@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('platformApp', [])
-.controller('PlatformCtrl', function ($sce, $scope, $log, $window, messageService, stateService) {
+.controller('PlatformCtrl', function ($sce, $scope, $log, $window, platformMessageService, stateService) {
 
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
@@ -30,16 +30,16 @@ angular.module('platformApp', [])
     stateService.setPlayMode($scope.playMode);
   });
 
-  messageService.addMessageListener(function (message) {
+  platformMessageService.addMessageListener(function (message) {
     if (message.gameReady !== undefined) {
       gotGameReady = true;
       var game = message.gameReady;
       game.isMoveOk = function (params) {
-        messageService.sendMessage({isMoveOk: params});
+        platformMessageService.sendMessage({isMoveOk: params});
         return true;
       };
       game.updateUI = function (params) {
-        messageService.sendMessage({updateUI: params});
+        platformMessageService.sendMessage({updateUI: params});
       };
       stateService.setGame(game);
     } else if (message.isMoveOkResult !== undefined) {
@@ -47,11 +47,11 @@ angular.module('platformApp', [])
         $window.alert("isMoveOk returned " + message.isMoveOkResult);
       }
     } else if (message.makeMove !== undefined) {
-      messageService.makeMove(message.makeMove);
+      platformMessageService.makeMove(message.makeMove);
     }
   });
 })
-.service('messageService', function($window, $log, $rootScope) {
+.service('platformMessageService', function($window, $log, $rootScope) {
   this.sendMessage = function (message) {
     $log.info("Platform sent message", message);
     $window.document.getElementById("game_iframe").contentWindow.postMessage(
