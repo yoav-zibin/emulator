@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Gaming Platform</title>
+  <meta name="description" content="Gaming Platform for games using GameApi">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.js"></script>
+  <script src="intercom.js"></script>
+  <script src="platform.js"></script>
+</head>
+<body ng-cloak ng-controller="Ctrl">
+  <div>{{getStatus()}}</div>
+  <button ng-click="startNewMatch()">New match</button>
+  <select ng-model="playMode">
+    <option value="passAndPlay">Single-window Pass-and-play</option>
+    <option value="playAgainstTheComputer">Single-window Play-against-the-computer</option>
+    <option value="playWhite">Multi-window play White</option>
+    <option value="playBlack">Multi-window play Black</option>
+    <option value="playViewer">Multi-window be a Viewer</option>
+  </select>
+  <iframe id="game_iframe" ng-src="{{gameUrl}}" frameborder="0" height="500px" width="100%"></iframe>
+</body>
+</html>
