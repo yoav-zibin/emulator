@@ -47,7 +47,7 @@ angular.module('platformApp', [])
         $window.alert("isMoveOk returned " + message.isMoveOkResult);
       }
     } else if (message.makeMove !== undefined) {
-      platformMessageService.makeMove(message.makeMove);
+      stateService.makeMove(message.makeMove);
     }
   });
 })
