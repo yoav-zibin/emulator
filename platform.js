@@ -314,21 +314,20 @@ angular.module('platformApp', [])
     currentVisibleTo = data.currentVisibleTo;
   }
 
-  function logArgs() {
-    $log.info(arguments);
-  }
-
   function getIntercom() {
     if ($window.Intercom !== undefined) {
       return $window.Intercom.getInstance();
     }
-    return {on: logArgs, emit: logArgs}; // for local game testing
+    return null;
   }
 
   function broadcastUpdateUi() {
     var matchState = getMatchState();
-    $window.localStorage.setItem("matchState", angular.toJson(matchState));
-    getIntercom().emit('broadcastUpdateUi', matchState);
+    var intercom = getIntercom();
+    if (intercom != null) {
+      $window.localStorage.setItem("matchState", angular.toJson(matchState));
+      intercom.emit('broadcastUpdateUi', matchState);
+    }
   }
 
   function gotBroadcastUpdateUi(data) {
@@ -402,12 +401,15 @@ angular.module('platformApp', [])
     get(game, "maxNumberOfPlayers");
     get(game, "isMoveOk");
     get(game, "updateUI");
-    getIntercom().on('broadcastUpdateUi', gotBroadcastUpdateUi);
 
     init();
-    var matchState = $window.localStorage.getItem("matchState");
-    if (!isNull(matchState)) {
-      setMatchState(angular.fromJson(matchState));
+    var intercom = getIntercom();
+    if (intercom != null) {
+      intercom.on('broadcastUpdateUi', gotBroadcastUpdateUi);
+      var matchState = $window.localStorage.getItem("matchState");
+      if (!isNull(matchState)) {
+        setMatchState(angular.fromJson(matchState));
+      }
     }
     sendUpdateUi();
   }
