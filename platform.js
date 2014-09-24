@@ -2,7 +2,7 @@
 
 angular.module('myApp', [])
 .controller('Ctrl', function ($sce, $scope, $log, $window, messageHandler, stateHandler) {
-
+ 
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
   if (gameUrl === null) {
