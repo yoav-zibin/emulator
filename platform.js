@@ -30,8 +30,6 @@ angular.module('platformApp', [])
     stateService.setPlayMode($scope.playMode);
   });
 
-
-  var makeMoveCallback;
   messageService.addMessageListener(function (message) {
     if (message.gameReady !== undefined) {
       gotGameReady = true;
@@ -41,8 +39,6 @@ angular.module('platformApp', [])
         return true;
       };
       game.updateUI = function (params) {
-        makeMoveCallback = params.makeMoveCallback;
-        delete params.makeMoveCallback;
         messageService.sendMessage({updateUI: params});
       };
       stateService.setGame(game);
@@ -50,8 +46,8 @@ angular.module('platformApp', [])
       if (message.isMoveOkResult !== true) {
         $window.alert("isMoveOk returned " + message.isMoveOkResult);
       }
-    } else if (message.madeMove !== undefined) {
-      makeMoveCallback(message.madeMove);
+    } else if (message.makeMove !== undefined) {
+      messageService.makeMove(message.makeMove);
     }
   });
 })
@@ -89,9 +85,6 @@ angular.module('platformApp', [])
 
   // match object is used by the controller
   var match = {};
-
-  // private methods
-  var makeMoveCallback;
 
   function setPlayMode(_playMode) {
     playMode = _playMode;
@@ -356,12 +349,11 @@ angular.module('platformApp', [])
         stateBeforeMove : stateBeforeMove,
         stateAfterMove : stateAfterMove,
         yourPlayerIndex : getYourPlayerIndex(),
-        playersInfo : playersInfo,
-        makeMoveCallback : makeMoveCallback
+        playersInfo : playersInfo
       });
   }
 
-  makeMoveCallback = function (operations) {
+  function makeMove(operations) {
     // Making sure only match.turnIndex can make the move
     if (match.turnIndex === -1) {
       throwError("You cannot send a move after the game ended!");
@@ -410,6 +402,7 @@ angular.module('platformApp', [])
   }
 
   this.setGame = setGame;
+  this.makeMove = makeMove;
   this.startNewMatch = startNewMatch;
   this.setPlayMode = setPlayMode;
   this.getMatch = function () { return match; };
