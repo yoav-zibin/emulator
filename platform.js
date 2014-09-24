@@ -314,10 +314,21 @@ angular.module('platformApp', [])
     currentVisibleTo = data.currentVisibleTo;
   }
 
+  function logArgs() {
+    $log.info(arguments);
+  }
+  
+  function getIntercom() {
+    if (Intercom !== undefined) {
+      return Intercom.getInstance();
+    }
+    return {on: logArgs, emit: logArgs}; // for local game testing
+  }
+
   function broadcastUpdateUi() {
     var matchState = getMatchState();
     $window.localStorage.setItem("matchState", angular.toJson(matchState));
-    Intercom.getInstance().emit('broadcastUpdateUi', matchState);
+    getIntercom().emit('broadcastUpdateUi', matchState);
   }
 
   function gotBroadcastUpdateUi(data) {
@@ -391,7 +402,7 @@ angular.module('platformApp', [])
     get(game, "maxNumberOfPlayers");
     get(game, "isMoveOk");
     get(game, "updateUI");
-    Intercom.getInstance().on('broadcastUpdateUi', gotBroadcastUpdateUi);
+    getIntercom().on('broadcastUpdateUi', gotBroadcastUpdateUi);
 
     init();
     var matchState = $window.localStorage.getItem("matchState");
