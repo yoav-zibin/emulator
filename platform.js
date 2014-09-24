@@ -317,10 +317,10 @@ angular.module('platformApp', [])
   function logArgs() {
     $log.info(arguments);
   }
-  
+
   function getIntercom() {
-    if (Intercom !== undefined) {
-      return Intercom.getInstance();
+    if ($window.Intercom !== undefined) {
+      return $window.Intercom.getInstance();
     }
     return {on: logArgs, emit: logArgs}; // for local game testing
   }
