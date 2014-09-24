@@ -2,7 +2,7 @@
 
 angular.module('myApp', [])
 .controller('Ctrl', function ($sce, $scope, $log, $window, messageHandler, stateHandler) {
- 
+
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
   if (gameUrl === null) {
@@ -143,9 +143,7 @@ angular.module('myApp', [])
   }
 
   function clone(obj) {
-    var str = JSON.stringify(obj);
-    var copy = JSON.parse(str);
-    return copy;
+    return angular.copy(obj);
   }
 
   function isNull(obj) {
@@ -225,7 +223,7 @@ angular.module('myApp', [])
       visibleToPlayerIndexes = op.visibleToPlayerIndexes;
       var value = op.value;
       if (isNull(key) || isNull(value)) {
-        throwError("Fields key and value in Set operation must be non null. operation=" + JSON.stringify(operation));
+        throwError("Fields key and value in Set operation must be non null. operation=" + angular.toJson(operation, true));
       }
       currentState[key] = value;
       currentVisibleTo[key] = visibleToPlayerIndexes;
@@ -239,7 +237,7 @@ angular.module('myApp', [])
       var from = op.from;
       var to = op.to;
       if (isNull(key) || isNull(from) || isNull(to)) {
-        throwError("Fields key, from, and to, in SetRandomInteger operation must be non null. operation=" + JSON.stringify(operation));
+        throwError("Fields key, from, and to, in SetRandomInteger operation must be non null. operation=" + angular.toJson(operation, true));
       }
       var randomValue = Math.floor((Math.random() * (to - from)) + from);
       currentState[key] = randomValue;
@@ -249,14 +247,14 @@ angular.module('myApp', [])
       key = op.key;
       visibleToPlayerIndexes = op.visibleToPlayerIndexes;
       if (isNull(key)) {
-        throwError("Fields key in SetVisibility operation must be non null. operation=" + JSON.stringify(operation));
+        throwError("Fields key in SetVisibility operation must be non null. operation=" + angular.toJson(operation, true));
       }
       currentVisibleTo[key] = visibleToPlayerIndexes;
     } else if (!isNull(operation['delete'])) {
       op = operation['delete'];
       key = op.key;
       if (isNull(key)) {
-        throwError("Field key in Delete operation must be non null. operation=" + JSON.stringify(operation));
+        throwError("Field key in Delete operation must be non null. operation=" + angular.toJson(operation, true));
       }
       delete currentState[key];
       delete currentVisibleTo[key];
@@ -264,7 +262,7 @@ angular.module('myApp', [])
       op = operation.shuffle;
       var keys = op.keys;
       if (isNull(keys) || (keys.length === 0)) {
-        throwError("Field keys in Shuffle operation must be a non empty array. operation=" + JSON.stringify(operation));
+        throwError("Field keys in Shuffle operation must be a non empty array. operation=" + angular.toJson(operation, true));
       }
       var shuffledKeys = shuffle(keys);
       var oldGameState = clone(currentState);
@@ -280,11 +278,11 @@ angular.module('myApp', [])
       setTurnOrEndMatchCount++;
       var scores = op.endMatchScores;
       if (isNull(scores) || scores.length !== playersInfo.length) {
-        throwError("Field scores in EndMatch operation must be an array of the same length as the number of players. operation=" + JSON.stringify(operation));
+        throwError("Field scores in EndMatch operation must be an array of the same length as the number of players. operation=" + angular.toJson(operation, true));
       }
       match.endMatchScores = scores;
     } else {
-      throwError("Illegal operation, it must contain either set, setRandomInteger, setVisibility, delete, shuffle, or endMatch: " + JSON.stringify(operation));
+      throwError("Illegal operation, it must contain either set, setRandomInteger, setVisibility, delete, shuffle, or endMatch: " + angular.toJson(operation, true));
     }
   }
 
@@ -327,7 +325,7 @@ angular.module('myApp', [])
 
   function broadcastUpdateUi() {
     var matchState = getMatchState();
-    $window.localStorage.setItem("matchState", JSON.stringify(matchState));
+    $window.localStorage.setItem("matchState", angular.toJson(matchState));
     Intercom.getInstance().emit('broadcastUpdateUi', matchState);
   }
 
@@ -408,7 +406,7 @@ angular.module('myApp', [])
     init();
     var matchState = $window.localStorage.getItem("matchState");
     if (!isNull(matchState)) {
-      setMatchState(JSON.parse(matchState));
+      setMatchState(angular.fromJson(matchState));
     }
     sendUpdateUi();
   }
