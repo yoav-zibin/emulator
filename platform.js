@@ -327,6 +327,8 @@ angular.module('platformApp', [])
     if (intercom != null) {
       $window.localStorage.setItem("matchState", angular.toJson(matchState));
       intercom.emit('broadcastUpdateUi', matchState);
+    } else {
+      sendUpdateUi();
     }
   }
 
