@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="myApp">
+<html lang="en" ng-app="platformApp">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,7 +10,7 @@
   <script src="intercom.js"></script>
   <script src="platform.js"></script>
 </head>
-<body ng-cloak ng-controller="Ctrl">
+<body ng-cloak ng-controller="PlatformCtrl">
   <div>{{getStatus()}}</div>
   <button ng-click="startNewMatch()">New match</button>
   <select ng-model="playMode">

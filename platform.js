@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('myApp', [])
-.controller('Ctrl', function ($sce, $scope, $log, $window, messageHandler, stateHandler) {
+angular.module('platformApp', [])
+.controller('PlatformCtrl', function ($sce, $scope, $log, $window, messageService, stateService) {
 
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
@@ -12,40 +12,40 @@ angular.module('myApp', [])
   $scope.gameUrl = $sce.trustAsResourceUrl(gameUrl);
   var gotGameReady = false;
   $scope.startNewMatch = function () {
-    stateHandler.startNewMatch();
+    stateService.startNewMatch();
   };
   $scope.getStatus = function () {
     if (!gotGameReady) {
       return "Waiting for 'gameReady' message from the game...";
     }
-    var match = stateHandler.getMatch();
+    var match = stateService.getMatch();
     if (match.endMatchScores !== null) {
       return "Match ended with scores: " + match.endMatchScores;
     }
     return "Match is ongoing! Turn of player index " + match.turnIndex;
   };
   $scope.playMode = "passAndPlay";
-  stateHandler.setPlayMode($scope.playMode);
+  stateService.setPlayMode($scope.playMode);
   $scope.$watch('playMode', function() {
-    stateHandler.setPlayMode($scope.playMode);
+    stateService.setPlayMode($scope.playMode);
   });
 
 
   var makeMoveCallback;
-  messageHandler.addMessageListener(function (message) {
+  messageService.addMessageListener(function (message) {
     if (message.gameReady !== undefined) {
       gotGameReady = true;
       var game = message.gameReady;
       game.isMoveOk = function (params) {
-        messageHandler.sendMessage({isMoveOk: params});
+        messageService.sendMessage({isMoveOk: params});
         return true;
       };
       game.updateUI = function (params) {
         makeMoveCallback = params.makeMoveCallback;
         delete params.makeMoveCallback;
-        messageHandler.sendMessage({updateUI: params});
+        messageService.sendMessage({updateUI: params});
       };
-      stateHandler.setGame(game);
+      stateService.setGame(game);
     } else if (message.isMoveOkResult !== undefined) {
       if (message.isMoveOkResult !== true) {
         $window.alert("isMoveOk returned " + message.isMoveOkResult);
@@ -55,14 +55,13 @@ angular.module('myApp', [])
     }
   });
 })
-.factory('messageHandler', function($window, $log, $rootScope) {
-  var messageHandler = {};
-  messageHandler.sendMessage = function (message) {
+.service('messageService', function($window, $log, $rootScope) {
+  this.sendMessage = function (message) {
     $log.info("Platform sent message", message);
     $window.document.getElementById("game_iframe").contentWindow.postMessage(
       message, "*");
   };
-  messageHandler.addMessageListener = function (listener) {
+  this.addMessageListener = function (listener) {
     $window.addEventListener("message", function (event) {
       $rootScope.$apply(function () {
         var message = event.data;
@@ -71,9 +70,8 @@ angular.module('myApp', [])
       });
     }, false);
   };
-  return messageHandler;
 })
-.factory('stateHandler', function($window, $log) {
+.service('stateService', function($window, $log) {
 
   var game;
   var minNumberOfPlayers;
@@ -411,10 +409,8 @@ angular.module('myApp', [])
     sendUpdateUi();
   }
 
-  return {
-      setGame : setGame,
-      startNewMatch: startNewMatch,
-      setPlayMode: setPlayMode,
-      getMatch: function () { return match; }
-    };
+  this.setGame = setGame;
+  this.startNewMatch = startNewMatch;
+  this.setPlayMode = setPlayMode;
+  this.getMatch = function () { return match; };
 });
