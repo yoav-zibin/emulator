@@ -6,7 +6,8 @@ angular.module('platformApp', [])
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
   if (gameUrl === null) {
-    $window.alert("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., ...platform.html?https://yoav-zibin.github.io/TicTacToe/generic_ui.html");
+    $log.error("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., http://yoav-zibin.github.io/emulator/platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
+    $window.alert("You must pass the game url like this: ...platform.html?<GAME_URL> , e.g., ...platform.html?http://yoav-zibin.github.io/TicTacToe/game.html");
     return;
   }
   $scope.gameUrl = $sce.trustAsResourceUrl(gameUrl);
