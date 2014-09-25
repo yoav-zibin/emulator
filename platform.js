@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('platformApp', [])
-.controller('PlatformCtrl', function ($sce, $scope, $log, $window, platformMessageService, stateService) {
+.controller('PlatformCtrl', function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService) {
 
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
@@ -15,11 +15,12 @@ angular.module('platformApp', [])
   $scope.startNewMatch = function () {
     stateService.startNewMatch();
   };
+  var match = stateService.getMatch();
+  $scope.match = match;
   $scope.getStatus = function () {
     if (!gotGameReady) {
       return "Waiting for 'gameReady' message from the game...";
     }
-    var match = stateService.getMatch();
     if (match.endMatchScores !== null) {
       return "Match ended with scores: " + match.endMatchScores;
     }
@@ -68,7 +69,7 @@ angular.module('platformApp', [])
     }, false);
   };
 })
-.service('stateService', function($window, $timeout, $log) {
+.service('stateService', function($window, $timeout, $log, $rootScope) {
 
   var game;
   var minNumberOfPlayers;
@@ -86,6 +87,9 @@ angular.module('platformApp', [])
 
   // match object is used by the controller
   var match = {};
+  
+  $rootScope.settings = {};
+  $rootScope.settings.simulateServerDelayMilliseconds = 500;
 
   function setPlayMode(_playMode) {
     playMode = _playMode;
@@ -367,7 +371,7 @@ angular.module('platformApp', [])
   }
   
   function sendUpdateUi() {
-    $timeout(delayedSendUpdateUi, 2000); // Delay by 2 seconds to simulate server delay.
+    $timeout(delayedSendUpdateUi, $rootScope.settings.simulateServerDelayMilliseconds); // Delay to simulate server delay.
   }
 
   function makeMove(operations) {
