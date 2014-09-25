@@ -68,7 +68,7 @@ angular.module('platformApp', [])
     }, false);
   };
 })
-.service('stateService', function($window, $log) {
+.service('stateService', function($window, $timeout, $log) {
 
   var game;
   var minNumberOfPlayers;
@@ -339,7 +339,7 @@ angular.module('platformApp', [])
     sendUpdateUi();
   }
 
-  function sendUpdateUi() {
+  function delayedSendUpdateUi() {
     var moveForIndex = getMoveForPlayerIndex(match.turnIndex, lastMove);
     var stateBeforeMove = getStateForPlayerIndex(match.turnIndex, lastState, lastVisibleTo);
     var stateAfterMove = getStateForPlayerIndex(match.turnIndex, currentState, currentVisibleTo);
@@ -364,6 +364,10 @@ angular.module('platformApp', [])
         yourPlayerIndex : getYourPlayerIndex(),
         playersInfo : playersInfo
       });
+  }
+  
+  function sendUpdateUi() {
+    $timeout(delayedSendUpdateUi, 2000); // Delay by 2 seconds to simulate server delay.
   }
 
   function makeMove(operations) {
