@@ -10,7 +10,7 @@
   <script src="intercom.js"></script>
   <script src="platform.js"></script>
 </head>
-<body ng-cloak ng-controller="PlatformCtrl">
+<body style="height:100%" ng-cloak ng-controller="PlatformCtrl">
   <div>{{getStatus()}}</div>
   <button ng-click="startNewMatch()">New match</button>
   <select ng-model="playMode">
@@ -22,7 +22,7 @@
   </select>
   <br>
   <div>
-    <iframe frameborder="1" id="game_iframe" ng-src="{{gameUrl}}" frameborder="0" height="90%" width="100%"></iframe>
+    <iframe frameborder="1" id="game_iframe" ng-src="{{gameUrl}}" style="height:90%; width:100%;"></iframe>
   </div>
 </body>
 </html>
