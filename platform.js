@@ -292,7 +292,7 @@ angular.module('platformApp', [])
   function getYourPlayerIndex() {
     return (playMode === "playWhite") ? 0 :
           (playMode === "playBlack") ? 1 :
-          (playMode === "playViewer") ? -1 :
+          (playMode === "playViewer") ? -2 : // viewer is -2 (because -1 for turnIndexAfterMove means the game ended)
           turnIndex;
   }
 
@@ -367,7 +367,8 @@ angular.module('platformApp', [])
         stateBeforeMove : stateBeforeMove,
         stateAfterMove : stateAfterMove,
         yourPlayerIndex : getYourPlayerIndex(),
-        playersInfo : playersInfo
+        playersInfo : playersInfo,
+        endMatchScores: endMatchScores
       });
   }
 
