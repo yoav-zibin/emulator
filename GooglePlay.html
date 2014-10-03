@@ -21,10 +21,10 @@
      
      function signinCallback(authResult) {
         if (authResult['status']['signed_in']) {
-          // Update the app to reflect a signed in user
-          // Hide the sign-in button now that the user is authorized, for example:
+          console.log('Hide the sign-in button now that the user is authorized');
           document.getElementById('signinButton').setAttribute('style', 'display: none');
           gapi.client.load('games','v1',function(response) {
+            console.log('loaded games', response);
             init();
           });
         } else {
@@ -52,8 +52,9 @@
           "requestId": 1
         });
 
+        console.log('Making request', request);
         request.execute(function(response) { 
-          console.log(response); 
+          console.log('request response:', response); 
         });
       }
     </script>
