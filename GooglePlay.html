@@ -38,7 +38,23 @@
       }
       
       function init() {
-        
+        var request = gapi.client.games.turnBasedMatches.create({
+          "kind": "games#turnBasedMatchCreateRequest",
+          "variant": 1,
+          "invitedPlayerIds": [
+          ],
+          "autoMatchingCriteria": {
+            "kind": "games#turnBasedAutoMatchingCriteria",
+            "minAutoMatchingPlayers": 2,
+            "maxAutoMatchingPlayers": 2,
+            "exclusiveBitmask": 0
+          },
+          "requestId": 1
+        });
+
+        request.execute(function(response) { 
+          console.log(response); 
+        });
       }
     </script>
     
