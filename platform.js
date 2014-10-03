@@ -15,16 +15,15 @@ angular.module('platformApp', [])
   $scope.startNewMatch = function () {
     stateService.startNewMatch();
   };
-  var match = stateService.getMatch();
-  $scope.match = match;
   $scope.getStatus = function () {
     if (!gotGameReady) {
       return "Waiting for 'gameReady' message from the game...";
     }
-    if (match.endMatchScores !== null) {
-      return "Match ended with scores: " + match.endMatchScores;
+    var matchState = stateService.getMatchState();
+    if (matchState.endMatchScores !== null) {
+      return "Match ended with scores: " + matchState.endMatchScores;
     }
-    return "Match is ongoing! Turn of player index " + match.turnIndex;
+    return "Match is ongoing! Turn of player index " + matchState.turnIndex;
   };
   $scope.playMode = "passAndPlay";
   stateService.setPlayMode($scope.playMode);
@@ -81,13 +80,13 @@ angular.module('platformApp', [])
   var lastVisibleTo;
   var lastMove;
   var turnIndexBeforeMove;
+  var turnIndex = 0; // turn after the move (-1 when the game ends)
+  var endMatchScores = null;
   var setTurnOrEndMatchCount;
   var playersInfo;
   var playMode;
 
-  // match object is used by the controller
-  var match = {};
-  
+  // Global settings
   $rootScope.settings = {};
   $rootScope.settings.simulateServerDelayMilliseconds = 500;
 
@@ -118,8 +117,8 @@ angular.module('platformApp', [])
     lastVisibleTo = null;
     lastMove = [];
     turnIndexBeforeMove = 0;
-    match.turnIndex = 0; // can be -1 in the last updateUI after the game ended.
-    match.endMatchScores = null;
+    turnIndex = 0; // can be -1 in the last updateUI after the game ended.
+    endMatchScores = null;
   }
 
   function startNewMatch() {
@@ -225,7 +224,7 @@ angular.module('platformApp', [])
       currentVisibleTo[key] = visibleToPlayerIndexes;
     } else if (!isNull(operation.setTurn)) {
       op = operation.setTurn;
-      match.turnIndex = get(op, "turnIndex");
+      turnIndex = get(op, "turnIndex");
       setTurnOrEndMatchCount++;
     } else if (!isNull(operation.setRandomInteger)) {
       op = operation.setRandomInteger;
@@ -276,7 +275,7 @@ angular.module('platformApp', [])
       if (isNull(scores) || scores.length !== playersInfo.length) {
         throwError("Field scores in EndMatch operation must be an array of the same length as the number of players. operation=" + angular.toJson(operation, true));
       }
-      match.endMatchScores = scores;
+      endMatchScores = scores;
     } else {
       throwError("Illegal operation, it must contain either set, setRandomInteger, setVisibility, delete, shuffle, or endMatch: " + angular.toJson(operation, true));
     }
@@ -293,14 +292,15 @@ angular.module('platformApp', [])
   function getYourPlayerIndex() {
     return (playMode === "playWhite") ? 0 :
           (playMode === "playBlack") ? 1 :
-          (playMode === "playViewer") ? -1 :
-          match.turnIndex;
+          (playMode === "playViewer") ? -2 : // viewer is -2 (because -1 for turnIndexAfterMove means the game ended)
+          turnIndex;
   }
 
   function getMatchState() {
     return {
       turnIndexBeforeMove: turnIndexBeforeMove,
-      match: match,
+      turnIndex: turnIndex,
+      endMatchScores: endMatchScores,
       lastMove: lastMove,
       lastState: lastState,
       currentState: currentState,
@@ -311,7 +311,8 @@ angular.module('platformApp', [])
 
   function setMatchState(data) {
     turnIndexBeforeMove = data.turnIndexBeforeMove;
-    match = data.match;
+    turnIndex = data.turnIndex;
+    endMatchScores = data.endMatchScores;
     lastMove = data.lastMove;
     lastState = data.lastState;
     currentState = data.currentState;
@@ -344,14 +345,14 @@ angular.module('platformApp', [])
   }
 
   function delayedSendUpdateUi() {
-    var moveForIndex = getMoveForPlayerIndex(match.turnIndex, lastMove);
-    var stateBeforeMove = getStateForPlayerIndex(match.turnIndex, lastState, lastVisibleTo);
-    var stateAfterMove = getStateForPlayerIndex(match.turnIndex, currentState, currentVisibleTo);
+    var moveForIndex = getMoveForPlayerIndex(turnIndex, lastMove);
+    var stateBeforeMove = getStateForPlayerIndex(turnIndex, lastState, lastVisibleTo);
+    var stateAfterMove = getStateForPlayerIndex(turnIndex, currentState, currentVisibleTo);
     if (lastMove.length > 0 && game.isMoveOk(
       {
         move : moveForIndex,
         turnIndexBeforeMove : turnIndexBeforeMove,
-        turnIndexAfterMove : match.turnIndex,
+        turnIndexAfterMove : turnIndex,
         stateBeforeMove : stateBeforeMove,
         stateAfterMove : stateAfterMove
       }) !== true) {
@@ -362,31 +363,32 @@ angular.module('platformApp', [])
       {
         move : moveForIndex,
         turnIndexBeforeMove : turnIndexBeforeMove,
-        turnIndexAfterMove : match.turnIndex,
+        turnIndexAfterMove : turnIndex,
         stateBeforeMove : stateBeforeMove,
         stateAfterMove : stateAfterMove,
         yourPlayerIndex : getYourPlayerIndex(),
-        playersInfo : playersInfo
+        playersInfo : playersInfo,
+        endMatchScores: endMatchScores
       });
   }
-  
+
   function sendUpdateUi() {
     $timeout(delayedSendUpdateUi, $rootScope.settings.simulateServerDelayMilliseconds); // Delay to simulate server delay.
   }
 
   function makeMove(operations) {
-    // Making sure only match.turnIndex can make the move
-    if (match.turnIndex === -1) {
+    // Making sure only turnIndex can make the move
+    if (turnIndex === -1) {
       throwError("You cannot send a move after the game ended!");
     }
-    if (getYourPlayerIndex() !== match.turnIndex) {
-      throwError("Expected a move from turnIndex=" + match.turnIndex + " but got the move from index=" + getYourPlayerIndex());
+    if (getYourPlayerIndex() !== turnIndex) {
+      throwError("Expected a move from turnIndex=" + turnIndex + " but got the move from index=" + getYourPlayerIndex());
     }
 
     lastState = clone(currentState);
     lastVisibleTo = clone(currentVisibleTo);
-    turnIndexBeforeMove = match.turnIndex;
-    match.turnIndex = -1;
+    turnIndexBeforeMove = turnIndex;
+    turnIndex = -1;
     lastMove = operations;
     setTurnOrEndMatchCount = 0;
     for (var i = 0; i < lastMove.length; i++) {
@@ -396,8 +398,8 @@ angular.module('platformApp', [])
     if (setTurnOrEndMatchCount !== 1) {
       throwError("We must have either SetTurn or EndMatch, but not both");
     }
-    if (!(match.turnIndex >= -1 && match.turnIndex < playersInfo.length)) {
-      throwError("turnIndex must be between -1 and " + playersInfo.length + ", but it was " + match.turnIndex + ".");
+    if (!(turnIndex >= -1 && turnIndex < playersInfo.length)) {
+      throwError("turnIndex must be between -1 and " + playersInfo.length + ", but it was " + turnIndex + ".");
     }
     broadcastUpdateUi();
   };
@@ -429,5 +431,5 @@ angular.module('platformApp', [])
   this.makeMove = makeMove;
   this.startNewMatch = startNewMatch;
   this.setPlayMode = setPlayMode;
-  this.getMatch = function () { return match; };
+  this.getMatchState = getMatchState;
 });
