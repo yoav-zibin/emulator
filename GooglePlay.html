@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>TicTacToe</title>
+  <meta name="description" content="Google Play Services test">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="google-signin-clientid" content="509303050414-301u83qa97as0flsqnc10nda8r3b8bdu.apps.googleusercontent.com" />
+  <meta name="google-signin-cookiepolicy" content="single_host_origin" />
+  <meta name="google-signin-callback" content="signinCallback" />
+  <meta name="google-signin-scope" content="https://www.googleapis.com/auth/games" />
+  <script src="https://apis.google.com/js/client.js"></script>
+  <script type="text/javascript">
+      (function() {
+       var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+       po.src = 'https://apis.google.com/js/client:plusone.js';
+       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+     })();
+     
+     function signinCallback(authResult) {
+        if (authResult['status']['signed_in']) {
+          // Update the app to reflect a signed in user
+          // Hide the sign-in button now that the user is authorized, for example:
+          document.getElementById('signinButton').setAttribute('style', 'display: none');
+        } else {
+          // Update the app to reflect a signed out user
+          // Possible error values:
+          //   "user_signed_out" - User is signed-out
+          //   "access_denied" - User denied access to your app
+          //   "immediate_failed" - Could not automatically log in the user
+          console.log('Sign-in state: ' + authResult['error']);
+        }
+      }
+    </script>
+    
+  <link rel="stylesheet" type="text/css" href="game.css">
+</head>
+<body>
+  <span id="signinButton">
+    <span
+      class="g-signin"
+      data-callback="signinCallback"
+      data-clientid="CLIENT_ID"
+      data-cookiepolicy="single_host_origin"
+      data-requestvisibleactions="http://schema.org/AddAction"
+      data-scope="https://www.googleapis.com/auth/plus.login">
+    </span>
+  </span>
+</body>
+</html>
