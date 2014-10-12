@@ -14,11 +14,13 @@ Server API spec:<br>
 <br>
 Example messages:<br>
 <textarea rows=7 cols=80>
+[{addGame: {gameDeveloperEmail: "yoav.zibin@gmail.com", languageToGameName: {en: "TicTacToe"}, password: "pass"}}]
+[{getGames: {}}]
 [{emailJavaScriptError: {gameDeveloperEmail: "yzibin@google.com", emailSubject: "emailSubject", emailBody: "emailBody"}}]
 [{registerPlayer:{displayName: "yoav z", avatarImageUrl: "avatar"}}]
-[{getPlayerMatches: {gameUrl: "gameUrl", getCommunityMatches: false, myPlayerId:"...",accessSignature:"..."}}]
-[{reserveAutoMatch: {tokens:0, numberOfPlayers:2, gameUrl: "gameUrl", myPlayerId:"...",accessSignature:"..."}}]
-[{newMatch: {gameUrl: "gameUrl", tokens: 0, move: [{setTurn: {turnIndex: 0}}, {setRandomInteger: {key: 'foo', from: 0, to: 6}}], startAutoMatch: { numberOfPlayers : 2 }, myPlayerId:"...",accessSignature:"..."}}]
+[{getPlayerMatches: {gameId: "...", getCommunityMatches: false, myPlayerId:"...",accessSignature:"..."}}]
+[{reserveAutoMatch: {tokens:0, numberOfPlayers:2, gameId: "...", myPlayerId:"...",accessSignature:"..."}}]
+[{newMatch: {gameId: "...", tokens: 0, move: [{setTurn: {turnIndex: 0}}, {setRandomInteger: {key: 'foo', from: 0, to: 6}}], startAutoMatch: { numberOfPlayers : 2 }, myPlayerId:"...",accessSignature:"..."}}]
 [{madeMove: {matchId:"...", move: [{setTurn: {turnIndex: 1}}, {set: {key: 'bar', value: 42}}], moveNumber: 1, myPlayerId:"...",accessSignature:"..."}}]
 [{dismissMatch: {matchId:"...", myPlayerId:"...",accessSignature:"..."}}]
 </textarea>
