@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Gaming Platform</title>
+  <meta name="description" content="Gaming Platform for games using GameApi">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+  function sendMessage(msg) {
+    window.alert("sendMessage: " + msg);
+    window.document.getElementById("game_iframe").contentWindow.postMessage(
+      JSON.parse(msg), "*");
+  }
+  window.addEventListener("message", function (event) {
+    var msg = JSON.stringify(event.data);
+    window.alert("gotMessage: " + msg);
+    window.android.gotMessage(msg);
+  });
+  </script>
+</head>
+<body style="height:100%; width:100%;">
+  <iframe frameborder="0" id="game_iframe" src="http://yoav-zibin.github.io/TicTacToe/game.html" style="height:100%; width:100%;"></iframe>
+</body>
+</html>
