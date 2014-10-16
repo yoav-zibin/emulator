@@ -8,13 +8,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>
   function sendMessage(msg) {
-    window.alert("sendMessage: " + msg);
+    console.log("Android sendMessage: ", msg);
     window.document.getElementById("game_iframe").contentWindow.postMessage(
       JSON.parse(msg), "*");
   }
   window.addEventListener("message", function (event) {
     var msg = JSON.stringify(event.data);
-    window.alert("gotMessage: " + msg);
+    console.log("Android gotMessage: ", msg);
     window.android.gotMessage(msg);
   });
   </script>
