@@ -2,7 +2,8 @@
 
 angular.module('myApp')
 .service('gameService', function($window, $log, stateService, messageService) {
-    var isLocalTesting = $window.parent === $window;
+    var isLocalTesting = $window.parent === $window
+        || $window.location.search === "?test";
 
     function makeMove(move) {
       $log.info(["Making move:", move]);
