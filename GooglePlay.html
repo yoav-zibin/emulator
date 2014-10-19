@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>TicTacToe</title>
   <meta name="description" content="Google Play Services test">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   
   <meta name="google-signin-clientid" content="509303050414-vsjml39jei37r4p8k6s8bdv1ac1j2ag4.apps.googleusercontent.com" />
   <meta name="google-signin-cookiepolicy" content="single_host_origin" />
@@ -18,7 +18,7 @@
        po.src = 'https://apis.google.com/js/client:plusone.js';
        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
      })();
-     
+
      function signinCallback(authResult) {
         if (authResult['status']['signed_in']) {
           console.log('Hide the sign-in button now that the user is authorized');
@@ -36,7 +36,7 @@
           console.log('Sign-in state: ' + authResult['error']);
         }
       }
-      
+
       function init() {
         var request = gapi.client.games.turnBasedMatches.create({
           "kind": "games#turnBasedMatchCreateRequest",
@@ -53,12 +53,12 @@
         });
 
         console.log('Making request', request);
-        request.execute(function(response) { 
-          console.log('request response:', response); 
+        request.execute(function(response) {
+          console.log('request response:', response);
         });
       }
     </script>
-    
+
 </head>
 <body>
   <span id="signinButton">
