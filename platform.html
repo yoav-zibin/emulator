@@ -15,16 +15,18 @@
 </head>
 <body style="height:100%; width:100%; overflow: hidden;"
     ng-cloak ng-controller="PlatformCtrl">
-  <div>{{getStatus()}}</div>
-  <button ng-click="startNewMatch()">New match</button>
-  <select ng-model="playMode">
-    <option value="passAndPlay">Single-window Pass-and-play</option>
-    <option value="playAgainstTheComputer">Single-window Play-against-the-computer</option>
-    <option value="playWhite">Multi-window play White</option>
-    <option value="playBlack">Multi-window play Black</option>
-    <option value="playViewer">Multi-window be a Viewer</option>
-  </select>
-  Simulate delay of <input ng-model="settings.simulateServerDelayMilliseconds"> milliseconds.
+  <div style="height:10%; overflow: hidden;">
+    <button ng-click="startNewMatch()">New match</button>
+    <select ng-model="playMode">
+      <option value="passAndPlay">Single-window Pass-and-play</option>
+      <option value="playAgainstTheComputer">Single-window Play-against-the-computer</option>
+      <option value="playWhite">Multi-window play White</option>
+      <option value="playBlack">Multi-window play Black</option>
+      <option value="playViewer">Multi-window be a Viewer</option>
+    </select>
+    <div>{{getStatus()}}</div>
+    Simulate delay of <input ng-model="settings.simulateServerDelayMilliseconds"> milliseconds.
+  </div>
   <iframe frameborder="1" id="game_iframe" ng-src="{{gameUrl}}"
       style="height:90%; width:100%; overflow: hidden;"
       scrolling="no" seamless="seamless"></iframe>

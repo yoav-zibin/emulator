@@ -243,6 +243,11 @@ angular.module('myApp')
   }
 
   function setMatchState(data) {
+    if (data.turnIndexBeforeMove === undefined
+        || data.turnIndex === undefined
+        || data.endMatchScores === undefined) {
+      return;
+    }
     turnIndexBeforeMove = data.turnIndexBeforeMove;
     turnIndex = data.turnIndex;
     endMatchScores = data.endMatchScores;

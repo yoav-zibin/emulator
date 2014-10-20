@@ -21,7 +21,7 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
       return "Waiting for 'gameReady' message from the game...";
     }
     var matchState = stateService.getMatchState();
-    if (matchState.endMatchScores !== null) {
+    if (matchState.endMatchScores) {
       return "Match ended with scores: " + matchState.endMatchScores;
     }
     return "Match is ongoing! Turn of player index " + matchState.turnIndex;
