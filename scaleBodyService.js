@@ -3,7 +3,6 @@
 angular.module('myApp')
   .service('scaleBodyService', function($window, $log) {
     var doc = $window.document;
-    var body = doc.body;
     var gameSize = null;
     var oldSizes = null;
 
@@ -11,8 +10,12 @@ angular.module('myApp')
       gameSize = _gameSize;
       rescale();
     }
+    function round2(num) {
+      return Math.round(num * 100) / 100;
+    }
 
     function rescale() {
+      var body = doc.body;
       if (gameSize === null) {
         return;
       }
@@ -20,14 +23,14 @@ angular.module('myApp')
       var myGameHeight = gameSize.height;
       var windowWidth = body.clientWidth; //$window.innerWidth;
       var windowHeight = body.clientHeight; //$window.innerHeight;
-      /*if (oldSizes !== null) {
+      if (oldSizes !== null) {
         if (oldSizes.myGameWidth === myGameWidth &&
             oldSizes.myGameHeight === myGameHeight &&
             oldSizes.windowWidth === windowWidth &&
             oldSizes.windowHeight === windowHeight) {
           return; // nothing changed, so no need to change the transformations.
         }
-      }*/
+      }
       oldSizes = {
           myGameWidth: myGameWidth,
           myGameHeight: myGameHeight,
@@ -38,9 +41,9 @@ angular.module('myApp')
 
       var scaleX = windowWidth / myGameWidth;
       var scaleY = windowHeight / myGameHeight;
-      var scale = Math.min(scaleX, scaleY);
-      var tx = (windowWidth / scale - myGameWidth) / 2;
-      var ty = (windowHeight / scale - myGameHeight) / 2;
+      var scale = round2(Math.min(scaleX, scaleY));
+      var tx = round2((windowWidth / scale - myGameWidth) / 2);
+      var ty = round2((windowHeight / scale - myGameHeight) / 2);
       var transformString = "scale(" + scale + "," + scale + ")  translate(" + tx + "px, " + ty + "px)";
       body.style['transform'] = transformString;
       body.style['-o-transform'] = transformString;
