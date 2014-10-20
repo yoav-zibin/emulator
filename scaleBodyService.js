@@ -18,8 +18,8 @@ angular.module('myApp')
       }
       var myGameWidth = gameSize.width;
       var myGameHeight = gameSize.height;
-      var windowWidth = $window.innerWidth;
-      var windowHeight = $window.innerHeight;
+      var windowWidth = body.clientWidth; //$window.innerWidth;
+      var windowHeight = body.clientHeight; //$window.innerHeight;
       if (oldSizes !== null) {
         if (oldSizes.myGameWidth === myGameWidth &&
             oldSizes.myGameHeight === myGameHeight &&
@@ -28,13 +28,13 @@ angular.module('myApp')
           return; // nothing changed, so no need to change the transformations.
         }
       }
-      $log.info(["Scaling the body to size: ", gameSize]);
       oldSizes = {
           myGameWidth: myGameWidth,
           myGameHeight: myGameHeight,
           windowWidth: windowWidth,
           windowHeight: windowHeight
       };
+      $log.info(["Scaling the body to size: ", oldSizes]);
 
       var scaleX = windowWidth / myGameWidth;
       var scaleY = windowHeight / myGameHeight;
