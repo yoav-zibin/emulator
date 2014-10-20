@@ -20,14 +20,14 @@ angular.module('myApp')
       var myGameHeight = gameSize.height;
       var windowWidth = body.clientWidth; //$window.innerWidth;
       var windowHeight = body.clientHeight; //$window.innerHeight;
-      if (oldSizes !== null) {
+      /*if (oldSizes !== null) {
         if (oldSizes.myGameWidth === myGameWidth &&
             oldSizes.myGameHeight === myGameHeight &&
             oldSizes.windowWidth === windowWidth &&
             oldSizes.windowHeight === windowHeight) {
           return; // nothing changed, so no need to change the transformations.
         }
-      }
+      }*/
       oldSizes = {
           myGameWidth: myGameWidth,
           myGameHeight: myGameHeight,
