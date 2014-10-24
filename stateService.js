@@ -269,7 +269,7 @@ angular.module('myApp')
     var matchState = getMatchState();
     var intercom = getIntercom();
     if (intercom != null) {
-      $window.localStorage.setItem("matchState", angular.toJson(matchState));
+      $window.localStorage.setItem($window.location.toString(), angular.toJson(matchState));
       intercom.emit('broadcastUpdateUi', matchState);
     } else {
       sendUpdateUi();
@@ -357,7 +357,7 @@ angular.module('myApp')
     var intercom = getIntercom();
     if (intercom != null) {
       intercom.on('broadcastUpdateUi', gotBroadcastUpdateUi);
-      var matchState = $window.localStorage.getItem("matchState");
+      var matchState = $window.localStorage.getItem($window.location.toString());
       if (!isNull(matchState)) {
         setMatchState(angular.fromJson(matchState));
       }
