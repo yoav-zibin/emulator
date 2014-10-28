@@ -22,6 +22,10 @@ angular.module('myApp')
 
     function listenMessage(event) {
       $rootScope.$apply(function () {
+        if (serverApiIframe === null 
+            || serverApiIframe.contentWindow !== event.source) {
+          return;
+        }
         var msg = event.data;
         if (secretCode === null) {
           secretCode = eval(msg);
