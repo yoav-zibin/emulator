@@ -50,6 +50,8 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
       }
     } else if (message.makeMove !== undefined) {
       stateService.makeMove(message.makeMove);
+    } else {
+      $window.alert("Platform got: " + angular.toJson(message, true));
     }
   });
 });
