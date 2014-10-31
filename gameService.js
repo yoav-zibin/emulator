@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('myApp')
-.service('gameService', function($window, $log, stateService, messageService) {
+.service('gameService', function($window, $log, stateService, messageService, $exceptionHandler) {
     var isLocalTesting = $window.parent === $window
         || $window.location.search === "?test";
 
@@ -15,6 +15,7 @@ angular.module('myApp')
     }
 
     function setGame(game) {
+      $window.gameDeveloperEmail = game.gameDeveloperEmail;
       if (isLocalTesting) {
         stateService.setGame(game);
       } else {
@@ -22,6 +23,7 @@ angular.module('myApp')
         var updateUI = game.updateUI;
 
         messageService.addMessageListener(function (message) {
+          $window.lastMessage = message;
           if (message.isMoveOk !== undefined) {
             var isMoveOkResult = isMoveOk(message.isMoveOk);
             messageService.sendMessage({isMoveOkResult: isMoveOkResult});
@@ -37,6 +39,32 @@ angular.module('myApp')
       }
     }
 
+    $window.addEventListener("keydown", function (event) {
+      if (event.shiftKey  && event.ctrlKey) {
+        if (event.keyCode === 66) {
+          var msg = "User pressed on Ctrl+Shift+B";
+          $exceptionHandler(new Error(msg), msg);
+        }
+      }
+    });
+
     this.makeMove = makeMove;
     this.setGame = setGame;
+})
+.factory('$exceptionHandler', function ($window, $log) {
+  return function (exception, cause) {
+    $log.info("Game had an exception:", exception, cause);
+    var exceptionString = angular.toJson({exception: exception, cause: cause, lastMessage: $window.lastMessage}, true);
+    var message = 
+        {
+          emailJavaScriptError: 
+            {
+              gameDeveloperEmail: $window.gameDeveloperEmail, 
+              emailSubject: "Error in game " + $window.location, 
+              emailBody: exceptionString
+            }
+        };
+    $window.parent.postMessage(message, "*");
+    $window.alert(exceptionString);
+  };
 });
