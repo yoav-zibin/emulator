@@ -1,7 +1,16 @@
 'use strict';
 
 angular.module('myApp')
-  .service('serverApiService', function($window, $log, $rootScope) {
+  .service('serverApiService', function(serverApiServiceWithoutRootScope, $rootScope) {
+    this.sendMessage = function (msg, callback) {
+      serverApiServiceWithoutRootScope.sendMessage(msg, function (reply) {
+        $rootScope.$apply(function () {
+          callback(reply);
+        });
+      });
+    };
+  })
+  .service('serverApiServiceWithoutRootScope', function($window, $log) {
 
     var secretCode = null;
     var waitingForReply = [];
@@ -21,26 +30,24 @@ angular.module('myApp')
     }
 
     function listenMessage(event) {
-      $rootScope.$apply(function () {
-        if (serverApiIframe === null 
-            || serverApiIframe.contentWindow !== event.source) {
-          return;
+      if (serverApiIframe === null 
+          || serverApiIframe.contentWindow !== event.source) {
+        return;
+      }
+      var msg = event.data;
+      if (secretCode === null) {
+        secretCode = eval(msg);
+        for (var i = 0; i < waitingForReply.length; i++) {
+          sendMessageInPosition(i);
         }
-        var msg = event.data;
-        if (secretCode === null) {
-          secretCode = eval(msg);
-          for (var i = 0; i < waitingForReply.length; i++) {
-            sendMessageInPosition(i);
-          }
-        } else {
-          $log.info("serverApiService got: ", msg);
-          var position = msg.id;
-          var reply = msg.reply;
-          var callback = waitingForReply[position].callback;
-          delete waitingForReply[position];
-          callback(reply);
-        }
-      });
+      } else {
+        $log.info("serverApiService got: ", msg);
+        var position = msg.id;
+        var reply = msg.reply;
+        var callback = waitingForReply[position].callback;
+        delete waitingForReply[position];
+        callback(reply);
+      }
     }
 
     // Loads server_api.html in an iframe
