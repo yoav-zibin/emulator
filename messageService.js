@@ -8,6 +8,10 @@ angular.module('myApp')
     };
     this.addMessageListener = function (listener) {
       $window.addEventListener("message", function (event) {
+        var source = event.source;
+        if (source !== $window.parent) {
+          return;
+        }
         $rootScope.$apply(function () {
           var message = event.data;
           $log.info("Game got message", message);
