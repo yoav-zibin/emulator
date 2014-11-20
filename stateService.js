@@ -334,7 +334,7 @@ angular.module('myApp')
     }
     // We must have either SetTurn or EndMatch
     if (setTurnOrEndMatchCount !== 1) {
-      throwError("We must have either SetTurn or EndMatch, but not both");
+      throwError("We must have either SetTurn or EndMatch, but not both: setTurnOrEndMatchCount=" + setTurnOrEndMatchCount);
     }
     if (!(turnIndex >= -1 && turnIndex < playersInfo.length)) {
       throwError("turnIndex must be between -1 and " + playersInfo.length + ", but it was " + turnIndex + ".");
