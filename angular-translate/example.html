@@ -18,8 +18,9 @@
         prefix: 'languages/',
         suffix: '.json'
       });
-      $translateProvider.determinePreferredLanguage()
-                .fallbackLanguage(['en']);
+      $translateProvider
+        .fallbackLanguage(['en'])
+        .determinePreferredLanguage();
     })
     .controller('Ctrl',
       function($translate, $scope) {
