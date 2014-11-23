@@ -19,6 +19,11 @@
         suffix: '.json'
       });
       $translateProvider
+        .registerAvailableLanguageKeys(['en', 'de'], {
+          'en_UK': 'en',
+          'de_DE': 'de',
+          'de_CH': 'de'
+        })
         .fallbackLanguage(['en'])
         .determinePreferredLanguage();
     })
@@ -31,6 +36,7 @@
   </script>
 </head>
 <body ng-cloak ng-controller="Ctrl">
+  <h1>Example of I18N:</h1>
   <h2>{{ 'HEADLINE' | translate }}</h2>
   <p>{{ 'INTRO_TEXT' | translate }}</p>
   <div>
