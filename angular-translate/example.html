@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Example translate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-touch.min.js"></script>
+
+  <script src="http://yoav-zibin.github.io/emulator/angular-translate/angular-translate.2.4.2.min.js"></script>
+  <script src="http://yoav-zibin.github.io/emulator/angular-translate/loader-static-files.2.4.2.js"></script>
+  <script>
+    angular.module('myApp', ['ngTouch','pascalprecht.translate']);
+    angular.module('myApp')
+    .config(function($translateProvider) {
+      $translateProvider.useStaticFilesLoader({
+        prefix: 'languages/',
+        suffix: '.json'
+      });
+      $translateProvider.determinePreferredLanguage()
+                .fallbackLanguage(['en']);
+    })
+    .controller('Ctrl',
+      function($translate, $scope) {
+        $scope.changeLanguage = function (langKey) {
+          $translate.use(langKey);
+        };
+      });
+  </script>
+</head>
+<body ng-cloak ng-controller="Ctrl">
+  <h2>{{ 'HEADLINE' | translate }}</h2>
+  <p>{{ 'INTRO_TEXT' | translate }}</p>
+  <div>
+    <button ng-click="changeLanguage('de')" translate="BUTTON_TEXT_DE"></button>
+    <button ng-click="changeLanguage('en')" translate="BUTTON_TEXT_EN"></button>
+  </div>
+</body>
+</html>
