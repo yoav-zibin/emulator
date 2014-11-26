@@ -1,0 +1,6 @@
+{
+  "HEADLINE": "Hello there, This is my awesome app!",
+  "INTRO_TEXT": "And it has i18n support!",
+  "BUTTON_TEXT_EN": "english",
+  "BUTTON_TEXT_DE": "german"
+}
