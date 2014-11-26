@@ -21,8 +21,12 @@
   </script>
 </head>
 <body style="height:100%; width:100%; overflow: hidden;">
-  <iframe frameborder="0" id="game_iframe" src="http://yoav-zibin.github.io/TicTacToe/game.html"
+  <iframe frameborder="0" id="game_iframe" 
     style="height:100%; width:100%; overflow: hidden;"
     scrolling="no" seamless="seamless"></iframe>
+  <script>
+  window.document.getElementById("game_iframe").src = 
+    "http://yoav-zibin.github.io/multiplayer-games/index.html" + window.location.search.toString();
+  </script>
 </body>
 </html>
