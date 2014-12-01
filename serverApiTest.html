@@ -18,12 +18,16 @@ Example messages:<br>
 [{addGame: {gameUrl: "http://yoav-zibin.github.io/TicTacToe/game.html", gameDeveloperEmail: "yoav.zibin@gmail.com", languageToGameName: {en: "TicTacToe"}, password: "pass"}}]
 [{getGames: {gameId: "5682617542246400"}}]
 [{emailJavaScriptError: {gameDeveloperEmail: "yzibin@google.com", emailSubject: "emailSubject", emailBody: "emailBody"}}]
-[{registerPlayer:{displayName: "yoav z", avatarImageUrl: "avatar"}}]
+[{registerPlayer:{displayName: "yoav z", avatarImageUrl: "http://bla.com/avatar"}}]
 [{getPlayerMatches: {gameId: "...", getCommunityMatches: false, myPlayerId:"...",accessSignature:"..."}}]
 [{reserveAutoMatch: {tokens:0, numberOfPlayers:2, gameId: "...", myPlayerId:"...",accessSignature:"..."}}]
 [{newMatch: {gameId: "...", tokens: 0, move: [{setTurn: {turnIndex: 0}}, {setRandomInteger: {key: 'foo', from: 0, to: 6}}], startAutoMatch: { numberOfPlayers : 2 }, myPlayerId:"...",accessSignature:"..."}}]
 [{madeMove: {matchId:"...", move: [{setTurn: {turnIndex: 1}}, {set: {key: 'bar', value: 42}}], moveNumber: 1, myPlayerId:"...",accessSignature:"..."}}]
 [{dismissMatch: {matchId:"...", myPlayerId:"...",accessSignature:"..."}}]
+
+[{testSendPushNotificationToRegId: {androidRegistrationId: "APA91bH_ao41BpWM_lE1lunPDKe4Nq_cZh-MQvecN4m0b6uikP6upoNM7i63VuT2TNw8QQl-pluc17Zsi9s2YFrwOGuZA6fvnupdltv30UClG6FRKkV6IThSeqokcerOqnHNJLppQh4KZ4GHQ1qdp_gJnkjUUnbcCP0676oX7GOWbMQX_o8pZQY"}}]
+[{registerForPushNotifications: {myPlayerId: "5378685255286784", accessSignature: "c7bc8f0aa06a207d47da681cd2810248", gameId: "123", androidRegistrationId: "APA91bH_ao41BpWM_lE1lunPDKe4Nq_cZh-MQvecN4m0b6uikP6upoNM7i63VuT2TNw8QQl-pluc17Zsi9s2YFrwOGuZA6fvnupdltv30UClG6FRKkV6IThSeqokcerOqnHNJLppQh4KZ4GHQ1qdp_gJnkjUUnbcCP0676oX7GOWbMQX_o8pZQY"}}]
+[{testSendPushNotificationToPlayer: {myPlayerId: "5378685255286784", accessSignature: "c7bc8f0aa06a207d47da681cd2810248"}}]
 </textarea>
 <br>
 Enter message in JSON format:<br>
