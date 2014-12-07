@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="myApp">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,26 +7,75 @@
   <meta name="description" content="Gaming Platform for games using GameApi">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
+
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
   <script>
-  function sendMessage(msg) {
-    console.log("Android sendMessage: ", msg);
-    window.document.getElementById("game_iframe").contentWindow.postMessage(
-      JSON.parse(msg), "*");
-  }
-  window.addEventListener("message", function (event) {
-    var msg = JSON.stringify(event.data);
-    console.log("Android gotMessage: ", msg);
-    window.android.gotMessage(msg);
-  });
+    angular.module('myApp', []);
   </script>
+  <script src="stateService.js"></script>
 </head>
 <body style="height:100%; width:100%; overflow: hidden;">
-  <iframe frameborder="0" id="game_iframe" 
+  <iframe frameborder="0" id="game_iframe"
     style="height:100%; width:100%; overflow: hidden;"
     scrolling="no" seamless="seamless"></iframe>
-  <script>
-  window.document.getElementById("game_iframe").src = 
-    "http://yoav-zibin.github.io/multiplayer-games/index.html" + window.location.search.toString();
-  </script>
+
+    <script>
+    /**
+     * Protocol with Android:
+     * Game->Android: window.android.gameReady();
+     * Android->Game: sendMessage("" stateString, "0" "1")
+     * Game->Android: window.android.saveState(stateString, "ongoing" "tie" "0" "1")
+     */
+    angular.module('myApp')
+    .run(function(stateService, $log, $window) {
+      var yourPlayerIndex = null;
+
+      function sendMessage(msgString, yourPlayerIndexString) {
+        console.log("Android sendMessage: ", msgString, yourPlayerIndexString);
+        yourPlayerIndex = Number(yourPlayerIndexString);
+        var msgObj = {};
+        if (msgString) {
+          msgObj = angular.fromJson(msgString);
+        }
+        stateService.setMatchState(msgObj);
+        stateService.setPlayMode(yourPlayerIndex === 0 ? "playWhite" : "playBlack");
+      }
+      window.sendMessage = sendMessage;
+
+      function updateUI(params) {
+        if (yourPlayerIndex === null) {
+          return;
+        }
+        window.document.getElementById("game_iframe").contentWindow.postMessage(
+          {updateUI: params}, "*");
+      }
+
+      $window.addEventListener("message", function (event) {
+        var msg = event.data;
+        $log.info("Android gotMessage: ", msg);
+        if (msg.gameReady) {
+          window.android.gameReady();
+          return;
+        }
+        stateService.makeMove(msg.makeMove);
+        var stateObj = stateService.getMatchState();
+        var endMatchScores = stateObj.endMatchScores;
+        window.android.saveState(angular.toJson(stateObj),
+          endMatchScores === null ? "ongoing"
+            : endMatchScores[0] == endMatchScores[1] ? "tie"
+            : endMatchScores[0] > endMatchScores[1] ? "0" : "1");
+      });
+
+      stateService.setGame({
+        gameDeveloperEmail: "yoav.zibin@gmail.com",
+        minNumberOfPlayers: 2,
+        maxNumberOfPlayers: 2,
+        isMoveOk: function () { return true; },
+        updateUI: updateUI
+      });
+      $window.document.getElementById("game_iframe").src =
+        "http://yoav-zibin.github.io/multiplayer-games/index.html" + window.location.search.toString();
+    });
+    </script>
 </body>
 </html>
