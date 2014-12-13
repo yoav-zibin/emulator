@@ -20,15 +20,26 @@
     scrolling="no" seamless="seamless"></iframe>
 
     <script>
-    /**
+    /** Reversi, Go, Yatzy, and more
+     * com.yoavzibin.megagame
+     * application ID (318930481142)
      * Protocol with Android:
      * Game->Android: window.android.gameReady();
      * Android->Game: sendMessage("" stateString, "0" "1")
-     * Game->Android: window.android.saveState(stateString, "ongoing" "tie" "0" "1")
+     * Game->Android: window.android.saveState(stateString, gameName, "ongoing" "tie" "0" "1")
      */
+    if (window.android === undefined) {
+      window.android = {};
+      window.android.gameReady = function () {
+        console.log("Android got GameReady!");
+        window.sendMessage("", "0");
+      };
+      window.android.saveState = function (stateString, gameName, outcomeString) { console.log("Android got saveState:", stateString, gameName, outcomeString); };
+    }
     angular.module('myApp')
     .run(function(stateService, $log, $window) {
       var yourPlayerIndex = null;
+      var updateUIParams;
 
       function sendMessage(msgString, yourPlayerIndexString) {
         console.log("Android sendMessage: ", msgString, yourPlayerIndexString);
@@ -39,15 +50,16 @@
         }
         stateService.setMatchState(msgObj);
         stateService.setPlayMode(yourPlayerIndex === 0 ? "playWhite" : "playBlack");
+        sendUpdateUI();
       }
       window.sendMessage = sendMessage;
 
       function updateUI(params) {
-        if (yourPlayerIndex === null) {
-          return;
-        }
+        updateUIParams = params;
+      }
+      function sendUpdateUI() {
         window.document.getElementById("game_iframe").contentWindow.postMessage(
-          {updateUI: params}, "*");
+          {updateUI: updateUIParams}, "*");
       }
 
       $window.addEventListener("message", function (event) {
@@ -60,10 +72,15 @@
         stateService.makeMove(msg.makeMove);
         var stateObj = stateService.getMatchState();
         var endMatchScores = stateObj.endMatchScores;
-        window.android.saveState(angular.toJson(stateObj),
-          endMatchScores === null ? "ongoing"
-            : endMatchScores[0] == endMatchScores[1] ? "tie"
-            : endMatchScores[0] > endMatchScores[1] ? "0" : "1");
+        var turnIndex = stateObj.turnIndex;
+        if (turnIndex !== yourPlayerIndex) {
+          window.android.saveState(angular.toJson(stateObj),
+            stateObj.currentState.__gameName,
+            endMatchScores === null ? "ongoing"
+              : endMatchScores[0] == endMatchScores[1] ? "tie"
+              : endMatchScores[0] > endMatchScores[1] ? "0" : "1");
+        }
+        sendUpdateUI(); // Some games (Reversi), won't show the updated UI.
       });
 
       stateService.setGame({
