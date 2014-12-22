@@ -21,7 +21,7 @@ angular.module('myApp')
       }
       var myGameWidth = gameSize.width;
       var myGameHeight = gameSize.height;
-      var windowWidth = $window.innerWidth; // body.clientWidt
+      var windowWidth = $window.innerWidth; // body.clientWidth
       var windowHeight = $window.innerHeight; // I saw cases where body.clientHeight was 0.
       if (oldSizes !== null) {
         if (oldSizes.myGameWidth === myGameWidth &&
@@ -60,6 +60,7 @@ angular.module('myApp')
 
     $window.onresize = rescale;
     $window.onorientationchange = rescale;
+    doc.addEventListener("onresize", rescale);
     doc.addEventListener("orientationchange", rescale);
     setInterval(rescale, 1000);
 
