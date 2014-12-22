@@ -311,7 +311,11 @@ angular.module('myApp')
   }
 
   function sendUpdateUi() {
-    $timeout(delayedSendUpdateUi, $rootScope.settings.simulateServerDelayMilliseconds); // Delay to simulate server delay.
+    if ($rootScope.settings.simulateServerDelayMilliseconds === 0) {
+      delayedSendUpdateUi();
+    } else {
+      $timeout(delayedSendUpdateUi, $rootScope.settings.simulateServerDelayMilliseconds); // Delay to simulate server delay.
+    }
   }
 
   function makeMove(operations) {
@@ -370,4 +374,5 @@ angular.module('myApp')
   this.startNewMatch = startNewMatch;
   this.setPlayMode = setPlayMode;
   this.getMatchState = getMatchState;
+  this.setMatchState = setMatchState;
 });
