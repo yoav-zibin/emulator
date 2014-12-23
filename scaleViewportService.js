@@ -21,8 +21,9 @@ angular.module('myApp')
       }
       var myGameWidth = gameSize.width;
       var myGameHeight = gameSize.height;
-      var windowWidth = screen.width; // window.innerWidth; // body.clientWidth
-      var windowHeight = screen.height; // window.innerHeight; // I saw cases where body.clientHeight was 0.
+      // The problem with innerWidth is that it changes when we set the initial-scale.
+      var windowWidth = screen.availWidth; // window.innerWidth; // body.clientWidth
+      var windowHeight = screen.availHeight; // window.innerHeight; // I saw cases where body.clientHeight was 0.
       if (oldSizes !== null) {
         if (oldSizes.myGameWidth === myGameWidth &&
             oldSizes.myGameHeight === myGameHeight &&
