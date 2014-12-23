@@ -57,7 +57,7 @@ angular.module('myApp')
       var content = 'width=' + myGameWidth + ', height=' + myGameHeight + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no';
       var viewports = document.getElementsByName("viewport");
       var hasViewport = viewports && viewports.length > 0;
-      $log.info(["Scaling the body to size: ", oldSizes, ' scale:', scale, 'viewport content:', content, 'hasViewport:', hasViewport, 'didSwitch:', didSwitch]);
+      $log.info(["windowWidth:", windowWidth, ' windowHeight:', windowHeight, ' scale:', scale, ' viewport content:', content, ' hasViewport:', hasViewport, ' didSwitch:', didSwitch]);
       if (hasViewport) {
         viewports[0].setAttribute("content", content);
       }
