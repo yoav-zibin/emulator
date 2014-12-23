@@ -24,19 +24,7 @@ angular.module('myApp')
       // The problem with innerWidth is that it changes when we set the initial-scale.
       var windowWidth = screen.availWidth; // window.innerWidth; // body.clientWidth
       var windowHeight = screen.availHeight; // window.innerHeight; // I saw cases where body.clientHeight was 0.
-      
-      // fix bug where width<height in landscape
-      var isLandscape = window.orientation === -90 || window.orientation === 90;
-      var didSwitch = false;
-      if (window.orientation // in the chrome emulator, window.orientation is undefined.
-        && ((isLandscape && (windowWidth < windowHeight)) || (!isLandscape && (windowWidth > windowHeight)))) {
-        // switch
-        didSwitch = true;
-        var tmp = windowWidth;
-        windowWidth = windowHeight;
-        windowHeight = tmp;
-      }
-      
+            
       if (oldSizes !== null) {
         if (oldSizes.myGameWidth === myGameWidth &&
             oldSizes.myGameHeight === myGameHeight &&
@@ -58,7 +46,7 @@ angular.module('myApp')
       var content = 'width=' + myGameWidth + ', height=' + myGameHeight + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no';
       var viewports = document.getElementsByName("viewport");
       var hasViewport = viewports && viewports.length > 0;
-      $log.info(["orientation:", window.orientation, " windowWidth:", windowWidth, ' windowHeight:', windowHeight, ' scale:', scale, ' viewport content:', content, ' hasViewport:', hasViewport, ' didSwitch:', didSwitch]);
+      $log.info(["orientation:", window.orientation, " windowWidth:", windowWidth, ' windowHeight:', windowHeight, ' scale:', scale, ' viewport content:', content, ' hasViewport:', hasViewport]);
       if (hasViewport) {
         viewports[0].setAttribute("content", content);
       }
