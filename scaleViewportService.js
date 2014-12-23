@@ -26,9 +26,9 @@ angular.module('myApp')
       var windowHeight = screen.availHeight; // window.innerHeight; // I saw cases where body.clientHeight was 0.
       
       // fix bug where width<height in landscape
-      var isLandscape = window.orientation == -90 || window.orientation == 90;
+      var isLandscape = window.orientation === -90 || window.orientation === 90;
       var didSwitch = false;
-      if ((isLandscape && (windowWidth < windowHeight)) || (!isLandscape && (windowWidth > windowHeight))) {
+      if (window.orientation && (isLandscape && (windowWidth < windowHeight)) || (!isLandscape && (windowWidth > windowHeight))) {
         // switch
         didSwitch = true;
         var tmp = windowWidth;
