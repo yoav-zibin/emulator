@@ -27,8 +27,10 @@ angular.module('myApp')
       
       // fix bug where width<height in landscape
       var isLandscape = window.orientation == -90 || window.orientation == 90;
+      var didSwitch = false;
       if ((isLandscape && (windowWidth < windowHeight)) || (!isLandscape && (windowWidth > windowHeight))) {
         // switch
+        didSwitch = true;
         var tmp = windowWidth;
         windowWidth = windowHeight;
         windowHeight = tmp;
@@ -55,7 +57,7 @@ angular.module('myApp')
       var content = 'width=' + myGameWidth + ', height=' + myGameHeight + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no';
       var viewports = document.getElementsByName("viewport");
       var hasViewport = viewports && viewports.length > 0;
-      $log.info(["Scaling the body to size: ", oldSizes, ' scale:', scale, 'viewport content:', content, 'hasViewport:', hasViewport]);
+      $log.info(["Scaling the body to size: ", oldSizes, ' scale:', scale, 'viewport content:', content, 'hasViewport:', hasViewport, 'didSwitch:', didSwitch]);
       if (hasViewport) {
         viewports[0].setAttribute("content", content);
       }
