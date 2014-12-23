@@ -24,6 +24,16 @@ angular.module('myApp')
       // The problem with innerWidth is that it changes when we set the initial-scale.
       var windowWidth = screen.availWidth; // window.innerWidth; // body.clientWidth
       var windowHeight = screen.availHeight; // window.innerHeight; // I saw cases where body.clientHeight was 0.
+      
+      // fix bug where width<height in landscape
+      var isLandscape = window.orientation == -90 || window.orientation == 90;
+      if ((isLandscape && (windowWidth < windowHeight)) || (!isLandscape && (windowWidth > windowHeight))) {
+        // switch
+        var tmp = windowWidth;
+        windowWidth = windowHeight;
+        windowHeight = tmp;
+      }
+      
       if (oldSizes !== null) {
         if (oldSizes.myGameWidth === myGameWidth &&
             oldSizes.myGameHeight === myGameHeight &&
