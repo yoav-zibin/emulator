@@ -28,7 +28,8 @@ angular.module('myApp')
       // fix bug where width<height in landscape
       var isLandscape = window.orientation === -90 || window.orientation === 90;
       var didSwitch = false;
-      if (window.orientation && ((isLandscape && (windowWidth < windowHeight)) || (!isLandscape && (windowWidth > windowHeight)))) {
+      if (window.orientation // in the chrome emulator, window.orientation is undefined.
+        && ((isLandscape && (windowWidth < windowHeight)) || (!isLandscape && (windowWidth > windowHeight)))) {
         // switch
         didSwitch = true;
         var tmp = windowWidth;
