@@ -5,12 +5,16 @@
   <title>Example</title>
   <meta name="description" content="Example">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
+
+  <!-- drag-n-drop using jQuery UI -->
+  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-touch.min.js"></script>
-  <script src="http://yoav-zibin.github.io/emulator/ngDraggable.js"></script>
   <script>
-  angular.module('myApp', ['ngDraggable'])
+  angular.module('myApp', [])
     .controller('Ctrl', function ($scope, $log) {
       function isWhiteSquare(row, col) {
         return ((row+col)%2)==0;
@@ -26,19 +30,28 @@
       $scope.isSquareDroppable = function (row, col) {
         return !isWhiteSquare(row,col);
       };
+      $scope.isDraggable = function (row, col) {
+        return !isWhiteSquare(row,col);
+      };
       $scope.getImageSrc = function (row, col) {
         return !isWhiteSquare(row,col) ? "black_man.png" : "";
       };
-      $scope.getPieceDragData = function (row, col) {
-        return {pieceRow: row, pieceCol: col};
-      };
-      $scope.onDropComplete = function (data, event, row, col) {
-        alert("Dragged piece from "
-          + data.pieceRow + "x" + data.pieceCol
-          + " to " + row + "x" + col);
+
+      var draggingPieceId;
+      $scope.handleDragStart = function (pieceId) {
+        draggingPieceId = pieceId;
+        $log.info("handleDragStart:" + pieceId);
+        document.getElementById(pieceId).style['z-index'] = 40;
+      }
+      $scope.handleDrop = function (squareId) {
+        $log.info("handleDrop:" + squareId);
+        document.getElementById(squareId).style['z-index'] = 20;
+        alert("Dragged " + draggingPieceId + " to " + squareId);
       };
     });
   </script>
+  <script src="DraggableDirective.js"></script>
+  <script src="DropTargetDirective.js"></script>
   <style>
   body {
     background: #FCFAF2;
@@ -70,11 +83,12 @@
 <body ng-controller="Ctrl">
   <div ng-repeat="row in [0, 1, 2, 3, 4, 5, 6, 7]">
     <div ng-repeat="col in [0, 1, 2, 3, 4, 5, 6, 7]"
+      id="Square{{row}}x{{col}}"
       ng-class = "getSquareStyle(row, col)"
-      ng-drop = "isSquareDroppable(row, col)"
-      ng-drop-success = "onDropComplete($data, $event, row, col)">
+      dd-drop-target = "{{isSquareDroppable(row, col)}}">
       <img class="piece" ng-src="{{getImageSrc(row, col)}}"
-        ng-drag="true" ng-drag-data="{{getPieceDragData(row, col)}}">
+        id="Piece{{row}}x{{col}}"
+        dd-draggable = "{{isDraggable(row, col)}}">
     </div>
   </div>
 </body>
