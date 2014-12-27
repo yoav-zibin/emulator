@@ -17,10 +17,6 @@
             }
           });
         }
-        // It seems the jQuery UI changed the css property of the element
-        // and will cause the problem for animation, so here change it back.
-        //element[0].style.position = 'absolute';
-        //element[0].style['z-index'] = '40';
       }
     };
   }]);

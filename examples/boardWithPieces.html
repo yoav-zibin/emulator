@@ -37,15 +37,14 @@
         return !isWhiteSquare(row,col) ? "black_man.png" : "";
       };
 
-      var draggingPieceId;
+      var maxZIndex = 21;
       $scope.handleDragStart = function (pieceId) {
         draggingPieceId = pieceId;
         $log.info("handleDragStart:" + pieceId);
-        document.getElementById(pieceId).style['z-index'] = 40;
+        document.getElementById(pieceId).style['z-index'] = ++maxZIndex;
       }
       $scope.handleDrop = function (squareId) {
         $log.info("handleDrop:" + squareId);
-        document.getElementById(squareId).style['z-index'] = 20;
         alert("Dragged " + draggingPieceId + " to " + squareId);
       };
     });
