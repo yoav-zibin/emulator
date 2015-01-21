@@ -306,6 +306,7 @@ angular.module('myApp')
         stateAfterMove : stateAfterMove,
         yourPlayerIndex : getYourPlayerIndex(),
         playersInfo : playersInfo,
+        playMode: playMode,
         endMatchScores: endMatchScores
       });
   }
