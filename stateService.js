@@ -214,19 +214,13 @@ angular.module('myApp')
     }
   }
 
-  function hackerFoundCallback(params) {
-    var gameDeveloperEmail = get(params, 'gameDeveloperEmail');
-    var emailSubject = get(params, 'emailSubject');
-    var emailBody = get(params, 'emailBody');
-    // TODO: email the developer.
-    throwError("Declared a hacker");
-  }
-
   function getYourPlayerIndex() {
     return (playMode === "playWhite") ? 0 :
           (playMode === "playBlack") ? 1 :
           (playMode === "playViewer") ? -2 : // viewer is -2 (because -1 for turnIndexAfterMove means the game ended)
-          turnIndex;
+          (playMode === "playAgainstTheComputer") ? turnIndex :
+          (playMode === "passAndPlay") ? turnIndex :
+          playMode;
   }
 
   function getMatchState() {
@@ -352,7 +346,6 @@ angular.module('myApp')
       throwError("You can call setGame only once");
     }
     game = _game;
-    get(game, "gameDeveloperEmail");
     get(game, "minNumberOfPlayers");
     get(game, "maxNumberOfPlayers");
     get(game, "isMoveOk");
