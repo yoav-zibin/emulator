@@ -32,6 +32,12 @@ angular.module('myApp')
           windowHeight: windowHeight
       };
       var gameArea = doc.getElementById('gameArea');
+      if (windowWidth === 0 || windowHeight === 0) {
+      $log.info("Window width/height is 0 so hiding gameArea div.");
+        gameArea.style.display = "none";
+        return;
+      }
+      gameArea.style.display = "block";
 
       var newWidthToHeight = windowWidth / windowHeight;
 
