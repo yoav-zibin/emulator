@@ -10,7 +10,9 @@ angular.module('myApp').factory('alphaBetaService', function() {
    * and if state is a terminal state it should return an empty array.
    *
    * getStateScoreForIndex0(state) should return a score for the state as viewed by
-   * player index 0, i.e., if player index 0 is about to win then the score should be high.
+   * player index 0, i.e., if player index 0 is probably winning then the score should be high.
+   * Return Number.POSITIVE_INFINITY is player index 0 is definitely winning,
+   * and Number.NEGATIVE_INFINITY if player index 0 is definitely losing.
    *
    * getDebugStateToString can either be null (and then there is no output to console)
    * or it can be a function, where getDebugStateToString(state) should return
@@ -42,10 +44,9 @@ angular.module('myApp').factory('alphaBetaService', function() {
           startTime, 0,
           Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY).bestState;
     }
-    // For time limits (without maxDepth), we do iterative deepening (A* search)
-    // until we run out of time.
+    // For time limits (without maxDepth), we do iterative deepening (A* search).
     if (getDebugStateToString != null) {
-      console.log("Doing iterative-deepeninh (A*) until we run out of time.");
+      console.log("Doing iterative-deepeninh (A*) until we run out of time or find a win/lose move.");
     }
     var maxDepth = 1;
     var bestState;
@@ -53,12 +54,25 @@ angular.module('myApp').factory('alphaBetaService', function() {
       if (getDebugStateToString != null) {
         console.log("Alpha-beta search until maxDepth=" + maxDepth);
       }
-      var nextBestState = getScoreForIndex0(
+      var nextBestStateAndScore = getScoreForIndex0(
           startingState, playerIndex, getNextStates, getStateScoreForIndex0,
           getDebugStateToString,
           {maxDepth: maxDepth, millisecondsLimit: alphaBetaLimits.millisecondsLimit},
           startTime, 0,
-          Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY).bestState;
+          Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY);
+      var nextBestScore = nextBestStateAndScore.bestScore;
+      var nextBestState = nextBestStateAndScore.bestState;
+      if (nextBestScore === Number.POSITIVE_INFINITY
+          || nextBestScore === Number.NEGATIVE_INFINITY) {
+        var isWin = nextBestScore ===
+            (playerIndex === 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY);
+        console.log("Discovered that AI is going to "
+            + (isWin ? "win" : "lose") + " with maxDepth=" + maxDepth);
+        if (getDebugStateToString != null) {
+            console.log("Best state is " + getDebugStateToString(result));
+        }
+        return nextBestState;
+      }
       if (isTimeout(alphaBetaLimits, startTime)) {
         // It's more accurate to return the best state for the previous alpha-beta search
         // because we finished traversing all immediate children of the starting state.
