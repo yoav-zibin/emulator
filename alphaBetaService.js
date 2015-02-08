@@ -4,7 +4,8 @@ angular.module('myApp').factory('alphaBetaService', function() {
 
   /**
    * Does alpha-beta search, starting from startingState,
-   * where the first move is done by playerIndex, then by 1-playerIndex, etc.
+   * where the first move is done by playerIndex (playerIndex is either 0 or 1),
+   * then the next move is done by 1-playerIndex, etc.
    *
    * getNextStates(state, playerIndex) should return an array of the following states
    * and if state is a terminal state it should return an empty array.
@@ -114,7 +115,7 @@ angular.module('myApp').factory('alphaBetaService', function() {
               : depth === alphaBetaLimits.maxDepth ? "Max depth reached"
               : "Time limit reached") + ", score is " + bestScore);
       }
-      return {bestScore: bestScore, bestState: bestState};
+      return {bestScore: bestScore, bestState: null};
     }
     for (var i = 0; i < states.length; i++) {
       var state = states[i];
