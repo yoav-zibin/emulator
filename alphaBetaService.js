@@ -47,7 +47,7 @@ angular.module('myApp').factory('alphaBetaService', function() {
     }
     // For time limits (without maxDepth), we do iterative deepening (A* search).
     if (getDebugStateToString != null) {
-      console.log("Doing iterative-deepeninh (A*) until we run out of time or find a win/lose move.");
+      console.log("Doing iterative-deepeninh (A*) until we run out of time or find a certain win/lose move.");
     }
     var maxDepth = 1;
     var bestState;
@@ -74,13 +74,24 @@ angular.module('myApp').factory('alphaBetaService', function() {
         }
         return nextBestState;
       }
-      if (isTimeout(alphaBetaLimits, startTime)) {
+      var isHalfTimePassed =
+          isTimeout({millisecondsLimit: alphaBetaLimits.millisecondsLimit / 2}, startTime);
+      var isAllTimePassed = isTimeout(alphaBetaLimits, startTime);
+      if (isHalfTimePassed || isAllTimePassed) {
+        // If we run out of half the time, then no point of starting a new search that
+        // will most likely take more time than all previous searches.
         // It's more accurate to return the best state for the previous alpha-beta search
-        // because we finished traversing all immediate children of the starting state.
-        var result = maxDepth === 1 ? nextBestState : bestState;
-        console.log("Run out of time when maxDepth=" + maxDepth
-            + ", so returning the best state for maxDepth="
-            + (maxDepth === 1 ? 1 : maxDepth - 1));
+        // if we run out of time, because we finished traversing all
+        // immediate children of the starting state.
+        var result = !isAllTimePassed || maxDepth === 1 ? nextBestState : bestState;
+        if (isAllTimePassed) {
+          console.log("Run out of time when maxDepth=" + maxDepth
+              + ", so returning the best state for maxDepth="
+              + (maxDepth === 1 ? 1 : maxDepth - 1));
+        } else {
+          console.log("Run out of half the time when maxDepth=" + maxDepth
+              + ", so no point of exploring the next depth.");
+        }
         if (getDebugStateToString != null) {
             console.log("Best state is " + getDebugStateToString(result));
         }
