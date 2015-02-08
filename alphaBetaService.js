@@ -10,8 +10,9 @@ angular.module('myApp').factory('alphaBetaService', function() {
    * getNextStates(state, playerIndex) should return an array of the following states
    * and if state is a terminal state it should return an empty array.
    *
-   * getStateScoreForIndex0(state) should return a score for the state as viewed by
-   * player index 0, i.e., if player index 0 is probably winning then the score should be high.
+   * getStateScoreForIndex0(state, playerIndex) should return a score for
+   * the state as viewed by player index 0, i.e.,
+   * if player index 0 is probably winning then the score should be high.
    * Return Number.POSITIVE_INFINITY is player index 0 is definitely winning,
    * and Number.NEGATIVE_INFINITY if player index 0 is definitely losing.
    *
@@ -119,7 +120,7 @@ angular.module('myApp').factory('alphaBetaService', function() {
     if (states.length === 0
         || depth === alphaBetaLimits.maxDepth
         || isTimeout(alphaBetaLimits, startTime)) {
-      bestScore = getStateScoreForIndex0(startingState);
+      bestScore = getStateScoreForIndex0(startingState, playerIndex);
       if (getDebugStateToString != null) {
         console.log(
           (states.length === 0 ? "Terminal state"
