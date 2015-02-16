@@ -6,3 +6,10 @@ html, body {
   overflow: hidden;
   position: fixed!important;
 }
+/* To prevent long-press that will bring up copy-paste dialog. */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
