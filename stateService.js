@@ -17,7 +17,7 @@ angular.module('myApp')
   var endMatchScores = null;
   var setTurnOrEndMatchCount;
   var playersInfo;
-  var playMode = "playAgainstTheComputer"; // Default play mode.
+  var playMode = "passAndPlay"; // Default play mode: either playAgainstTheComputer or passAndPlay
 
   // Global settings
   $rootScope.settings = {};
@@ -363,9 +363,44 @@ angular.module('myApp')
     sendUpdateUi();
   }
 
+
+  function isTie() {
+    if (!endMatchScores) {
+      return false;
+    }
+    var score = endMatchScores[0];
+    for (var i = 0; i < endMatchScores.length; i++) {
+      if (score !== endMatchScores[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+  function getWinnerIndex() {
+    if (!endMatchScores || isTie()) {
+      return null;
+    }
+    var winnerIndex = 0;
+    for (var i = 0; i < endMatchScores.length; i++) {
+      if (endMatchScores[winnerIndex] < endMatchScores[i]) {
+        winnerIndex = i;
+      }
+    }
+    return winnerIndex;
+  }
+
+  this.getTurnIndex = function () { return turnIndex; };
+  this.getYourPlayerIndex = getYourPlayerIndex;
+  this.isYourTurn = function () { return turnIndex !== -1 && turnIndex === getYourPlayerIndex(); };
+  this.getEndMatchScores = function () { return endMatchScores; };
+  this.isTie = isTie;
+  this.getWinnerIndex = getWinnerIndex;
+  this.isWinner = function () { return getWinnerIndex() === getYourPlayerIndex(); };
+
   this.setGame = setGame;
   this.makeMove = makeMove;
   this.startNewMatch = startNewMatch;
+  this.init = init;
   this.setPlayMode = setPlayMode;
   this.getMatchState = getMatchState;
   this.setMatchState = setMatchState;
