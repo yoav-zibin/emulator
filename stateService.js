@@ -17,7 +17,7 @@ angular.module('myApp')
   var endMatchScores = null;
   var setTurnOrEndMatchCount;
   var playersInfo;
-  var playMode = "passAndPlay"; // Default play mode: either playAgainstTheComputer or passAndPlay
+  var playMode = location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer" : "passAndPlay"; // Default play mode
 
   // Global settings
   $rootScope.settings = {};
