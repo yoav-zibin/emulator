@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('myApp')
-.service('platformMessageService', function($window, $log, $rootScope) {
+.service('platformMessageService', 
+    ["$window", "$log", "$rootScope",
+      function($window, $log, $rootScope) {
   this.sendMessage = function (message) {
     $log.info("Platform sent message", message);
     $window.document.getElementById("game_iframe").contentWindow.postMessage(
@@ -16,4 +18,4 @@ angular.module('myApp')
       });
     }, false);
   };
-});
+}]);

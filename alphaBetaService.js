@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('myApp').factory('alphaBetaService', function() {
+angular.module('myApp').factory('alphaBetaService', [function() {
 
   /**
    * Does alpha-beta search, starting from startingState,
@@ -164,4 +164,4 @@ angular.module('myApp').factory('alphaBetaService', function() {
   }
 
   return {alphaBetaDecision: alphaBetaDecision};
-});
+}]);

@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('myApp')
-.service('stateService', function($window, $timeout, $log, $rootScope) {
+.service('stateService', 
+    ["$window", "$timeout", "$log", "$rootScope",
+      function($window, $timeout, $log, $rootScope) {
 
   var game;
   var minNumberOfPlayers;
@@ -409,4 +411,4 @@ angular.module('myApp')
   this.setPlayMode = setPlayMode;
   this.getMatchState = getMatchState;
   this.setMatchState = setMatchState;
-});
+}]);

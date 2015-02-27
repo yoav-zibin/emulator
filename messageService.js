@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('myApp')
-  .service('messageService', function($window, $log, $rootScope) {
+  .service('messageService', 
+      ["$window", "$log", "$rootScope",
+        function($window, $log, $rootScope) {
+
     this.sendMessage = function (message) {
       $log.info("Game sent message", message);
       $window.parent.postMessage(message, "*");
@@ -19,4 +22,4 @@ angular.module('myApp')
         });
       }, false);
     };
-  });
+  }]);

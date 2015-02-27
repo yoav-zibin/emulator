@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('myApp')
-.service('gameService', function($window, $log, stateService, messageService, $exceptionHandler) {
+.service('gameService', 
+    ["$window", "$log", "stateService", "messageService", "$exceptionHandler",
+      function($window, $log, stateService, messageService, $exceptionHandler) {
+
     var isLocalTesting = $window.parent === $window
         || $window.location.search === "?test";
 
@@ -50,8 +53,11 @@ angular.module('myApp')
 
     this.makeMove = makeMove;
     this.setGame = setGame;
-})
-.factory('$exceptionHandler', function ($window, $log) {
+}])
+.factory('$exceptionHandler', 
+    ["$window", "$log",
+      function ($window, $log) {
+
   return function (exception, cause) {
     $log.info("Game had an exception:", exception, cause);
     var exceptionString = angular.toJson({exception: exception, cause: cause, lastMessage: $window.lastMessage}, true);
@@ -67,4 +73,4 @@ angular.module('myApp')
     $window.parent.postMessage(message, "*");
     $window.alert(exceptionString);
   };
-});
+}]);

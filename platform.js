@@ -2,7 +2,8 @@
 
 angular.module('myApp', [])
 .controller('PlatformCtrl',
-function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService) {
+    ["$sce", "$scope", "$rootScope", "$log", "$window", "platformMessageService", "stateService",
+      function ($sce, $scope, $rootScope, $log, $window, platformMessageService, stateService) {
 
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
@@ -54,4 +55,4 @@ function ($sce, $scope, $rootScope, $log, $window, platformMessageService, state
       $window.alert("Platform got: " + angular.toJson(message, true));
     }
   });
-});
+}]);

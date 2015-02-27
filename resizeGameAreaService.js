@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('myApp')
-  .service('resizeGameAreaService', function($window, $log) {
+  .service('resizeGameAreaService', 
+    ['$window', '$log',
+      function($window, $log) {
+
     var doc = $window.document;
     var widthToHeight = null;
     var oldSizes = null;
@@ -68,4 +71,4 @@ angular.module('myApp')
     setInterval(rescale, 1000);
 
     this.setWidthToHeight = setWidthToHeight;
-  });
+  }]);
