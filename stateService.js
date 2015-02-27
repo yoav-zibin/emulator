@@ -17,7 +17,8 @@ angular.module('myApp')
   var endMatchScores = null;
   var setTurnOrEndMatchCount;
   var playersInfo;
-  var playMode = location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer" : "passAndPlay"; // Default play mode
+  var playMode = location.search === "?onlyAIs" ? "onlyAIs" 
+      : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer" : "passAndPlay"; // Default play mode
 
   // Global settings
   $rootScope.settings = {};
@@ -34,8 +35,9 @@ angular.module('myApp')
   function setPlayers() {
     playersInfo = [];
     for (var i = 0; i < game.maxNumberOfPlayers; i++) {
-      var playerId = ((i === (game.maxNumberOfPlayers - 1))
-        && (playMode === "playAgainstTheComputer"))
+      var playerId = 
+        (playMode === "onlyAIs" ||
+          ((i === (game.maxNumberOfPlayers - 1)) && (playMode === "playAgainstTheComputer")))
           ? "" : // The playerId for the computer is "".
           "" + (i + 42);
       playersInfo.push({playerId : playerId});
@@ -209,6 +211,9 @@ angular.module('myApp')
         throwError("Field scores in EndMatch operation must be an array of the same length as the number of players. operation=" + angular.toJson(operation, true));
       }
       endMatchScores = scores;
+      if (playMode === "onlyAIs") {
+        $timeout(startNewMatch, 1000); // start a new match in 1 second.
+      }
     } else {
       throwError("Illegal operation, it must contain either set, setRandomInteger, setVisibility, delete, shuffle, or endMatch: " + angular.toJson(operation, true));
     }
@@ -218,7 +223,7 @@ angular.module('myApp')
     return (playMode === "playWhite") ? 0 :
           (playMode === "playBlack") ? 1 :
           (playMode === "playViewer") ? -2 : // viewer is -2 (because -1 for turnIndexAfterMove means the game ended)
-          (playMode === "playAgainstTheComputer") ? turnIndex :
+          (playMode === "playAgainstTheComputer" || playMode === "onlyAIs") ? turnIndex :
           (playMode === "passAndPlay") ? turnIndex :
           playMode;
   }
