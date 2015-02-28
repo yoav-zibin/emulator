@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('myApp')
-.service('stateService', 
+.service('stateService',
     ["$window", "$timeout", "$log", "$rootScope",
       function($window, $timeout, $log, $rootScope) {
 
@@ -19,7 +19,7 @@ angular.module('myApp')
   var endMatchScores = null;
   var setTurnOrEndMatchCount;
   var playersInfo;
-  var playMode = location.search === "?onlyAIs" ? "onlyAIs" 
+  var playMode = location.search === "?onlyAIs" ? "onlyAIs"
       : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer" : "passAndPlay"; // Default play mode
 
   // Global settings
@@ -37,7 +37,7 @@ angular.module('myApp')
   function setPlayers() {
     playersInfo = [];
     for (var i = 0; i < game.maxNumberOfPlayers; i++) {
-      var playerId = 
+      var playerId =
         (playMode === "onlyAIs" ||
           ((i === (game.maxNumberOfPlayers - 1)) && (playMode === "playAgainstTheComputer")))
           ? "" : // The playerId for the computer is "".
@@ -293,7 +293,8 @@ angular.module('myApp')
         turnIndexBeforeMove : turnIndexBeforeMove,
         turnIndexAfterMove : turnIndex,
         stateBeforeMove : stateBeforeMove,
-        stateAfterMove : stateAfterMove
+        stateAfterMove : stateAfterMove,
+        numberOfPlayers: playersInfo.length
       }) !== true) {
       throwError("You declared a hacker for a legal move! move=" + moveForIndex);
     }
