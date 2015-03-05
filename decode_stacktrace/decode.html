@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <script type="text/javascript"
+    src="sourcemapped-stacktrace.js"></script>
+<body>
+  <p>A page to decode a JavaScript stack trace using source maps.</p>
+
+  <p>Enter the unmapped Stack trace (pointing to transpiled code):</p>
+  <!--
+In Mozilla:  
+  Exception: Error: [$rootScope:inprog] http://errors.angularjs.org/1.3.8/$rootScope/inprog?p0=%24apply
+Stack: k@http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:118:287
+$apply@http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:126:294
+-->
+  <textarea id="unmapped" rows="20" cols="150">
+    Error: [$compile:tpload] http://errors.angularjs.org/1.3.8/$compile/tpload?p0=blabla.html
+      at Error (unknown source)
+      at http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:6:416
+      at http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:137:65
+      at http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:112:276
+      at l.$eval (http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:126:83)
+      at l.$digest (http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:123:195)
+      at l.$apply (http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:126:362)
+      at l (http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:81:422)
+      at O (http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:86:51)
+      at XMLHttpRequest.&lt;anonymous&gt; (http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:87:129)
+  </textarea>
+  <br>
+  <button type="button" onclick="errorAndPrint()">Decode stack trace</button>
+  <br>
+
+  <p>Source-mapped Stack trace (pointing to original code):</p>
+
+  <pre id="mapped">
+  </pre>
+
+  <script type="text/javascript">
+    var errorAndPrint = function() {
+      var stack = document.getElementById("unmapped").value;
+      console.log(stack);
+      sourceMappedStackTrace.mapStackTrace(stack, function(mappedStack) {
+        document.getElementById("mapped").innerHTML =
+          mappedStack;
+      });
+    }
+    errorAndPrint();
+  </script>
+
+</body>
+</html>
