@@ -1,13 +1,11 @@
-'use strict';
-
 angular.module('myApp')
 .service('stateService',
     ["$window", "$timeout", "$log", "$rootScope",
       function($window, $timeout, $log, $rootScope) {
 
+  'use strict';
+
   var game;
-  var minNumberOfPlayers;
-  var maxNumberOfPlayers;
 
   var currentState;
   var lastState;
@@ -38,9 +36,9 @@ angular.module('myApp')
     playersInfo = [];
     for (var i = 0; i < game.maxNumberOfPlayers; i++) {
       var playerId =
-        (playMode === "onlyAIs" ||
-          ((i === (game.maxNumberOfPlayers - 1)) && (playMode === "playAgainstTheComputer")))
-          ? "" : // The playerId for the computer is "".
+        playMode === "onlyAIs" ||
+          i === game.maxNumberOfPlayers - 1 && playMode === "playAgainstTheComputer" ? 
+          "" : // The playerId for the computer is "".
           "" + (i + 42);
       playersInfo.push({playerId : playerId});
     }
@@ -171,7 +169,7 @@ angular.module('myApp')
       if (isNull(key) || isNull(from) || isNull(to)) {
         throwError("Fields key, from, and to, in SetRandomInteger operation must be non null. operation=" + angular.toJson(operation, true));
       }
-      var randomValue = Math.floor((Math.random() * (to - from)) + from);
+      var randomValue = Math.floor(Math.random() * (to - from) + from);
       currentState[key] = randomValue;
       currentVisibleTo[key] = null;
     } else if (!isNull(operation.setVisibility)) {
@@ -193,7 +191,7 @@ angular.module('myApp')
     } else if (!isNull(operation.shuffle)) {
       op = operation.shuffle;
       var keys = op.keys;
-      if (isNull(keys) || (keys.length === 0)) {
+      if (isNull(keys) || keys.length === 0) {
         throwError("Field keys in Shuffle operation must be a non empty array. operation=" + angular.toJson(operation, true));
       }
       var shuffledKeys = shuffle(keys);
@@ -222,11 +220,11 @@ angular.module('myApp')
   }
 
   function getYourPlayerIndex() {
-    return (playMode === "playWhite") ? 0 :
-          (playMode === "playBlack") ? 1 :
-          (playMode === "playViewer") ? -2 : // viewer is -2 (because -1 for turnIndexAfterMove means the game ended)
-          (playMode === "playAgainstTheComputer" || playMode === "onlyAIs") ? turnIndex :
-          (playMode === "passAndPlay") ? turnIndex :
+    return playMode === "playWhite" ? 0 :
+          playMode === "playBlack" ? 1 :
+          playMode === "playViewer" ? -2 : // viewer is -2 (because -1 for turnIndexAfterMove means the game ended)
+          playMode === "playAgainstTheComputer" || playMode === "onlyAIs" ? turnIndex :
+          playMode === "passAndPlay" ? turnIndex :
           playMode;
   }
 
@@ -244,9 +242,9 @@ angular.module('myApp')
   }
 
   function setMatchState(data) {
-    if (data.turnIndexBeforeMove === undefined
-        || data.turnIndex === undefined
-        || data.endMatchScores === undefined) {
+    if (data.turnIndexBeforeMove === undefined || 
+        data.turnIndex === undefined ||
+        data.endMatchScores === undefined) {
       return;
     }
     turnIndexBeforeMove = data.turnIndexBeforeMove;
@@ -347,7 +345,7 @@ angular.module('myApp')
       throwError("turnIndex must be between -1 and " + playersInfo.length + ", but it was " + turnIndex + ".");
     }
     broadcastUpdateUi();
-  };
+  }
 
   function setGame(_game) {
     if (game !== undefined) {

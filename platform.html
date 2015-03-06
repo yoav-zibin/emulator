@@ -7,13 +7,19 @@
   <meta name="description" content="Gaming Platform for games using GameApi">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+
+  <!-- build:js http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
+  <!-- /build -->
+
   <script src="intercom.js"></script>
   <script src="platform.js"></script>
   <script src="platformMessageService.js"></script>
-  <!-- build:js stateService.min.js -->
+
+  <!-- build:js dist/gameServices.min.js -->
   <script src="stateService.js"></script>
   <!-- /build -->
+  
 </head>
 <body style="height:100%; width:100%; overflow: hidden;"
     ng-cloak ng-controller="PlatformCtrl">

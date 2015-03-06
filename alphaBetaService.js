@@ -1,6 +1,6 @@
-'use strict';
-
 angular.module('myApp').factory('alphaBetaService', [function() {
+
+  'use strict';
 
   /**
    * Does alpha-beta search, starting from startingState,
@@ -64,14 +64,14 @@ angular.module('myApp').factory('alphaBetaService', [function() {
           Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY);
       var nextBestScore = nextBestStateAndScore.bestScore;
       var nextBestState = nextBestStateAndScore.bestState;
-      if (nextBestScore === Number.POSITIVE_INFINITY
-          || nextBestScore === Number.NEGATIVE_INFINITY) {
+      if (nextBestScore === Number.POSITIVE_INFINITY ||
+          nextBestScore === Number.NEGATIVE_INFINITY) {
         var isWin = nextBestScore ===
-            (playerIndex === 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY);
-        console.log("Discovered that AI is going to "
-            + (isWin ? "win" : "lose") + " with maxDepth=" + maxDepth);
+            playerIndex === 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+        console.log("Discovered that AI is going to " + 
+            (isWin ? "win" : "lose") + " with maxDepth=" + maxDepth);
         if (getDebugStateToString != null) {
-            console.log("Best state is " + getDebugStateToString(result));
+            console.log("Best state is " + getDebugStateToString(nextBestState));
         }
         return nextBestState;
       }
@@ -86,12 +86,12 @@ angular.module('myApp').factory('alphaBetaService', [function() {
         // immediate children of the starting state.
         var result = !isAllTimePassed || maxDepth === 1 ? nextBestState : bestState;
         if (isAllTimePassed) {
-          console.log("Run out of time when maxDepth=" + maxDepth
-              + ", so returning the best state for maxDepth="
-              + (maxDepth === 1 ? 1 : maxDepth - 1));
+          console.log("Run out of time when maxDepth=" + maxDepth +
+              ", so returning the best state for maxDepth=" +
+              (maxDepth === 1 ? 1 : maxDepth - 1));
         } else {
-          console.log("Run out of half the time when maxDepth=" + maxDepth
-              + ", so no point of exploring the next depth.");
+          console.log("Run out of half the time when maxDepth=" + maxDepth +
+              ", so no point of exploring the next depth.");
         }
         if (getDebugStateToString != null) {
             console.log("Best state is " + getDebugStateToString(result));
@@ -104,8 +104,8 @@ angular.module('myApp').factory('alphaBetaService', [function() {
   }
 
   function isTimeout(alphaBetaLimits, startTime) {
-    return alphaBetaLimits.millisecondsLimit
-        && (new Date().getTime() - startTime) > alphaBetaLimits.millisecondsLimit;
+    return alphaBetaLimits.millisecondsLimit &&
+        new Date().getTime() - startTime > alphaBetaLimits.millisecondsLimit;
   }
 
   function getScoreForIndex0(
@@ -117,9 +117,9 @@ angular.module('myApp').factory('alphaBetaService', [function() {
     if (getDebugStateToString != null) {
       console.log(getDebugStateToString(startingState) + " has " + states.length + " next states");
     }
-    if (states.length === 0
-        || depth === alphaBetaLimits.maxDepth
-        || isTimeout(alphaBetaLimits, startTime)) {
+    if (states.length === 0 ||
+        depth === alphaBetaLimits.maxDepth ||
+        isTimeout(alphaBetaLimits, startTime)) {
       bestScore = getStateScoreForIndex0(startingState, playerIndex);
       if (getDebugStateToString != null) {
         console.log(
@@ -139,9 +139,9 @@ angular.module('myApp').factory('alphaBetaService', [function() {
       if (getDebugStateToString != null) {
         console.log("Score of " + getDebugStateToString(state) + " is " + scoreForIndex0);
       }
-      if (bestScore === null
-          || (playerIndex === 0 && scoreForIndex0 > bestScore)
-          || (playerIndex === 1 && scoreForIndex0 < bestScore)) {
+      if (bestScore === null ||
+          playerIndex === 0 && scoreForIndex0 > bestScore ||
+          playerIndex === 1 && scoreForIndex0 < bestScore) {
         bestScore = scoreForIndex0;
         bestState = state;
       }

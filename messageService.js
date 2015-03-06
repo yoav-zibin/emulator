@@ -1,9 +1,9 @@
-'use strict';
-
 angular.module('myApp')
   .service('messageService', 
       ["$window", "$log", "$rootScope",
         function($window, $log, $rootScope) {
+
+    'use strict';
 
     this.sendMessage = function (message) {
       $log.info("Game sent message", message);

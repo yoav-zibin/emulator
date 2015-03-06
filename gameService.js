@@ -1,12 +1,12 @@
-'use strict';
-
 angular.module('myApp')
 .service('gameService', 
     ["$window", "$log", "stateService", "messageService", "$exceptionHandler",
       function($window, $log, stateService, messageService, $exceptionHandler) {
 
-    var isLocalTesting = $window.parent === $window
-        || $window.location.search === "?test";
+    'use strict';
+
+    var isLocalTesting = $window.parent === $window || 
+        $window.location.search === "?test";
 
     function makeMove(move) {
       $log.info(["Making move:", move]);
@@ -57,6 +57,8 @@ angular.module('myApp')
 .factory('$exceptionHandler', 
     ["$window", "$log",
       function ($window, $log) {
+
+  'use strict';
 
   return function (exception, cause) {
     $log.info("Game had an exception:", exception, cause);

@@ -1,9 +1,9 @@
-'use strict';
-
 angular.module('myApp')
   .service('resizeGameAreaService', 
     ['$window', '$log',
       function($window, $log) {
+
+    'use strict';
 
     var doc = $window.document;
     var widthToHeight = null;
@@ -21,9 +21,8 @@ angular.module('myApp')
       if (widthToHeight === null) {
         return;
       }
-      var body = doc.body;
-      var windowWidth = $window.innerWidth; // body.clientWidth
-      var windowHeight = $window.innerHeight; // I saw cases where body.clientHeight was 0.
+      var windowWidth = $window.innerWidth; // doc.body.clientWidth
+      var windowHeight = $window.innerHeight; // I saw cases where doc.body.clientHeight was 0.
       if (oldSizes !== null) {
         if (oldSizes.windowWidth === windowWidth &&
             oldSizes.windowHeight === windowHeight) {
@@ -36,7 +35,7 @@ angular.module('myApp')
       };
       var gameArea = doc.getElementById('gameArea');
       if (windowWidth === 0 || windowHeight === 0) {
-      $log.info("Window width/height is 0 so hiding gameArea div.");
+        $log.info("Window width/height is 0 so hiding gameArea div.");
         gameArea.style.display = "none";
         return;
       }
@@ -45,20 +44,22 @@ angular.module('myApp')
       var newWidthToHeight = windowWidth / windowHeight;
 
       if (newWidthToHeight > widthToHeight) {
-        windowWidth = windowHeight * widthToHeight;
+        windowWidth = round2(windowHeight * widthToHeight);
         gameArea.style.height = windowHeight + 'px';
         gameArea.style.width = windowWidth + 'px';
       } else {
-        windowHeight = windowWidth / widthToHeight;
+        windowHeight = round2(windowWidth / widthToHeight);
         gameArea.style.width = windowWidth + 'px';
         gameArea.style.height = windowHeight + 'px';
       }
-      $log.info("Window size is " + oldSizes.windowWidth + "x" + oldSizes.windowHeight
-          + " so setting gameArea size to " + windowWidth + "x" + windowHeight
-          + " because widthToHeight=" + widthToHeight);
+      $log.info("Window size is " + oldSizes.windowWidth + "x" + oldSizes.windowHeight +
+          " so setting gameArea size to " + windowWidth + "x" + windowHeight +
+          " because widthToHeight=" + widthToHeight);
 
-      gameArea.style.marginTop = (-windowHeight / 2) + 'px';
-      gameArea.style.marginLeft = (-windowWidth / 2) + 'px';
+      var marginTop = -windowHeight / 2;
+      var marginLeft = -windowWidth / 2;
+      gameArea.style.marginTop = '' + marginTop + 'px';
+      gameArea.style.marginLeft = '' + marginLeft + 'px';
       gameArea.style.position = "absolute";
       gameArea.style.left = "50%";
       gameArea.style.top = "50%";
