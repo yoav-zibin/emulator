@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="myApp">
+<html lang="en" ng-app="myApp" ng-strict-di>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Example translate</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
-  
+
   <script src="http://yoav-zibin.github.io/emulator/angular-translate/angular-translate.2.4.2.min.js"></script>
   <script src="http://yoav-zibin.github.io/emulator/angular-translate/loader-static-files.2.4.2.js"></script>
   <script>
-    angular.module('myApp', ['ngTouch','pascalprecht.translate']);
+    angular.module('myApp', ['pascalprecht.translate']);
     angular.module('myApp')
-    .config(function($translateProvider) {
+    .config(["$translateProvider", function($translateProvider) {
       $translateProvider.useStaticFilesLoader({
         prefix: 'languages/',
         suffix: '.json'
@@ -26,13 +26,14 @@
         })
         .fallbackLanguage(['en'])
         .determinePreferredLanguage();
-    })
+    }])
     .controller('Ctrl',
+      ['$translate', '$scope',
       function($translate, $scope) {
         $scope.changeLanguage = function (langKey) {
           $translate.use(langKey);
         };
-      });
+      }]);
   </script>
 </head>
 <body ng-cloak ng-controller="Ctrl">
