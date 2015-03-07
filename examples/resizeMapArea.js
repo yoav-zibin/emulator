@@ -1,4 +1,9 @@
-function resizeMapArea(imageId, mapId, originalWidth, originalHeight) {
+function resizeMapArea(params) {
+  var imageId = params.imageId;
+  var mapId = params.mapId;
+  var originalWidth = params.originalWidth;
+  var originalHeight = params.originalHeight;
+
   function rescale() {
     var image = document.getElementById(imageId);
     var map = document.getElementById(mapId);
