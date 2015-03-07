@@ -7,8 +7,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
 
-  <script src="http://yoav-zibin.github.io/emulator/angular-translate/angular-translate.2.4.2.min.js"></script>
-  <script src="http://yoav-zibin.github.io/emulator/angular-translate/loader-static-files.2.4.2.js"></script>
+  <script src="http://rawgithub.com/angular-translate/bower-angular-translate/master/angular-translate.min.js"></script>
+  <script src="http://rawgithub.com/angular-translate/bower-angular-translate-interpolation-messageformat/master/angular-translate-interpolation-messageformat.min.js"></script>
+  <script src="http://rawgithub.com/angular-translate/bower-angular-translate-storage-local/master/angular-translate-storage-local.min.js"></script>
+  <script src="http://rawgithub.com/angular-translate/bower-angular-translate-loader-static-files/master/angular-translate-loader-static-files.min.js"></script>
+  <script src="http://rawgithub.com/angular-translate/bower-angular-translate-handler-log/master/angular-translate-handler-log.min.js"></script>
+  <script src="http://rawgithub.com/angular-translate/bower-angular-translate-loader-static-files/master/angular-translate-loader-static-files.min.js"></script>
+  <script src="http://rawgithub.com/angular-translate/bower-angular-translate-handler-log/master/angular-translate-handler-log.min.js"></script>
+
   <script>
     angular.module('myApp', ['pascalprecht.translate']);
     angular.module('myApp')
@@ -28,18 +34,35 @@
         .determinePreferredLanguage();
     }])
     .controller('Ctrl',
-      ['$translate', '$scope',
-      function($translate, $scope) {
+      ['$translate', '$scope', '$translate',
+      function($translate, $scope, $translate) {
+        function setVariablesOnScope() {
+          $translate('INTRO_TEXT').then(function (translation) {
+            translation;
+          });
+          $translate('WITH_VALUES', {value: 42}).then(function (translation) {
+            $scope.someVariableOnScope2 = translation;
+          });
+        }
         $scope.changeLanguage = function (langKey) {
           $translate.use(langKey);
+          setVariablesOnScope();
         };
+        $scope.someText1 = function () {
+
+        };
+        setVariablesOnScope();
       }]);
   </script>
 </head>
 <body ng-cloak ng-controller="Ctrl">
-  <h1>Example of I18N:</h1>
-  <h2>{{ 'HEADLINE' | translate }}</h2>
-  <p>{{ 'INTRO_TEXT' | translate }}</p>
+  <pre>Example of I18N:</pre>
+  <pre>{{ 'HEADLINE' | translate }}</pre>
+  <pre>{{ 'WITH_VALUES' | translate:'{value: 5}' }}</pre>
+  <pre>{{someVariableOnScope1}}</pre>
+  <pre>{{someVariableOnScope2}}</pre>
+  <pre translate="HEADLINE"></pre>
+  <pre translate="WITH_VALUES" translate-values="{value: 5}"></pre>
   <div>
     <button ng-click="changeLanguage('de')" translate="BUTTON_TEXT_DE"></button>
     <button ng-click="changeLanguage('en')" translate="BUTTON_TEXT_EN"></button>
