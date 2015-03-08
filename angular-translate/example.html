@@ -35,11 +35,8 @@
         .determinePreferredLanguage();
     }])
     .controller('Ctrl',
-      ['$translate', '$scope','$translateStaticFilesLoader',
-      function($translate, $scope, $translateStaticFilesLoader) {
-        $translateStaticFilesLoader.finishListener.then(function () {
-          console.log('Finished loading translation file.');
-        });
+      ['$translate', '$scope',
+      function($translate, $scope) {
         $scope.getPreferredLanguage = function () {
           return $translate.preferredLanguage();
         };
