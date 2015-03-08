@@ -36,7 +36,7 @@ angular.module('pascalprecht.translate')
       }, options.$http)).success(function (data) {
         if (window.localStorage) { // ADDED
           console.log("Storing translations for ", url, " data=", data);
-          window.localStorage.setItem(url, data);
+          window.localStorage.setItem(url, angular.toJson(data));
         }
         deferred.resolve(data);
       }).error(function (notUsed) {
@@ -44,7 +44,7 @@ angular.module('pascalprecht.translate')
           var data = window.localStorage.getItem(url);
           console.log("Load translations from local-storage for ", url, " data=", data);
           if (data) {
-            deferred.resolve(data);
+            deferred.resolve(angular.fromJson(data));
             return;
           }
         }
