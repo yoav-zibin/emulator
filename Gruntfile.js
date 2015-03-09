@@ -52,7 +52,8 @@ module.exports = function(grunt) {
       },
       my_target: {
         files: {
-          'dist/gameServices.min.js': ['dist/gameServices.js']
+          'dist/gameServices.min.js': ['dist/gameServices.js'],
+          'dist/stateService.min.js': ['stateService.js'], // In my mega-game, I don't want the angular error catcher (that passes emailJavaScriptError to the parent!)
         }
       }
     },
