@@ -1,11 +1,11 @@
 angular.module('myApp')
-.service('gameService', 
+.service('gameService',
     ["$window", "$log", "stateService", "messageService", "$exceptionHandler",
       function($window, $log, stateService, messageService, $exceptionHandler) {
 
     'use strict';
 
-    var isLocalTesting = $window.parent === $window || 
+    var isLocalTesting = $window.parent === $window ||
         $window.location.search === "?test";
 
     function makeMove(move) {
@@ -15,6 +15,14 @@ angular.module('myApp')
       } else {
         messageService.sendMessage({makeMove: move});
       }
+    }
+
+    function createPlayersInfo(game) {
+      var playersInfo = [];
+      for (var i = 0; i < game.maxNumberOfPlayers; i++) {
+        playersInfo.push({playerId : "" + (i + 42)});
+      }
+      return playersInfo;
     }
 
     function setGame(game) {
@@ -39,6 +47,19 @@ angular.module('myApp')
         delete game.isMoveOk;
         delete game.updateUI;
         messageService.sendMessage({gameReady : game});
+
+        // Show an empty board to a viewer (so you can't perform moves).
+        updateUI({
+          move : [],
+          turnIndexBeforeMove : 0,
+          turnIndexAfterMove : 0,
+          stateBeforeMove : null,
+          stateAfterMove : {},
+          yourPlayerIndex : -2,
+          playersInfo : createPlayersInfo(game),
+          playMode: "passAndPlay",
+          endMatchScores: null
+        });
       }
     }
 
@@ -54,7 +75,7 @@ angular.module('myApp')
     this.makeMove = makeMove;
     this.setGame = setGame;
 }])
-.factory('$exceptionHandler', 
+.factory('$exceptionHandler',
     ["$window", "$log",
       function ($window, $log) {
 
@@ -63,12 +84,12 @@ angular.module('myApp')
   return function (exception, cause) {
     $log.info("Game had an exception:", exception, cause);
     var exceptionString = angular.toJson({exception: exception, cause: cause, lastMessage: $window.lastMessage}, true);
-    var message = 
+    var message =
         {
-          emailJavaScriptError: 
+          emailJavaScriptError:
             {
-              gameDeveloperEmail: $window.gameDeveloperEmail, 
-              emailSubject: "Error in game " + $window.location, 
+              gameDeveloperEmail: $window.gameDeveloperEmail,
+              emailSubject: "Error in game " + $window.location,
               emailBody: exceptionString
             }
         };
