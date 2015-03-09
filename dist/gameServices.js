@@ -37,7 +37,7 @@ angular.module('myApp')
     for (var i = 0; i < game.maxNumberOfPlayers; i++) {
       var playerId =
         playMode === "onlyAIs" ||
-          i === game.maxNumberOfPlayers - 1 && playMode === "playAgainstTheComputer" ? 
+          i === game.maxNumberOfPlayers - 1 && playMode === "playAgainstTheComputer" ?
           "" : // The playerId for the computer is "".
           "" + (i + 42);
       playersInfo.push({playerId : playerId});
@@ -45,6 +45,9 @@ angular.module('myApp')
   }
 
   function init() {
+    if (!game) {
+      throwError("You must call setGame before any other method.");
+    }
     setPlayers();
     currentState = {};
     lastState = null;
@@ -242,7 +245,7 @@ angular.module('myApp')
   }
 
   function setMatchState(data) {
-    if (data.turnIndexBeforeMove === undefined || 
+    if (data.turnIndexBeforeMove === undefined ||
         data.turnIndex === undefined ||
         data.endMatchScores === undefined) {
       return;
@@ -320,6 +323,9 @@ angular.module('myApp')
   }
 
   function makeMove(operations) {
+    if (!game) {
+      throwError("You must call setGame before any other method.");
+    }
     // Making sure only turnIndex can make the move
     if (turnIndex === -1) {
       throwError("You cannot send a move after the game ended!");
