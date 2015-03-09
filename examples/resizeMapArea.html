@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="utf-8">
+  <title>Example</title>
+  <meta name="description" content="Example">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+  <script>
+  angular.module('myApp', [])
+    .run(["resizeGameAreaService", function (resizeGameAreaService) {
+      'use strict';
+
+      resizeGameAreaService.setWidthToHeight(1);
+    }]);
+  </script>
+  <script src="http://yoav-zibin.github.io/emulator/resizeGameAreaService.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
+
+  <script src="http://yoav-zibin.github.io/emulator/examples/resizeMapArea.js"></script>
+  <script>
+  resizeMapArea({imageId: "myimageId", mapId: "mymapId", originalWidth: 100, originalHeight: 100});
+  </script>
+</head>
+<body>
+<div id="gameArea">
+  <map id="mymapId" name="mymapId" >
+   <area  title="CYAN     AREA"  alt="CYAN"     shape="circle"   coords="50,50,20"      onclick="alert('CYAN')"      />
+   <area  title="BLUE     AREA"  alt="BLUE"     shape="circle"   coords="25,25,20"      onclick="alert('BLUE');"     />
+   <area  title="RED      AREA"  alt="RED"      shape="circle"   coords="25,75,20"      onclick="alert('RED');"      />
+   <area  title="MAGENTA  AREA"  alt="MAGENTA"  shape="circle"   coords="75,25,20"      onclick="alert('MAGENTA');"  />
+   <area  title="GREEN    AREA"  alt="GREEN"    shape="circle"   coords="75,75,20"      onclick="alert('GREEN');"    />
+   <area  title="YELLOW   AREA"  alt="YELLOW"   shape="rect"     coords="0,0,100,100"  onclick="alert('YELLOW');"   />
+  </map>
+  <img id="myimageId" width="100%" height="100%" src="http://home.comcast.net/~urbanjost/IMG/100x100.gif" alt="100x100" usemap="#mymapId" />
+</div>
+</body>
+</html>
