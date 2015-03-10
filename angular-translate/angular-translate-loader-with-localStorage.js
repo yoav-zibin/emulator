@@ -29,6 +29,16 @@ angular.module('pascalprecht.translate')
             options.key,
             file.suffix
           ].join('');
+
+      function resolve(data) {
+        window.angularTranslations = null;
+        eval(data);
+        if (!window.angularTranslations) {
+          throw new Error("Translation file " + url + " didn't have 'window.angularTranslations = ...'");
+        }
+        deferred.resolve(window.angularTranslations);
+      }
+
       $http(angular.extend({
         url: url,
         method: 'GET',
@@ -36,19 +46,20 @@ angular.module('pascalprecht.translate')
       }, options.$http)).success(function (data) {
         if (window.localStorage) { // ADDED
           console.log("Storing translations for ", url, " data=", data);
-          window.localStorage.setItem(url, angular.toJson(data));
+          window.localStorage.setItem(url, data);
         }
-        deferred.resolve(data);
-      }).error(function (notUsed) {
+        resolve(data);
+      }).error(function () {
         if (window.localStorage) { // ADDED
           var data = window.localStorage.getItem(url);
           console.log("Load translations from local-storage for ", url, " data=", data);
           if (data) {
-            deferred.resolve(angular.fromJson(data));
+            resolve(data);
             return;
           }
         }
-        deferred.reject(options.key);
+        deferred.resolve({}); // better to have an empty translation table, so we will use 'en' as fallback.
+        //deferred.reject(options.key);
       });
 
       return deferred.promise;

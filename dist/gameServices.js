@@ -37,7 +37,7 @@ angular.module('myApp')
     for (var i = 0; i < game.maxNumberOfPlayers; i++) {
       var playerId =
         playMode === "onlyAIs" ||
-          i === game.maxNumberOfPlayers - 1 && playMode === "playAgainstTheComputer" ?
+          i !== 0 && playMode === "playAgainstTheComputer" ?
           "" : // The playerId for the computer is "".
           "" + (i + 42);
       playersInfo.push({playerId : playerId});

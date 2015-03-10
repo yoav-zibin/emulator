@@ -10,7 +10,9 @@
 
 
   <script src="http://yoav-zibin.github.io/emulator/angular-translate/angular-translate.2.6.1.min.js"></script>
-  <script src="http://yoav-zibin.github.io/emulator/angular-translate/angular-translate-loader-with-localStorage.js"></script>
+  <script src="languages/en.js"></script>
+  <script src="angular-translate-loader-with-localStorage.js"></script>
+
 
   <script>
     // IMPORTANT: don't forget to add the dependency on 'pascalprecht.translate'
@@ -22,9 +24,10 @@
         function($translateProvider) {
       $translateProvider.useStaticFilesLoader({
         prefix: 'languages/',
-        suffix: '.json'
+        suffix: '.js'
       });
       $translateProvider
+        //.preferredLanguage() TODO
         .registerAvailableLanguageKeys(['en', 'de'], {
           'en_US': 'en',
           'en_UK': 'en',
@@ -37,6 +40,8 @@
     .controller('Ctrl',
       ['$translate', '$scope',
       function($translate, $scope) {
+        window.$translate = $translate;
+        console.log("Creating Ctrl using: preferredLanguage=" + $translate.preferredLanguage() + " useLanguage=" + $translate.use());
         $scope.getPreferredLanguage = function () {
           return $translate.preferredLanguage();
         };
