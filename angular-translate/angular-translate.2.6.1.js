@@ -3,14 +3,118 @@
  * http://github.com/angular-translate/angular-translate
  * Copyright (c) 2015 ; Licensed MIT
  */
+
+/*!
+ * YOAV CHANGED: I changed it and added local storage cache for loading translation files,
+ * changed them from json to js (so we can lint and prefetch them with appcache),
+ * fixed a bug where it chooses a language that is not in registerAvailableLanguageKeys,
+ * and renamed the module name to myApp (to make it easier on the students).
+ */
+angular.module('myApp')
+.factory('$translateStaticFilesLoader', ['$q', '$http', function ($q, $http) {
+  var finishListener;
+  var result = function (options) {
+
+    if (!options || (!angular.isArray(options.files) && (!angular.isString(options.prefix) || !angular.isString(options.suffix)))) {
+      throw new Error('Couldn\'t load static files, no files and prefix or suffix specified!');
+    }
+
+    if (!options.files) {
+      options.files = [{
+        prefix: options.prefix,
+        suffix: options.suffix
+      }];
+    }
+
+    var load = function (file) {
+      if (!file || (!angular.isString(file.prefix) || !angular.isString(file.suffix))) {
+        throw new Error('Couldn\'t load static file, no prefix or suffix specified!');
+      }
+
+      var deferred = $q.defer();
+      var url = [
+            file.prefix,
+            options.key,
+            file.suffix
+          ].join('');
+
+      function resolve(data) {
+        window.angularTranslations = null;
+        eval(data);
+        if (!window.angularTranslations) {
+          throw new Error("Translation file " + url + " didn't have 'window.angularTranslations = ...'");
+        }
+        deferred.resolve(window.angularTranslations);
+      }
+
+      $http(angular.extend({
+        url: url,
+        method: 'GET',
+        params: ''
+      }, options.$http)).success(function (data) {
+        if (window.localStorage) { // ADDED
+          console.log("Storing translations for ", url, " data=", data);
+          window.localStorage.setItem(url, data);
+        }
+        resolve(data);
+      }).error(function () {
+        if (window.localStorage) { // ADDED
+          var data = window.localStorage.getItem(url);
+          console.log("Load translations from local-storage for ", url, " data=", data);
+          if (data) {
+            resolve(data);
+            return;
+          }
+        }
+        console.log("Failed loading ", url);
+        deferred.resolve({}); // YOAV CHANGED: better to have an empty translation table, so we will use 'en' as fallback.
+        //deferred.reject(options.key);
+      });
+
+      return deferred.promise;
+    };
+
+    var deferred = $q.defer(),
+        promises = [],
+        length = options.files.length;
+
+    for (var i = 0; i < length; i++) {
+      promises.push(load({
+        prefix: options.files[i].prefix,
+        key: options.key,
+        suffix: options.files[i].suffix
+      }));
+    }
+
+    $q.all(promises).then(function (data) {
+      var length = data.length,
+          mergedData = {};
+
+      for (var i = 0; i < length; i++) {
+        for (var key in data[i]) {
+          mergedData[key] = data[i][key];
+        }
+      }
+
+      deferred.resolve(mergedData);
+    }, function (data) {
+      deferred.reject(data);
+    });
+    result.finishListener = deferred.promise;
+    return result.finishListener;
+  };
+  return result;
+}]);
+
+
 /**
  * @ngdoc overview
- * @name pascalprecht.translate
+ * @name myApp
  *
  * @description
  * The main module which holds everything together.
  */
-angular.module('pascalprecht.translate', ['ng'])
+angular.module('myApp')
 
 .run(['$translate', function ($translate) {
 
@@ -41,14 +145,14 @@ angular.module('pascalprecht.translate', ['ng'])
 
 /**
  * @ngdoc object
- * @name pascalprecht.translate.$translateProvider
+ * @name myApp.$translateProvider
  * @description
  *
  * $translateProvider allows developers to register translation-tables, asynchronous loaders
  * and similar to configure translation behavior directly inside of a module.
  *
  */
-angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY', '$windowProvider', function ($STORAGE_KEY, $windowProvider) {
+angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider', function ($STORAGE_KEY, $windowProvider) {
 
   var $translationTable = {},
       $preferredLanguage,
@@ -192,8 +296,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#translations
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#translations
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Registers a new translation table for specific language key.
@@ -249,8 +353,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#cloakClassName
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#cloakClassName
+   * @methodOf myApp.$translateProvider
    *
    * @description
    *
@@ -307,8 +411,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#addInterpolation
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#addInterpolation
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Adds interpolation services to angular-translate, so it can manage them.
@@ -322,8 +426,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useMessageFormatInterpolation
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useMessageFormatInterpolation
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells angular-translate to use interpolation functionality of messageformat.js.
@@ -335,8 +439,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useInterpolation
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useInterpolation
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells angular-translate which interpolation style to use as default, application-wide.
@@ -352,8 +456,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useSanitizeStrategy
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useSanitizeStrategy
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Simply sets a sanitation strategy type.
@@ -367,8 +471,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
  /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#preferredLanguage
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#preferredLanguage
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells the module which of the registered translation tables to use for translation
@@ -391,8 +495,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
   };
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#translationNotFoundIndicator
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#translationNotFoundIndicator
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Sets an indicator which is used when a translation isn't found. E.g. when
@@ -416,8 +520,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * ngdoc function
-   * @name pascalprecht.translate.$translateProvider#translationNotFoundIndicatorLeft
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#translationNotFoundIndicatorLeft
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Sets an indicator which is used when a translation isn't found left to the
@@ -435,8 +539,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * ngdoc function
-   * @name pascalprecht.translate.$translateProvider#translationNotFoundIndicatorLeft
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#translationNotFoundIndicatorLeft
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Sets an indicator which is used when a translation isn't found right to the
@@ -454,8 +558,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#fallbackLanguage
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#fallbackLanguage
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells the module which of the registered translation tables to use when missing translations
@@ -495,8 +599,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#use
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#use
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Set which translation table to use for translation by given language key. When
@@ -521,8 +625,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
  /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#storageKey
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#storageKey
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells the module which key must represent the choosed language by a user in the storage.
@@ -543,8 +647,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useUrlLoader
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useUrlLoader
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells angular-translate to use `$translateUrlLoader` extension service as loader.
@@ -558,8 +662,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useStaticFilesLoader
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useStaticFilesLoader
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells angular-translate to use `$translateStaticFilesLoader` extension service as loader.
@@ -572,8 +676,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useLoader
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useLoader
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells angular-translate to use any other service as loader.
@@ -589,8 +693,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useLocalStorage
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useLocalStorage
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells angular-translate to use `$translateLocalStorage` service as storage layer.
@@ -602,8 +706,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useCookieStorage
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useCookieStorage
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells angular-translate to use `$translateCookieStorage` service as storage layer.
@@ -614,8 +718,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useStorage
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useStorage
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells angular-translate to use custom service as storage layer.
@@ -627,8 +731,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#storagePrefix
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#storagePrefix
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Sets prefix for storage key.
@@ -645,8 +749,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useMissingTranslationHandlerLog
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useMissingTranslationHandlerLog
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells angular-translate to use built-in log handler when trying to translate
@@ -661,8 +765,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useMissingTranslationHandler
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useMissingTranslationHandler
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Expects a factory name which later gets instantiated with `$injector`.
@@ -692,8 +796,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#usePostCompiling
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#usePostCompiling
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * If post compiling is enabled, all translated values will be processed
@@ -715,8 +819,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#determinePreferredLanguage
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#determinePreferredLanguage
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Tells angular-translate to try to determine on its own which language key
@@ -747,13 +851,13 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#registerAvailableLanguageKeys
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#registerAvailableLanguageKeys
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Registers a set of language keys the app will work with. Use this method in
    * combination with
-   * {@link pascalprecht.translate.$translateProvider#determinePreferredLanguage determinePreferredLanguage}.
+   * {@link myApp.$translateProvider#determinePreferredLanguage determinePreferredLanguage}.
    * When available languages keys are registered, angular-translate
    * tries to find the best fitting language key depending on the browsers locale,
    * considering your language key convention.
@@ -774,12 +878,12 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#useLoaderCache
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#useLoaderCache
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Registers a cache for internal $http based loaders.
-   * {@link pascalprecht.translate.$translateProvider#determinePreferredLanguage determinePreferredLanguage}.
+   * {@link myApp.$translateProvider#determinePreferredLanguage determinePreferredLanguage}.
    * When false the cache will be disabled (default). When true or undefined
    * the cache will be a default (see $cacheFactory). When an object it will
    * be treat as a cache object itself: the usage is $http({cache: cache})
@@ -805,8 +909,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateProvider#directivePriority
-   * @methodOf pascalprecht.translate.$translateProvider
+   * @name myApp.$translateProvider#directivePriority
+   * @methodOf myApp.$translateProvider
    *
    * @description
    * Sets the default priority of the translate directive. The standard value is `0`.
@@ -827,7 +931,7 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
   /**
    * @ngdoc object
-   * @name pascalprecht.translate.$translate
+   * @name myApp.$translate
    * @requires $interpolate
    * @requires $log
    * @requires $rootScope
@@ -1405,8 +1509,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#preferredLanguage
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#preferredLanguage
+       * @methodOf myApp.$translate
        *
        * @description
        * Returns the language key for the preferred language.
@@ -1424,8 +1528,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#cloakClassName
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#cloakClassName
+       * @methodOf myApp.$translate
        *
        * @description
        * Returns the configured class name for `translate-cloak` directive.
@@ -1438,8 +1542,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#fallbackLanguage
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#fallbackLanguage
+       * @methodOf myApp.$translate
        *
        * @description
        * Returns the language key for the fallback languages or sets a new fallback stack.
@@ -1475,8 +1579,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#useFallbackLanguage
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#useFallbackLanguage
+       * @methodOf myApp.$translate
        *
        * @description
        * Sets the first key of the fallback language stack to be used for translation.
@@ -1502,8 +1606,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#proposedLanguage
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#proposedLanguage
+       * @methodOf myApp.$translate
        *
        * @description
        * Returns the language key of language that is currently loaded asynchronously.
@@ -1516,8 +1620,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#storage
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#storage
+       * @methodOf myApp.$translate
        *
        * @description
        * Returns registered storage.
@@ -1530,8 +1634,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#use
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#use
+       * @methodOf myApp.$translate
        *
        * @description
        * Tells angular-translate which language to use by given language key. This method is
@@ -1596,8 +1700,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#storageKey
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#storageKey
+       * @methodOf myApp.$translate
        *
        * @description
        * Returns the key for the storage.
@@ -1610,8 +1714,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#isPostCompilingEnabled
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#isPostCompilingEnabled
+       * @methodOf myApp.$translate
        *
        * @description
        * Returns whether post compiling is enabled or not
@@ -1624,8 +1728,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#refresh
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#refresh
+       * @methodOf myApp.$translate
        *
        * @description
        * Refreshes a translation table pointed by the given langKey. If langKey is not specified,
@@ -1718,8 +1822,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#instant
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#instant
+       * @methodOf myApp.$translate
        *
        * @description
        * Returns a translation instantly from the internal state of loaded translation. All rules
@@ -1800,8 +1904,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#versionInfo
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#versionInfo
+       * @methodOf myApp.$translate
        *
        * @description
        * Returns the current version information for the angular-translate library
@@ -1814,8 +1918,8 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
       /**
        * @ngdoc function
-       * @name pascalprecht.translate.$translate#loaderCache
-       * @methodOf pascalprecht.translate.$translate
+       * @name myApp.$translate#loaderCache
+       * @methodOf myApp.$translate
        *
        * @description
        * Returns the defined loaderCache.
@@ -1860,7 +1964,7 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
 
 /**
  * @ngdoc object
- * @name pascalprecht.translate.$translateDefaultInterpolation
+ * @name myApp.$translateDefaultInterpolation
  * @requires $interpolate
  *
  * @description
@@ -1868,7 +1972,7 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
  *
  * @return {object} $translateInterpolator Interpolator service
  */
-angular.module('pascalprecht.translate').factory('$translateDefaultInterpolation', ['$interpolate', function ($interpolate) {
+angular.module('myApp').factory('$translateDefaultInterpolation', ['$interpolate', function ($interpolate) {
 
   var $translateInterpolator = {},
       $locale,
@@ -1903,8 +2007,8 @@ angular.module('pascalprecht.translate').factory('$translateDefaultInterpolation
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateDefaultInterpolation#setLocale
-   * @methodOf pascalprecht.translate.$translateDefaultInterpolation
+   * @name myApp.$translateDefaultInterpolation#setLocale
+   * @methodOf myApp.$translateDefaultInterpolation
    *
    * @description
    * Sets current locale (this is currently not use in this interpolation).
@@ -1917,8 +2021,8 @@ angular.module('pascalprecht.translate').factory('$translateDefaultInterpolation
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateDefaultInterpolation#getInterpolationIdentifier
-   * @methodOf pascalprecht.translate.$translateDefaultInterpolation
+   * @name myApp.$translateDefaultInterpolation#getInterpolationIdentifier
+   * @methodOf myApp.$translateDefaultInterpolation
    *
    * @description
    * Returns an identifier for this interpolation service.
@@ -1936,8 +2040,8 @@ angular.module('pascalprecht.translate').factory('$translateDefaultInterpolation
 
   /**
    * @ngdoc function
-   * @name pascalprecht.translate.$translateDefaultInterpolation#interpolate
-   * @methodOf pascalprecht.translate.$translateDefaultInterpolation
+   * @name myApp.$translateDefaultInterpolation#interpolate
+   * @methodOf myApp.$translateDefaultInterpolation
    *
    * @description
    * Interpolates given string agains given interpolate params using angulars
@@ -1955,12 +2059,12 @@ angular.module('pascalprecht.translate').factory('$translateDefaultInterpolation
   return $translateInterpolator;
 }]);
 
-angular.module('pascalprecht.translate').constant('$STORAGE_KEY', 'NG_TRANSLATE_LANG_KEY');
+angular.module('myApp').constant('$STORAGE_KEY', 'NG_TRANSLATE_LANG_KEY');
 
-angular.module('pascalprecht.translate')
+angular.module('myApp')
 /**
  * @ngdoc directive
- * @name pascalprecht.translate.directive:translate
+ * @name myApp.directive:translate
  * @requires $compile
  * @requires $filter
  * @requires $interpolate
@@ -1975,7 +2079,7 @@ angular.module('pascalprecht.translate')
  * @param {string=} translate-values Values to pass into translation id. Can be passed as object literal string or interpolated object.
  * @param {string=} translate-attr-ATTR translate Translation id and put it into ATTR attribute.
  * @param {string=} translate-default will be used unless translation was successful
- * @param {boolean=} translate-compile (default true if present) defines locally activation of {@link pascalprecht.translate.$translate#usePostCompiling}
+ * @param {boolean=} translate-compile (default true if present) defines locally activation of {@link myApp.$translate#usePostCompiling}
  *
  * @example
    <example module="ngView">
@@ -1996,7 +2100,7 @@ angular.module('pascalprecht.translate')
       </div>
     </file>
     <file name="script.js">
-      angular.module('ngView', ['pascalprecht.translate'])
+      angular.module('ngView', ['myApp'])
 
       .config(function ($translateProvider) {
 
@@ -2238,10 +2342,10 @@ angular.module('pascalprecht.translate')
   };
 }]);
 
-angular.module('pascalprecht.translate')
+angular.module('myApp')
 /**
  * @ngdoc directive
- * @name pascalprecht.translate.directive:translateCloak
+ * @name myApp.directive:translateCloak
  * @requires $rootScope
  * @requires $translate
  * @restrict A
@@ -2254,7 +2358,7 @@ angular.module('pascalprecht.translate')
  * data asynchronously.
  *
  * The class name is defined in
- * {@link pascalprecht.translate.$translateProvider#cloakClassName $translate.cloakClassName()}.
+ * {@link myApp.$translateProvider#cloakClassName $translate.cloakClassName()}.
  *
  * @param {string=} translate-cloak If a translationId is provided, it will be used for showing
  *                                  or hiding the cloak. Basically it relies on the translation
@@ -2289,12 +2393,12 @@ angular.module('pascalprecht.translate')
   };
 }]);
 
-angular.module('pascalprecht.translate')
+angular.module('myApp')
 /**
  * @ngdoc filter
- * @name pascalprecht.translate.filter:translate
+ * @name myApp.filter:translate
  * @requires $parse
- * @requires pascalprecht.translate.$translate
+ * @requires myApp.$translate
  * @function
  *
  * @description
@@ -2319,7 +2423,7 @@ angular.module('pascalprecht.translate')
       </div>
     </file>
     <file name="script.js">
-      angular.module('ngView', ['pascalprecht.translate'])
+      angular.module('ngView', ['myApp'])
 
       .config(function ($translateProvider) {
 
