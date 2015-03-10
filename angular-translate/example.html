@@ -11,6 +11,10 @@
     angular.module('myApp', [])
     .config(["$translateProvider",
         function($translateProvider) {
+      if (!window.angularTranslations) {
+        throw new Error("We forgot to include languages/en.js in our HTML");
+      }
+      $translateProvider.translations('en', window.angularTranslations);
       $translateProvider.useStaticFilesLoader({
           prefix: 'languages/',
           suffix: '.js'
