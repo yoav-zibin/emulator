@@ -187,7 +187,7 @@ angular.module('pascalprecht.translate').provider('$translate', ['$STORAGE_KEY',
     }
 
     // If everything fails, just return the preferred, unchanged.
-    return preferred;
+    return $availableLanguageKeys[0]; // TODO: YOAV CHANGED THIS LINE FROM "preferred" to "$availableLanguageKeys[0]"
   };
 
   /**

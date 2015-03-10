@@ -58,7 +58,8 @@ angular.module('pascalprecht.translate')
             return;
           }
         }
-        deferred.resolve({}); // better to have an empty translation table, so we will use 'en' as fallback.
+        console.log("Failed loading ", url);
+        deferred.resolve({}); // YOAV CHANGED: better to have an empty translation table, so we will use 'en' as fallback.
         //deferred.reject(options.key);
       });
 
