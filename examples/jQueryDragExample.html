@@ -10,18 +10,39 @@
   <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
   <style>
-  #draggable { width: 150px; height: 150px; padding: 0.5em; }
+  #draggable {}
+  .snapTarget {}
   </style>
   <script>
   $(function() {
-    $( "#draggable" ).draggable();
+    var draggableElements = $( "#draggable" );
+    draggableElements.draggable({
+      snap: ".snapTarget",
+      snapMode: "inner",
+      revert: "invalid",
+      start: function () {
+        console.log("Start dragging id=", draggableElements[0].id);
+      }
+    });
+
+    var droppableElements = $( "#droppable" );
+    droppableElements.droppable({
+      drop: function () {
+        console.log("Dropped on id=", droppableElements[0].id);
+      }
+    });
   });
   </script>
 </head>
 <body>
 
-<div id="draggable" class="ui-widget-content">
-  <p>Drag me around</p>
+<div style="position:absolute; top:100px; left:100px;">
+  <div style="background-color: red; width:100px; height:100px;"></div>
+  <div id="droppable" class="snapTarget" style="background-color: green; width:100px; height:100px;"></div>
+  <div style="background-color: blue; width:100px; height:100px;"></div>
+</div>
+
+<div id="draggable" style="background-color: yellow; width:100px; height:100px;">
 </div>
 
 </body>

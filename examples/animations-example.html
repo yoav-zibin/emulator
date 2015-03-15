@@ -6,10 +6,9 @@
   <title>Animation example</title>
   <meta name="description" content="Animation example">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
   <script>
-  angular.module('myApp', ['ngAnimate'])
+  angular.module('myApp', [])
     .controller('Ctrl', function ($scope, $log) {
       $scope.board = [['X','','','O'],['','','',''],['','','',''],['','','','']];
       $scope.getStyle = function (row, col) {
@@ -39,13 +38,6 @@
     margin: 0px;
     padding: 0px;
   }
-  .testAnimate {
-    position: relative;
-    top: 100px;
-    left: 100px;
-    -webkit-animation: 5s moveAnimation;
-    animation: 5s moveAnimation;
-  }
   @-webkit-keyframes moveAnimation {
     0% {top: 0px; left: 0px;}
     50% {transform:scale(2);}
@@ -59,19 +51,9 @@
 </head>
 <body ng-cloak ng-controller="Ctrl">
 
-  <div class="testAnimate">
-    Yoav
-  </div>
-
-  <div ng-style='{top: "250px", left: "250px", position: "relative",
-                  "-webkit-animation": "moveAnimation 2s",
-                  "animation": "moveAnimation 2s"}'>
-    Foo
-  </div>
-
   <table border="1">
-    <tr ng-repeat="row in [0, 1, 2]">
-      <td ng-repeat="col in [0, 1, 2]"
+    <tr ng-repeat="row in [0, 1, 2, 3]">
+      <td ng-repeat="col in [0, 1, 2, 3]"
           class="cell">
         <div ng-style="getStyle(row, col)">
           {{board[row][col]}}
