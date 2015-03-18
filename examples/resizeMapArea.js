@@ -1,4 +1,6 @@
 function resizeMapArea(params) {
+  'use strict';
+  
   var imageId = params.imageId;
   var mapId = params.mapId;
   var originalWidth = params.originalWidth;

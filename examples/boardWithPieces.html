@@ -14,50 +14,105 @@
   <script>
   angular.module('myApp', [])
     .controller('Ctrl',
-        ['$scope', '$log', 'resizeGameAreaService',
-        function ($scope, $log, resizeGameAreaService) {
-      resizeGameAreaService.setWidthToHeight(1);
+        ['$timeout', '$rootScope', '$scope', '$log', 'resizeGameAreaService',
+        function ($timeout, $rootScope, $scope, $log, resizeGameAreaService) {
+
+      'use strict';
+
+      var draggingLines = document.getElementById("draggingLines");
+      var horizontalDraggingLine = document.getElementById("horizontalDraggingLine");
+      var verticalDraggingLine = document.getElementById("verticalDraggingLine");
+
+      var deltaLeft, deltaTop;
+      var maxZIndex = 21;
+
+      function setDraggable(draggableElements) {
+        console.log("Setting draggable on " + draggableElements.length + " elements.");
+        draggableElements.draggable({
+          snap: ".droppableClass",
+          snapMode: "inner",
+          revert: "invalid",
+          start: function (event, ui) {
+            var id = this.id;
+            var element = ui.helper; // same as ui.helper
+            var halfElementWidth = element.width() / 2;
+            draggingLines.style.display = "block";
+            console.log("Start draggable of id=" + id + " halfElementWidth=" + halfElementWidth);
+            // Setting snapTolerance again because the width might change due to orientation change.
+            element.draggable( "option", "snapTolerance", halfElementWidth);
+
+            this.style['z-index'] = ++maxZIndex;
+
+            var gameAreaOffset = $("#gameArea").offset();
+            var offset = element.offset();
+            deltaLeft = (offset.left - gameAreaOffset.left) + halfElementWidth;
+            deltaTop = (offset.top - gameAreaOffset.top) + halfElementWidth;
+          },
+          stop: function (event, ui) {
+            draggingLines.style.display = "none";
+            console.log("Stop draggable of id=" + this.id);
+          },
+          drag: function( event, ui ) {
+            verticalDraggingLine.setAttribute("x1", ui.position.left + deltaLeft);
+            verticalDraggingLine.setAttribute("x2", ui.position.left + deltaLeft);
+            horizontalDraggingLine.setAttribute("y1", ui.position.top + deltaTop);
+            horizontalDraggingLine.setAttribute("y2", ui.position.top + deltaTop);
+          }
+        });
+      }
+
+      function setDroppable(droppableElements) {
+        console.log("Setting droppable on " + droppableElements.length + " elements.");
+        droppableElements.droppable({
+          drop: function (event, ui) {
+            var that = this;
+            $rootScope.$apply(function () {
+              var msg = "Dragged " + ui.draggable[0].id + " to " + that.id;
+              $log.info(msg);
+              $scope.msg = msg;
+            });
+          }
+        });
+      }
 
       function isWhiteSquare(row, col) {
         return ((row+col)%2)==0;
       }
 
-      $scope.getSquareStyle = function (row, col) {
+
+      resizeGameAreaService.setWidthToHeight(1);
+
+      $scope.getSquareClass = function (row, col) {
         var isBlack = !isWhiteSquare(row,col);
         return {
-          snapTarget: isBlack,
+          droppableClass: isBlack,
           whiteSquare: !isBlack,
           blackSquare: isBlack
         };
       };
-      $scope.isSquareDroppable = function (row, col) {
-        return !isWhiteSquare(row,col);
-      };
-      $scope.squareClicked = function (row, col) {
-        console.log("squareClicked");
-      };
       $scope.isPieceShown = function (row, col) {
         return (row == 0 || row == 13) && !isWhiteSquare(row,col);
       };
-
-      var maxZIndex = 21;
-      $scope.handleDragStart = function (pieceId) {
-        draggingPieceId = pieceId;
-        $log.info("handleDragStart:" + pieceId);
-        document.getElementById(pieceId).style['z-index'] = ++maxZIndex;
-      }
-      $scope.handleDrop = function (squareId) {
-        $log.info("handleDrop:" + squareId);
-        alert("Dragged " + draggingPieceId + " to " + squareId);
+      $scope.getPieceClass = function (row, col) {
+        return {draggableClass: $scope.isPieceShown(row, col)};
       };
+
+      // Letting angular create all the DOM elements.
+      $timeout(function () {
+        if ($("#Square0x0").length !== 1) {
+          throw new Error("Angular still haven't created div with id #Square0x0");
+        }
+        setDraggable($(".draggableClass"));
+        setDroppable($(".droppableClass"));
+      }, 0);
+
     }]);
   </script>
   <script src="http://yoav-zibin.github.io/emulator/resizeGameAreaService.js"></script>
-  <script src="DraggableDirective.js"></script>
-  <script src="DropTargetDirective.js"></script>
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
   <style>
-  .snapTarget {}
+  .draggableClass {}
+  .droppableClass {}
   .whiteSquare {
     background: white;
   }
@@ -73,6 +128,7 @@
   </style>
 </head>
 <body ng-controller="Ctrl">
+  {{msg}}
   <div id="gameArea">
 
     <svg id="draggingLines" width="100%" height="100%"
@@ -94,13 +150,11 @@
       <div ng-repeat="col in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]"
         style="position:absolute; top:0; left:{{col * 5}}%; width:5%; height:100%;"
         id="Square{{row}}x{{col}}"
-        ng-class = "getSquareStyle(row, col)"
-        ng-click = "squareClicked(row, col)"
-        dd-drop-target = "{{isSquareDroppable(row, col)}}">
+        ng-class = "getSquareClass(row, col)">
         <svg width="100%" height="100%"
             ng-show="isPieceShown(row, col)"
             id="Piece{{row}}x{{col}}"
-            dd-draggable = "{{isPieceShown(row, col)}}">
+            ng-class = "getPieceClass(row, col)">
           <circle cx="50%" cy="50%" r="40%"
           stroke="green" stroke-width="4" fill="yellow" />
         </svg>

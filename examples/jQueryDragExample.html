@@ -10,25 +10,30 @@
   <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
   <style>
-  #draggable {}
+  .draggable {}
+  .droppable {}
   .snapTarget {}
   </style>
   <script>
   $(function() {
-    var draggableElements = $( "#draggable" );
+    'use strict';
+    
+    var draggableElements = $( ".draggable" );
+    console.log("Setting draggable on " + draggableElements.length + " elements.");
     draggableElements.draggable({
       snap: ".snapTarget",
       snapMode: "inner",
       revert: "invalid",
-      start: function () {
-        console.log("Start dragging id=", draggableElements[0].id);
+      start: function (event, ui) {
+        console.log("Start dragging id=", this.id);
       }
     });
 
-    var droppableElements = $( "#droppable" );
+    var droppableElements = $( ".droppable" );
+    console.log("Setting droppable on " + droppableElements.length + " elements.");
     droppableElements.droppable({
-      drop: function () {
-        console.log("Dropped on id=", droppableElements[0].id);
+      drop: function (event, ui) {
+        console.log("Dropped on id=", this.id);
       }
     });
   });
@@ -38,11 +43,14 @@
 
 <div style="position:absolute; top:100px; left:100px;">
   <div style="background-color: red; width:100px; height:100px;"></div>
-  <div id="droppable" class="snapTarget" style="background-color: green; width:100px; height:100px;"></div>
+  <div id="droppableDiv1" class="droppable snapTarget" style="background-color: green; width:100px; height:100px;"></div>
+  <div id="droppableDiv2" class="droppable snapTarget" style="background-color: white; width:100px; height:100px;"></div>
   <div style="background-color: blue; width:100px; height:100px;"></div>
 </div>
 
-<div id="draggable" style="background-color: yellow; width:100px; height:100px;">
+<div id="draggableDiv1" class="draggable" style="background-color: yellow; width:100px; height:100px;">
+</div>
+<div id="draggableDiv2" class="draggable" style="background-color: blue; width:100px; height:100px;">
 </div>
 
 </body>
