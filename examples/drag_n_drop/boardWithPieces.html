@@ -6,6 +6,7 @@
   <meta name="description" content="Example">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <script src="dragAndDropListeners.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
   <script>
   angular.module('myApp', [])
@@ -19,38 +20,14 @@
       var horizontalDraggingLine = document.getElementById("horizontalDraggingLine");
       var verticalDraggingLine = document.getElementById("verticalDraggingLine");
       var gameArea = document.getElementById("gameArea");
-      var isMouseDown = false;
       var rowsNum = 20;
       var colsNum = 10;
       var draggingStartedRowCol = null; // The {row: YY, col: XX} where dragging started.
       var draggingPiece = null;
       var nextZIndex = 61;
 
-      function touchHandler(event) {
-        var touch = event.changedTouches[0];
-        handleEvent(event, touch.clientX, touch.clientY);
-      }
-      function mouseDownHandler(event) {
-        isMouseDown = true;
-        handleEvent(event, event.clientX, event.clientY);
-      }
-      function mouseMoveHandler(event) {
-        if (isMouseDown) {
-          handleEvent(event, event.clientX, event.clientY);
-        }
-      }
-      function mouseUpHandler(event) {
-        isMouseDown = false;
-        handleEvent(event, event.clientX, event.clientY);
-      }
-      function handleEvent(event, clientX, clientY) {
-        var type = event.type;
-        //console.log("handleEvent:", type, event, clientX, clientY);
-        event.preventDefault();
-
-        var isDragStart = type === "touchstart" || type === "mousedown";
-        var isDragEnd = type === "touchend" || type === "touchcancel" || type === "touchleave" || type === "mouseup";
-
+      window.handleDragEvent = handleDragEvent;
+      function handleDragEvent(type, clientX, clientY) {
         // Center point in gameArea
         var x = clientX - gameArea.offsetLeft;
         var y = clientY - gameArea.offsetTop;
@@ -61,7 +38,7 @@
           if (draggingPiece) {
             // Drag the piece where the touch is (without snapping to a square).
             var size = getSquareWidthHeight();
-            setDraggingPieceTopLeft({top: y - size.height, left: x - size.width});
+            setDraggingPieceTopLeft({top: y - size.height / 2, left: x - size.width / 2});
           } else {
             return;
           }
@@ -70,7 +47,7 @@
           var col = Math.floor(colsNum * x / gameArea.clientWidth);
           var row = Math.floor(rowsNum * y / gameArea.clientHeight);
 
-          if (isDragStart) {
+          if (type === "touchstart" && !draggingStartedRowCol) {
             // drag started
             if ($scope.board[row][col]) {
               draggingStartedRowCol = {row: row, col: col};
@@ -82,8 +59,10 @@
             return;
           }
 
-          if (isDragEnd) {
-            dragDone(row, col);
+          if (type === "touchend") {
+            var from = draggingStartedRowCol;
+            var to = {row: row, col: col};
+            dragDone(from, to);
           } else {
             // Drag continue
             setDraggingPieceTopLeft(getSquareTopLeft(row, col));
@@ -95,7 +74,7 @@
             horizontalDraggingLine.setAttribute("y2", centerXY.y);
           }
         }
-        if (isDragEnd) {
+        if (type === "touchend" || type === "touchcancel" || type === "touchleave") {
           // drag ended
           // return the piece to it's original style (then angular will take care to hide it).
           setDraggingPieceTopLeft(getSquareTopLeft(draggingStartedRowCol.row, draggingStartedRowCol.col));
@@ -131,25 +110,16 @@
         };
       }
 
-      document.addEventListener("touchstart", touchHandler, true);
-      document.addEventListener("touchmove", touchHandler, true);
-      document.addEventListener("touchend", touchHandler, true);
-      document.addEventListener("touchcancel", touchHandler, true);
-      document.addEventListener("touchleave", touchHandler, true);
-      document.addEventListener("mousedown", mouseDownHandler, true);
-      document.addEventListener("mousemove", mouseMoveHandler, true);
-      document.addEventListener("mouseup", mouseUpHandler, true);
-
       resizeGameAreaService.setWidthToHeight(0.5);
 
-      function dragDone(row, col) {
+      function dragDone(from, to) {
         $rootScope.$apply(function () {
-          var msg = "Dragged piece " + draggingStartedRowCol.row + "x" + draggingStartedRowCol.col + " to square " + row + "x" + col;
+          var msg = "Dragged piece " + from.row + "x" + from.col + " to square " + to.row + "x" + to.col;
           $log.info(msg);
           $scope.msg = msg;
           // Update piece in board
-          $scope.board[draggingStartedRowCol.row][draggingStartedRowCol.col] = null;
-          $scope.board[row][col] = 'O';
+          $scope.board[from.row][from.col] = null;
+          $scope.board[to.row][to.col] = 'O';
         });
       }
 

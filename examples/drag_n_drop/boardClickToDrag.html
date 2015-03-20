@@ -6,6 +6,7 @@
   <meta name="description" content="Example">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <script src="dragAndDropListeners.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
   <script>
   angular.module('myApp', [])
@@ -20,32 +21,11 @@
       var verticalDraggingLine = document.getElementById("verticalDraggingLine");
       var clickToDragPiece = document.getElementById("clickToDragPiece");
       var gameArea = document.getElementById("gameArea");
-      var isMouseDown = false;
       var rowsNum = 20;
       var colsNum = 10;
 
-      function touchHandler(event) {
-        var touch = event.changedTouches[0];
-        handleEvent(event, touch.clientX, touch.clientY);
-      }
-      function mouseDownHandler(event) {
-        isMouseDown = true;
-        handleEvent(event, event.clientX, event.clientY);
-      }
-      function mouseMoveHandler(event) {
-        if (isMouseDown) {
-          handleEvent(event, event.clientX, event.clientY);
-        }
-      }
-      function mouseUpHandler(event) {
-        isMouseDown = false;
-        handleEvent(event, event.clientX, event.clientY);
-      }
-      function handleEvent(event, clientX, clientY) {
-        var type = event.type;
-        //console.log("handleEvent:", type, event, clientX, clientY);
-        event.preventDefault();
-
+      window.handleDragEvent = handleDragEvent;
+      function handleDragEvent(type, clientX, clientY) {
         // Center point in gameArea
         var x = clientX - gameArea.offsetLeft;
         var y = clientY - gameArea.offsetTop;
@@ -62,7 +42,7 @@
         // Inside gameArea. Let's find the containing square's row and col
         var col = Math.floor(colsNum * x / gameArea.clientWidth);
         var row = Math.floor(rowsNum * y / gameArea.clientHeight);
-        
+
         var centerXY = getSquareCenterXY(row, col);
         verticalDraggingLine.setAttribute("x1", centerXY.x);
         verticalDraggingLine.setAttribute("x2", centerXY.x);
@@ -99,15 +79,6 @@
           y: row * size.height + size.height / 2
         };
       }
-
-      document.addEventListener("touchstart", touchHandler, true);
-      document.addEventListener("touchmove", touchHandler, true);
-      document.addEventListener("touchend", touchHandler, true);
-      document.addEventListener("touchcancel", touchHandler, true);
-      document.addEventListener("touchleave", touchHandler, true);
-      document.addEventListener("mousedown", mouseDownHandler, true);
-      document.addEventListener("mousemove", mouseMoveHandler, true);
-      document.addEventListener("mouseup", mouseUpHandler, true);
 
       resizeGameAreaService.setWidthToHeight(0.5);
 
