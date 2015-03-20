@@ -120,8 +120,8 @@ angular.module('myApp')
  * The main module which holds everything together.
  */
 angular.module('myApp')
-
 .run(['$translate', function ($translate) {
+  window.$translate = $translate; // YOAV: for debugging prod.
 
   var key = $translate.storageKey(),
       storage = $translate.storage();
@@ -1060,6 +1060,11 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
         return deferred.promise;
       };
 
+      var throwNotFound = function (translationId) {
+        // YOAV ADDED
+        throw new Error("Translation " + translationId + " not found!");
+      }
+
       /**
        * @name applyNotFoundIndicators
        * @private
@@ -1304,6 +1309,7 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
        * absent
        */
       var translateByHandler = function (translationId) {
+        throwNotFound(translationId); // YOAV ADDED
         // If we have a handler factory - we might also call it here to determine if it provides
         // a default text for a translationid that can't be found anywhere in our tables
         if ($missingTranslationHandlerFactory) {
@@ -1347,6 +1353,7 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
         } else {
           // No translation found in any fallback language
           // if a default translation text is set in the directive, then return this as a result
+          throwNotFound(translationId); // YOAV ADDED
           if (defaultTranslationText) {
             deferred.resolve(defaultTranslationText);
           } else {
@@ -1444,9 +1451,11 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
                 .then(function (translation) {
                   deferred.resolve(translation);
                 }, function (_translationId) {
+                  throwNotFound(_translationId); // YOAV ADDED
                   deferred.reject(applyNotFoundIndicators(_translationId));
                 });
           } else if ($missingTranslationHandlerFactory && !pendingLoader && missingTranslationHandlerTranslation) {
+            throwNotFound(translationId); // YOAV ADDED
             // looks like the requested translation id doesn't exists.
             // Now, if there is a registered handler for missing translations and no
             // asyncLoader is pending, we execute the handler
@@ -1456,6 +1465,7 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
                 deferred.resolve(missingTranslationHandlerTranslation);
               }
           } else {
+            throwNotFound(translationId); // YOAV ADDED
             if (defaultTranslationText) {
               deferred.resolve(defaultTranslationText);
             } else {
@@ -1500,11 +1510,13 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
             fallbackIndex = 0;
             result = fallbackTranslationInstant(translationId, interpolateParams, Interpolator);
           } else if ($missingTranslationHandlerFactory && !pendingLoader && missingTranslationHandlerTranslation) {
+            throwNotFound(translationId); // YOAV ADDED
             // looks like the requested translation id doesn't exists.
             // Now, if there is a registered handler for missing translations and no
             // asyncLoader is pending, we execute the handler
             result = missingTranslationHandlerTranslation;
           } else {
+            throwNotFound(translationId); // YOAV ADDED
             result = applyNotFoundIndicators(translationId);
           }
         }
@@ -1887,8 +1899,11 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
           if ($translationTable[possibleLangKey]) {
             if (typeof $translationTable[possibleLangKey][translationId] !== 'undefined') {
               result = determineTranslationInstant(translationId, interpolateParams, interpolationId);
-            } else if ($notFoundIndicatorLeft || $notFoundIndicatorRight) {
-              result = applyNotFoundIndicators(translationId);
+            } else {
+              throwNotFound(translationId); // YOAV ADDED
+              if ($notFoundIndicatorLeft || $notFoundIndicatorRight) {
+                result = applyNotFoundIndicators(translationId);
+              }
             }
           }
           if (typeof result !== 'undefined') {
@@ -1896,6 +1911,9 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
           }
         }
 
+        if (!result) {
+          throwNotFound(translationId); // YOAV ADDED
+        }
         if (!result && result !== '') {
           // Return translation of default interpolator if not found anything.
           result = defaultInterpolator.interpolate(translationId, interpolateParams);
