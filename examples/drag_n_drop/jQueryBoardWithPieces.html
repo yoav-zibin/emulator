@@ -24,7 +24,7 @@
       var verticalDraggingLine = document.getElementById("verticalDraggingLine");
 
       var deltaLeft, deltaTop;
-      var maxZIndex = 21;
+      var nextZIndex = 21;
 
       function setDraggable(draggableElements) {
         console.log("Setting draggable on " + draggableElements.length + " elements.");
@@ -41,7 +41,7 @@
             // Setting snapTolerance again because the width might change due to orientation change.
             element.draggable( "option", "snapTolerance", halfElementWidth);
 
-            this.style['z-index'] = ++maxZIndex;
+            this.style['z-index'] = ++nextZIndex;
 
             var gameAreaOffset = $("#gameArea").offset();
             var offset = element.offset();
@@ -80,7 +80,22 @@
       }
 
 
-      resizeGameAreaService.setWidthToHeight(1);
+      resizeGameAreaService.setWidthToHeight(0.5);
+
+      function getIntegersTill(number) {
+        var res = [];
+        for (var i = 0; i < number; i++) {
+          res.push(i);
+        }
+        return res;
+      }
+
+      var rowsNum = 20;
+      var colsNum = 10;
+      $scope.rowsNum = rowsNum;
+      $scope.colsNum = colsNum;
+      $scope.rows = getIntegersTill(rowsNum);
+      $scope.cols = getIntegersTill(colsNum);
 
       $scope.getSquareClass = function (row, col) {
         var isBlack = !isWhiteSquare(row,col);
@@ -145,12 +160,12 @@
             stroke-width="1%"/>
     </svg>
 
-    <div ng-repeat="row in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]"
-        style="position:absolute; top:{{row * 5}}%; left:0; width:100%; height:5%;">
-      <div ng-repeat="col in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]"
-        style="position:absolute; top:0; left:{{col * 5}}%; width:5%; height:100%;"
-        id="Square{{row}}x{{col}}"
-        ng-class = "getSquareClass(row, col)">
+    <div ng-repeat="row in rows"
+        style="position:absolute; top:{{row * 100 / rowsNum}}%; left:0; width:100%; height:{{100 / rowsNum}}%;">
+      <div ng-repeat="col in cols"
+        style="position:absolute; top:0; left:{{col * 100 / colsNum}}%; width:{{100 / colsNum}}%; height:100%;"
+        ng-class = "getSquareClass(row, col)"
+        id="Square{{row}}x{{col}}">
         <svg width="100%" height="100%"
             ng-show="isPieceShown(row, col)"
             id="Piece{{row}}x{{col}}"
