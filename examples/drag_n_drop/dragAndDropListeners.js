@@ -29,6 +29,7 @@
 
   function handleEvent(event, type, clientX, clientY) {
     event.preventDefault();
+    console.log("handleDragEvent:", type, clientX, clientY);
     handleDragEvent(type, clientX, clientY);
   }
 
