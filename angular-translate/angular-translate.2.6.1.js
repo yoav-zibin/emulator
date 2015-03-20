@@ -850,6 +850,10 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
     } else {
       $preferredLanguage = negotiateLocale(locale);
     }
+    $uses = $preferredLanguage;
+    if ($availableLanguageKeys.indexOf($uses) === -1) {
+      throw new Error("YOAV: the selected language (" + $uses + ") must be in $availableLanguageKeys=" + $availableLanguageKeys);
+    }
 
     return this;
   };
@@ -1062,7 +1066,7 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
 
       var throwNotFound = function (translationId) {
         // YOAV ADDED
-        throw new Error("Translation " + translationId + " not found!");
+        throw new Error("YOAV: Translation " + translationId + " not found!");
       }
 
       /**
@@ -1477,7 +1481,9 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
       };
 
       var determineTranslationInstant = function (translationId, interpolateParams, interpolationId) {
-
+        if (!$uses) {
+          throw new Error("YOAV: You must set $uses. Happened while translating " + translationId); // YOAV ADDED
+        }
         var result, table = $uses ? $translationTable[$uses] : $translationTable,
             Interpolator = defaultInterpolator;
 
