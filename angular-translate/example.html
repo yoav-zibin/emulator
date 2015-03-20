@@ -24,9 +24,8 @@
         .determinePreferredLanguage();
     }])
     .controller('Ctrl',
-      ['$translate', '$scope',
-      function($translate, $scope) {
-        window.$translate = $translate;
+      ['$translate', '$scope', '$timeout',
+      function($translate, $scope, $timeout) {
         console.log("Creating Ctrl using: preferredLanguage=" + $translate.preferredLanguage() + " useLanguage=" + $translate.use());
         $scope.getPreferredLanguage = function () {
           return $translate.preferredLanguage();
@@ -43,6 +42,25 @@
         $scope.someText2 = function () {
           return $translate.instant('WITH_VALUES', {value: 42});
         };
+
+        // Test that missing translations throw an error that is caught by $exceptionHandler.
+        $timeout(function () {
+          $translate('MISSING_TEXT2').then(function (translation) {
+            console.log('MISSING_TEXT2 is:' + translation);
+          });
+          console.log('MISSING_TEXT1 translation is: ' + $translate.instant('MISSING_TEXT1'));
+        }, 0);
+
+      }])
+      .factory('$exceptionHandler',
+          ["$window", "$log",
+            function ($window, $log) {
+
+        'use strict';
+
+        return function (exception, cause) {
+          $log.error("Had an exception:", exception, cause);
+        };
       }]);
   </script>
   <script src="angular-translate.2.6.1.js"></script>
@@ -51,6 +69,7 @@
 <body ng-cloak ng-controller="Ctrl">
   <pre>Example of I18N (getPreferredLanguage={{getPreferredLanguage()}}, getUseLanguage={{getUseLanguage()}}):</pre>
   <pre>{{ 'HEADLINE' | translate }}</pre>
+  <pre>{{ 'MISSING_TEXT3' | translate }}</pre>
   <pre>{{ 'WITH_VALUES' | translate:'{value: 5}' }}</pre>
   <pre>{{someText1()}}</pre>
   <pre>{{someText2()}}</pre>
