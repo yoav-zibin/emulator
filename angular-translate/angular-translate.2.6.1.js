@@ -38,7 +38,12 @@ angular.module('myApp')
             file.suffix
           ].join('');
 
+      var didCallResolve = false;
       function resolve(data) {
+        if (didCallResolve) {
+          return;
+        }
+        didCallResolve = true;
         window.angularTranslations = null;
         eval(data);
         if (!window.angularTranslations) {
@@ -47,6 +52,14 @@ angular.module('myApp')
         deferred.resolve(window.angularTranslations);
       }
 
+      if (window.localStorage) { // ADDED
+        var data = window.localStorage.getItem(url);
+        console.log("Load translations from local-storage for ", url, " data=", data);
+        if (data) {
+          resolve(data);
+          // Loading the file to update localStorage
+        }
+      }
       $http(angular.extend({
         url: url,
         method: 'GET',
@@ -58,14 +71,6 @@ angular.module('myApp')
         }
         resolve(data);
       }).error(function () {
-        if (window.localStorage) { // ADDED
-          var data = window.localStorage.getItem(url);
-          console.log("Load translations from local-storage for ", url, " data=", data);
-          if (data) {
-            resolve(data);
-            return;
-          }
-        }
         console.log("Failed loading ", url);
         deferred.resolve({}); // YOAV CHANGED: better to have an empty translation table, so we will use 'en' as fallback.
         //deferred.reject(options.key);
