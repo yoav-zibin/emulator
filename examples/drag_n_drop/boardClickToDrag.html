@@ -46,9 +46,6 @@
         //console.log("handleEvent:", type, event, clientX, clientY);
         event.preventDefault();
 
-        clickToDragPiece.style.display = "inline";
-        draggingLines.style.display = "inline";
-
         // Center point in gameArea
         var x = clientX - gameArea.offsetLeft;
         var y = clientY - gameArea.offsetTop;
@@ -58,19 +55,22 @@
           draggingLines.style.display = "none";
           return;
         }
+
+        clickToDragPiece.style.display = "inline";
+        draggingLines.style.display = "inline";
+
         // Inside gameArea. Let's find the containing square's row and col
         var col = Math.floor(colsNum * x / gameArea.clientWidth);
         var row = Math.floor(rowsNum * y / gameArea.clientHeight);
-        var sqaureWidth = gameArea.clientWidth / colsNum;
-        var sqaureHeight = gameArea.clientHeight / rowsNum;
-        var squareCenterX = col * sqaureWidth + sqaureWidth / 2;
-        var squareCenterY = row * sqaureHeight + sqaureHeight / 2;
-        verticalDraggingLine.setAttribute("x1", squareCenterX);
-        verticalDraggingLine.setAttribute("x2", squareCenterX);
-        horizontalDraggingLine.setAttribute("y1", squareCenterY);
-        horizontalDraggingLine.setAttribute("y2", squareCenterY);
-        clickToDragPiece.style.left = (col * sqaureWidth) + "px";
-        clickToDragPiece.style.top = (row * sqaureHeight) + "px";
+        
+        var centerXY = getSquareCenterXY(row, col);
+        verticalDraggingLine.setAttribute("x1", centerXY.x);
+        verticalDraggingLine.setAttribute("x2", centerXY.x);
+        horizontalDraggingLine.setAttribute("y1", centerXY.y);
+        horizontalDraggingLine.setAttribute("y2", centerXY.y);
+        var topLeft = getSquareTopLeft(row, col);
+        clickToDragPiece.style.left = topLeft.left + "px";
+        clickToDragPiece.style.top = topLeft.top + "px";
 
         if (type === "touchend" || type === "touchcancel" || type === "touchleave" || type === "mouseup") {
           // drag ended
@@ -78,6 +78,26 @@
           draggingLines.style.display = "none";
           dragDone(row, col);
         }
+      }
+
+      function getSquareWidthHeight() {
+        return {
+          width: gameArea.clientWidth / colsNum,
+          height: gameArea.clientHeight / rowsNum
+        };
+      }
+
+      function getSquareTopLeft(row, col) {
+        var size = getSquareWidthHeight();
+        return {top: row * size.height, left: col * size.width}
+      }
+
+      function getSquareCenterXY(row, col) {
+        var size = getSquareWidthHeight();
+        return {
+          x: col * size.width + size.width / 2,
+          y: row * size.height + size.height / 2
+        };
       }
 
       document.addEventListener("touchstart", touchHandler, true);

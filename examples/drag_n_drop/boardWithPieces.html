@@ -6,10 +6,6 @@
   <meta name="description" content="Example">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- drag-n-drop using jQuery UI -->
-  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-  <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.min.js"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
   <script>
   angular.module('myApp', [])
@@ -22,56 +18,138 @@
       var draggingLines = document.getElementById("draggingLines");
       var horizontalDraggingLine = document.getElementById("horizontalDraggingLine");
       var verticalDraggingLine = document.getElementById("verticalDraggingLine");
+      var gameArea = document.getElementById("gameArea");
+      var isMouseDown = false;
+      var rowsNum = 20;
+      var colsNum = 10;
+      var draggingStartedRowCol = null; // The {row: YY, col: XX} where dragging started.
+      var draggingPiece = null;
+      var nextZIndex = 61;
 
-      var deltaLeft, deltaTop;
-      var maxZIndex = 21;
+      function touchHandler(event) {
+        var touch = event.changedTouches[0];
+        handleEvent(event, touch.clientX, touch.clientY);
+      }
+      function mouseDownHandler(event) {
+        isMouseDown = true;
+        handleEvent(event, event.clientX, event.clientY);
+      }
+      function mouseMoveHandler(event) {
+        if (isMouseDown) {
+          handleEvent(event, event.clientX, event.clientY);
+        }
+      }
+      function mouseUpHandler(event) {
+        isMouseDown = false;
+        handleEvent(event, event.clientX, event.clientY);
+      }
+      function handleEvent(event, clientX, clientY) {
+        var type = event.type;
+        //console.log("handleEvent:", type, event, clientX, clientY);
+        event.preventDefault();
 
-      function setDraggable(draggableElements) {
-        console.log("Setting draggable on " + draggableElements.length + " elements.");
-        draggableElements.draggable({
-          snap: ".droppableClass",
-          snapMode: "inner",
-          revert: "invalid",
-          start: function (event, ui) {
-            var id = this.id;
-            var element = ui.helper; // same as ui.helper
-            var halfElementWidth = element.width() / 2;
-            draggingLines.style.display = "block";
-            console.log("Start draggable of id=" + id + " halfElementWidth=" + halfElementWidth);
-            // Setting snapTolerance again because the width might change due to orientation change.
-            element.draggable( "option", "snapTolerance", halfElementWidth);
+        var isDragStart = type === "touchstart" || type === "mousedown";
+        var isDragEnd = type === "touchend" || type === "touchcancel" || type === "touchleave" || type === "mouseup";
 
-            this.style['z-index'] = ++maxZIndex;
-
-            var gameAreaOffset = $("#gameArea").offset();
-            var offset = element.offset();
-            deltaLeft = (offset.left - gameAreaOffset.left) + halfElementWidth;
-            deltaTop = (offset.top - gameAreaOffset.top) + halfElementWidth;
-          },
-          stop: function (event, ui) {
-            draggingLines.style.display = "none";
-            console.log("Stop draggable of id=" + this.id);
-          },
-          drag: function( event, ui ) {
-            verticalDraggingLine.setAttribute("x1", ui.position.left + deltaLeft);
-            verticalDraggingLine.setAttribute("x2", ui.position.left + deltaLeft);
-            horizontalDraggingLine.setAttribute("y1", ui.position.top + deltaTop);
-            horizontalDraggingLine.setAttribute("y2", ui.position.top + deltaTop);
+        // Center point in gameArea
+        var x = clientX - gameArea.offsetLeft;
+        var y = clientY - gameArea.offsetTop;
+        var row, col;
+        // Is outside gameArea?
+        if (x < 0 || y < 0 || x >= gameArea.clientWidth || y >= gameArea.clientHeight) {
+          draggingLines.style.display = "none";
+          if (draggingPiece) {
+            // Drag the piece where the touch is (without snapping to a square).
+            var size = getSquareWidthHeight();
+            setDraggingPieceTopLeft({top: y - size.height, left: x - size.width});
+          } else {
+            return;
           }
-        });
+        } else {
+          // Inside gameArea. Let's find the containing square's row and col
+          var col = Math.floor(colsNum * x / gameArea.clientWidth);
+          var row = Math.floor(rowsNum * y / gameArea.clientHeight);
+
+          if (isDragStart) {
+            // drag started
+            if ($scope.board[row][col]) {
+              draggingStartedRowCol = {row: row, col: col};
+              draggingPiece = document.getElementById("MyPiece" + draggingStartedRowCol.row + "x" + draggingStartedRowCol.col);
+              draggingPiece.style['z-index'] = ++nextZIndex;
+            }
+          }
+          if (!draggingPiece) {
+            return;
+          }
+
+          if (isDragEnd) {
+            dragDone(row, col);
+          } else {
+            // Drag continue
+            setDraggingPieceTopLeft(getSquareTopLeft(row, col));
+            draggingLines.style.display = "inline";
+            var centerXY = getSquareCenterXY(row, col);
+            verticalDraggingLine.setAttribute("x1", centerXY.x);
+            verticalDraggingLine.setAttribute("x2", centerXY.x);
+            horizontalDraggingLine.setAttribute("y1", centerXY.y);
+            horizontalDraggingLine.setAttribute("y2", centerXY.y);
+          }
+        }
+        if (isDragEnd) {
+          // drag ended
+          // return the piece to it's original style (then angular will take care to hide it).
+          setDraggingPieceTopLeft(getSquareTopLeft(draggingStartedRowCol.row, draggingStartedRowCol.col));
+          draggingLines.style.display = "none";
+          draggingStartedRowCol = null;
+          draggingPiece = null;
+        }
       }
 
-      function setDroppable(droppableElements) {
-        console.log("Setting droppable on " + droppableElements.length + " elements.");
-        droppableElements.droppable({
-          drop: function (event, ui) {
-            var that = this;
-            $rootScope.$apply(function () {
-              var msg = "Dragged " + ui.draggable[0].id + " to " + that.id;
-              $log.info(msg);
-              $scope.msg = msg;
-            });
-          }
+      function setDraggingPieceTopLeft(topLeft) {
+        var originalSize = getSquareTopLeft(draggingStartedRowCol.row, draggingStartedRowCol.col);
+        draggingPiece.style.left = (topLeft.left - originalSize.left) + "px";
+        draggingPiece.style.top = (topLeft.top - originalSize.top) + "px";
+      }
+
+      function getSquareWidthHeight() {
+        return {
+          width: gameArea.clientWidth / colsNum,
+          height: gameArea.clientHeight / rowsNum
+        };
+      }
+
+      function getSquareTopLeft(row, col) {
+        var size = getSquareWidthHeight();
+        return {top: row * size.height, left: col * size.width}
+      }
+
+      function getSquareCenterXY(row, col) {
+        var size = getSquareWidthHeight();
+        return {
+          x: col * size.width + size.width / 2,
+          y: row * size.height + size.height / 2
+        };
+      }
+
+      document.addEventListener("touchstart", touchHandler, true);
+      document.addEventListener("touchmove", touchHandler, true);
+      document.addEventListener("touchend", touchHandler, true);
+      document.addEventListener("touchcancel", touchHandler, true);
+      document.addEventListener("touchleave", touchHandler, true);
+      document.addEventListener("mousedown", mouseDownHandler, true);
+      document.addEventListener("mousemove", mouseMoveHandler, true);
+      document.addEventListener("mouseup", mouseUpHandler, true);
+
+      resizeGameAreaService.setWidthToHeight(0.5);
+
+      function dragDone(row, col) {
+        $rootScope.$apply(function () {
+          var msg = "Dragged piece " + draggingStartedRowCol.row + "x" + draggingStartedRowCol.col + " to square " + row + "x" + col;
+          $log.info(msg);
+          $scope.msg = msg;
+          // Update piece in board
+          $scope.board[draggingStartedRowCol.row][draggingStartedRowCol.col] = null;
+          $scope.board[row][col] = 'O';
         });
       }
 
@@ -79,56 +157,56 @@
         return ((row+col)%2)==0;
       }
 
+      function getIntegersTill(number) {
+        var res = [];
+        for (var i = 0; i < number; i++) {
+          res.push(i);
+        }
+        return res;
+      }
 
-      resizeGameAreaService.setWidthToHeight(1);
+      function getInitialBoard() {
+        var board = [];
+        for (var row = 0; row < rowsNum; row++) {
+          board[row] = [];
+          for (var col = 0; col < colsNum; col++) {
+            board[row][col] = (row == 0 || row == 13) && !isWhiteSquare(row,col) ? "O" : null;
+          }
+        }
+        return board;
+      }
 
+      $scope.rows = getIntegersTill(rowsNum);
+      $scope.cols = getIntegersTill(colsNum);
+      $scope.rowsNum = rowsNum;
+      $scope.colsNum = colsNum;
       $scope.getSquareClass = function (row, col) {
         var isBlack = !isWhiteSquare(row,col);
         return {
-          droppableClass: isBlack,
           whiteSquare: !isBlack,
           blackSquare: isBlack
         };
       };
+      $scope.board = getInitialBoard();
       $scope.isPieceShown = function (row, col) {
-        return (row == 0 || row == 13) && !isWhiteSquare(row,col);
+        return $scope.board[row][col] === "O";
       };
-      $scope.getPieceClass = function (row, col) {
-        return {draggableClass: $scope.isPieceShown(row, col)};
-      };
-
-      // Letting angular create all the DOM elements.
-      $timeout(function () {
-        if ($("#Square0x0").length !== 1) {
-          throw new Error("Angular still haven't created div with id #Square0x0");
-        }
-        setDraggable($(".draggableClass"));
-        setDroppable($(".droppableClass"));
-      }, 0);
 
     }]);
   </script>
   <script src="http://yoav-zibin.github.io/emulator/resizeGameAreaService.js"></script>
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
   <style>
-  .draggableClass {}
-  .droppableClass {}
   .whiteSquare {
     background: white;
   }
   .blackSquare {
     background: black;
   }
-  .piece {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    z-index: 20;
-  }
   </style>
 </head>
 <body ng-controller="Ctrl">
-  {{msg}}
+  <div style="position:absolute; z-index: 60; color: red;">{{msg}}</div>
   <div id="gameArea">
 
     <svg id="draggingLines" width="100%" height="100%"
@@ -145,18 +223,17 @@
             stroke-width="1%"/>
     </svg>
 
-    <div ng-repeat="row in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]"
-        style="position:absolute; top:{{row * 5}}%; left:0; width:100%; height:5%;">
-      <div ng-repeat="col in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]"
-        style="position:absolute; top:0; left:{{col * 5}}%; width:5%; height:100%;"
-        id="Square{{row}}x{{col}}"
+    <div ng-repeat="row in rows"
+        style="position:absolute; top:{{row * 100 / rowsNum}}%; left:0; width:100%; height:{{100 / rowsNum}}%;">
+      <div ng-repeat="col in cols"
+        style="position:absolute; top:0; left:{{col * 100 / colsNum}}%; width:{{100 / colsNum}}%; height:100%;"
         ng-class = "getSquareClass(row, col)">
         <svg width="100%" height="100%"
+            style="position:absolute;"
             ng-show="isPieceShown(row, col)"
-            id="Piece{{row}}x{{col}}"
-            ng-class = "getPieceClass(row, col)">
+            id="MyPiece{{row}}x{{col}}">
           <circle cx="50%" cy="50%" r="40%"
-          stroke="green" stroke-width="4" fill="yellow" />
+            stroke="green" stroke-width="4" fill="yellow" />
         </svg>
       </div>
     </div>
