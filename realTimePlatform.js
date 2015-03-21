@@ -40,8 +40,8 @@ angular.module('myApp', [])
       gotGameReadys++;
     } else if (message.sendReliableMessage || message.sendUnreliableMessage) {
       var msg = message.sendReliableMessage ? message.sendReliableMessage : message.sendUnreliableMessage;
-      console.log(source, source === document.getElementById("game_iframe0").contentWindow, source === document.getElementById("game_iframe0"));
-      //sendMessageTo(, {gotMessage: {fromPlayerIndex, message})});
+      var fromIndex = source === document.getElementById("game_iframe0").contentWindow ? 0 : 1;
+      sendMessageTo(1 - fromIndex, {gotMessage: {fromPlayerIndex: fromIndex, message: msg}});
     } else {
       throw new Error("Platform got: " + angular.toJson(message, true));
     }

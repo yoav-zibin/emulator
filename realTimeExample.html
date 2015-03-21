@@ -11,13 +11,19 @@
     .controller('Ctrl',
         function ($scope, $log, realTimeService) {
       'use strict';
+
+      $scope.isOngoing = false;
+      $scope.isSinglePlayer = false;
       function gotStartMatch(params) {
+        $scope.isOngoing = true;
+        $scope.isSinglePlayer = params.playersInfo.length === 1;
         $scope.startMatchParams = angular.toJson(params);
       }
-      function gotMessage(message) {
-        $scope.lastMessage = message;
+      function gotMessage(params) {
+        $scope.lastMessage = angular.toJson(params);
       }
       function gotEndMatch(endMatchScores) {
+        $scope.isOngoing = false;
         $scope.endMatchScores = angular.toJson(endMatchScores);
       }
       $scope.nextMessage = 'Any string';
@@ -29,6 +35,7 @@
         realTimeService.sendUnreliableMessage($scope.nextMessage);
       };
       $scope.endMatch = function () {
+        $scope.isOngoing = false;
         realTimeService.endMatch(angular.fromJson($scope.endMatchScores));
         $scope.endMatchScores = '';
         $scope.startMatchParams = '';
@@ -50,11 +57,11 @@
   <input type="text" style="width:100%" ng-model="lastMessage" readonly></input><br>
   Enter your message:<br>
   <input type="text" style="width:100%" ng-model="nextMessage"></input><br>
-  <button ng-click="sendReliableMessage()">Send reliable message</button>
-  <button ng-click="sendUnreliableMessage()">Send unreliable message</button>
+  <button ng-click="sendReliableMessage()"  ng-disabled="!isOngoing || isSinglePlayer">Send reliable message</button>
+  <button ng-click="sendUnreliableMessage()"  ng-disabled="!isOngoing || isSinglePlayer">Send unreliable message</button>
   <br>
   End match scores:<br>
   <input type="text" ng-model="endMatchScores"></input><br>
-  <button ng-click="endMatch()">End match!</button>
+  <button ng-click="endMatch()"  ng-disabled="!isOngoing">End match!</button>
 </body>
 </html>
