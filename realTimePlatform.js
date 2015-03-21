@@ -1,9 +1,8 @@
-'use strict';
-
 angular.module('myApp', [])
 .controller('PlatformCtrl',
     ["$sce", "$scope", "$rootScope", "$log", "$window", "$timeout", "platformMessageService",
       function ($sce, $scope, $rootScope, $log, $window, $timeout, platformMessageService) {
+  'use strict';
 
   var platformUrl = $window.location.search;
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;

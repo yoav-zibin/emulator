@@ -1,6 +1,6 @@
 function resizeMapArea(params) {
   'use strict';
-  
+
   var imageId = params.imageId;
   var mapId = params.mapId;
   var originalWidth = params.originalWidth;
@@ -22,10 +22,11 @@ function resizeMapArea(params) {
       var coords = areaElement.getAttribute("data-original-coords").split(',');
       var coordsPercent = [];
       for (var i = 0; i < coords.length; ++i) {
-        if (i % 2 === 0)
+        if (i % 2 === 0) {
           coordsPercent[i] = Math.round(coords[i] * widthScale);
-        else
+        } else {
           coordsPercent[i] = Math.round(coords[i] * heightScale);
+        }
       }
       //console.log("before=", coords, "after=", coordsPercent);
       areaElement.setAttribute("coords", coordsPercent.toString());

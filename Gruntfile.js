@@ -26,7 +26,11 @@ module.exports = function(grunt) {
         singleGroups: true,
         jasmine: true,
         jquery: true,
+        exported: {
+          resizeMapArea: false
+        },
         globals: {
+          handleDragEvent: false,
           module: false, // for Gruntfile.js
           exports: false, // for protractor.conf.js
           inject: false, // testing angular
@@ -35,7 +39,10 @@ module.exports = function(grunt) {
           browser: false, element: false, by: false, // Protractor
         },
       },
-      all: ['Gruntfile.js', 'stateService.js', 'gameService.js', 'messageService.js', 'alphaBetaService.js', 'resizeGameAreaService.js']
+      all: ['Gruntfile.js', 'stateService.js', 'gameService.js',
+          'messageService.js', 'alphaBetaService.js', 'resizeGameAreaService.js',
+          'examples/resizeMapArea.js', 'examples/drag_n_drop/dragAndDropListeners.js',
+          'platform.js', 'realTimePlatform.js', 'realTimeService.js']
     },
     concat: {
       options: {
