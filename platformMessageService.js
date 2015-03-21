@@ -5,9 +5,10 @@ angular.module('myApp')
     ["$window", "$log", "$rootScope",
       function($window, $log, $rootScope) {
   this.sendMessage = function (message, gameIframeId) {
-    $log.info("Platform sent message", message);
-    $window.document.getElementById(gameIframeId ? gameIframeId : "game_iframe")
-      .contentWindow.postMessage(message, "*");
+    var iframeId = gameIframeId ? gameIframeId : "game_iframe";
+    $log.info("Platform sent message", message, " to ", iframeId);
+    $window.document.getElementById(iframeId)
+        .contentWindow.postMessage(message, "*");
   };
   this.addMessageListener = function (listener) {
     $window.addEventListener("message", function (event) {
