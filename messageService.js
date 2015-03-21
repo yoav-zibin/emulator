@@ -1,5 +1,5 @@
 angular.module('myApp')
-  .service('messageService', 
+  .service('messageService',
       ["$window", "$log", "$rootScope",
         function($window, $log, $rootScope) {
 
@@ -21,5 +21,27 @@ angular.module('myApp')
           listener(message);
         });
       }, false);
+    };
+  }])
+  .factory('$exceptionHandler',
+      ["$window", "$log",
+        function ($window, $log) {
+
+    'use strict';
+
+    return function (exception, cause) {
+      $log.info("Game had an exception:", exception, cause);
+      var exceptionString = angular.toJson({exception: exception, cause: cause, lastMessage: $window.lastMessage}, true);
+      var message =
+          {
+            emailJavaScriptError:
+              {
+                gameDeveloperEmail: $window.gameDeveloperEmail,
+                emailSubject: "Error in game " + $window.location,
+                emailBody: exceptionString
+              }
+          };
+      $window.parent.postMessage(message, "*");
+      $window.alert(exceptionString);
     };
   }]);

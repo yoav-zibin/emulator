@@ -27,9 +27,9 @@
       });
     });
   </script>
-  <script src="http://yoav-zibin.github.io/emulator/gameService.js"></script>
-  <script src="http://yoav-zibin.github.io/emulator/messageService.js"></script>
-  <script src="http://yoav-zibin.github.io/emulator/stateService.js"></script>
+  <script src="gameService.js"></script>
+  <script src="messageService.js"></script>
+  <script src="stateService.js"></script>
 </head>
 <body style="height:100%; width:100%;" ng-cloak ng-controller="Ctrl">
 Last updateUI:<br>
@@ -38,7 +38,7 @@ Last updateUI:<br>
 Enter your move:<br>
 <textarea ng-model="nextMove" rows=3 cols=80>
 </textarea><br>
-  <button ng-click="sendMessage()">Send Server API message</button>
+  <button ng-click="sendMessage()">Send message</button>
 <br>
 Example operations:<br>
 <textarea rows=7 cols=80>

@@ -1,7 +1,7 @@
 angular.module('myApp')
 .service('gameService',
-    ["$window", "$log", "stateService", "messageService", "$exceptionHandler",
-      function($window, $log, stateService, messageService, $exceptionHandler) {
+    ["$window", "$log", "stateService", "messageService",
+      function($window, $log, stateService, messageService) {
 
     'use strict';
 
@@ -63,37 +63,6 @@ angular.module('myApp')
       }
     }
 
-    $window.addEventListener("keydown", function (event) {
-      if (event.shiftKey  && event.ctrlKey) {
-        if (event.keyCode === 66) {
-          var msg = "User pressed on Ctrl+Shift+B";
-          $exceptionHandler(new Error(msg), msg);
-        }
-      }
-    });
-
     this.makeMove = makeMove;
     this.setGame = setGame;
-}])
-.factory('$exceptionHandler',
-    ["$window", "$log",
-      function ($window, $log) {
-
-  'use strict';
-
-  return function (exception, cause) {
-    $log.info("Game had an exception:", exception, cause);
-    var exceptionString = angular.toJson({exception: exception, cause: cause, lastMessage: $window.lastMessage}, true);
-    var message =
-        {
-          emailJavaScriptError:
-            {
-              gameDeveloperEmail: $window.gameDeveloperEmail,
-              emailSubject: "Error in game " + $window.location,
-              emailBody: exceptionString
-            }
-        };
-    $window.parent.postMessage(message, "*");
-    $window.alert(exceptionString);
-  };
 }]);
