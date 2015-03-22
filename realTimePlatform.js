@@ -8,7 +8,7 @@ angular.module('myApp', [])
   var gameUrl = platformUrl.length > 1 ? platformUrl.substring(1) : null;
   if (gameUrl === null) {
     gameUrl = "http://yoav-zibin.github.io/emulator/realTimeExample.html";
-    console.log("You should pass the game url like this: ...platform.html?<GAME_URL> , e.g., http://yoav-zibin.github.io/emulator/platform.html?http://yoav-zibin.github.io/snake/index.html");
+    console.log("You should pass the game url like this: ...platform.html?<GAME_URL> , e.g., http://yoav-zibin.github.io/emulator/realTimePlatform.html?http://yoav-zibin.github.io/snake/index.html");
   }
   $scope.gameUrl = $sce.trustAsResourceUrl(gameUrl);
   $scope.simulateServerDelayMilliseconds = "1000";
