@@ -14,13 +14,12 @@ angular.module('myApp', [])
   $scope.simulateServerDelayMilliseconds = "1000";
   var gotGameReadys = 0;
   var isOngoing = false;
+  var messageQueues = [[], []];
 
-  function sendMessageNowTo(index, msg) {
-    platformMessageService.sendMessage(msg, "game_iframe" + index);
-  }
   function sendMessageTo(index, msg) {
+    messageQueues[index].push(msg);
     $timeout(function () {
-      sendMessageNowTo(index, msg);
+      platformMessageService.sendMessage(messageQueues[index].shift(), "game_iframe" + index);
     }, Number($scope.simulateServerDelayMilliseconds) * Math.random());
   }
   $scope.startNewMatch = function () {
@@ -29,13 +28,14 @@ angular.module('myApp', [])
     }
     if (isOngoing) {
       var endMsg = {gotEndMatch: [0, 0]};
-      sendMessageNowTo(0, endMsg);
-      sendMessageNowTo(1, endMsg);
+      sendMessageTo(0, endMsg);
+      sendMessageTo(1, endMsg);
     }
     isOngoing = true;
     var playersInfo = [{playerId: 42}, {playerId: 43}];
+    var matchId = "SomeMatchId" + Math.random();
     for (var index = 0; index < 2; index++) {
-      sendMessageTo(index, {gotStartMatch: {playersInfo: playersInfo, yourPlayerIndex: index}});
+      sendMessageTo(index, {gotStartMatch: {playersInfo: playersInfo, yourPlayerIndex: index, matchId: matchId}});
     }
   };
   $scope.getStatus = function () {
@@ -60,8 +60,8 @@ angular.module('myApp', [])
     } else if (message.endMatch) {
       isOngoing = false;
       var endMsg = {gotEndMatch: message.endMatch};
-      sendMessageNowTo(0, endMsg);
-      sendMessageNowTo(1, endMsg);
+      sendMessageTo(0, endMsg);
+      sendMessageTo(1, endMsg);
     } else {
       throw new Error("Platform got: " + angular.toJson(message, true));
     }

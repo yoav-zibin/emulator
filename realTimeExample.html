@@ -15,11 +15,16 @@
       $scope.isOngoing = false;
       $scope.isSinglePlayer = false;
       function gotStartMatch(params) {
+        //var yourPlayerIndex = params.yourPlayerIndex;
+        //var matchId = params.matchId;
+        var playersInfo = params.playersInfo;
         $scope.isOngoing = true;
-        $scope.isSinglePlayer = params.playersInfo.length === 1;
+        $scope.isSinglePlayer = playersInfo.length === 1;
         $scope.startMatchParams = angular.toJson(params);
       }
       function gotMessage(params) {
+        //var fromPlayerIndex = params.fromPlayerIndex;
+        //var message = params.message;
         $scope.lastMessage = angular.toJson(params);
       }
       function gotEndMatch(endMatchScores) {
@@ -50,7 +55,7 @@
   <script src="realTimeService.js"></script>
   <script src="messageService.js"></script>
 </head>
-<body style="height:100%; width:100%;" ng-cloak ng-controller="Ctrl">
+<body ng-cloak ng-controller="Ctrl">
   Start match params:<br>
   <input type="text" style="width:100%" ng-model="startMatchParams" readonly></input><br>
   Last got message:<br>

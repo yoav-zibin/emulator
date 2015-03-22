@@ -27,17 +27,24 @@ angular.module('myApp')
         messageService.addMessageListener(function (message) {
           $window.lastMessage = message;
           if (message.gotStartMatch) {
+            if (playersInfo) {
+              throw new Error("Got message.gotStartMatch before getting gotEndMatch");
+            }
             playersInfo = message.gotStartMatch.playersInfo;
             if (!playersInfo || !playersInfo.length) {
               throw new Error("Got message.gotStartMatch where playersInfo wasn't a non-empty array");
             }
             game.gotStartMatch(message.gotStartMatch);
           } else if (message.gotMessage) {
+            if (!playersInfo) {
+              return;
+            }
+            if (playersInfo.length <= 1) {
+              throw new Error("Got message.gotMessage in single-player.");
+            }
             game.gotMessage(message.gotMessage);
           } else if (message.gotEndMatch) {
-            if (!playersInfo) {
-              throw new Error("Got gotEndMatch without getting gotStartMatch");
-            }
+            playersInfo = null;
             game.gotEndMatch(message.gotEndMatch);
           } else {
             throw new Error("Unknown message: " + angular.toJson(message));
@@ -51,38 +58,36 @@ angular.module('myApp')
       $timeout(function () {
         $log.info("Calling game.gotStartMatch");
         playersInfo = [{playerId: 42}];
-        game.gotStartMatch({playersInfo: playersInfo, yourPlayerIndex: 0});
+        game.gotStartMatch({playersInfo: playersInfo, yourPlayerIndex: 0, matchId: "someMatchIdForRandomSeed"});
       }, 2000);
     }
 
-    function sendReliableMessage(msg) {
+    function checkSendMessage(msg) {
       if (!msg || typeof msg !== "string") {
         throw new Error("When calling realTimeService.sendReliableMessage(message), " +
             "you must pass a non-empty string as the message.");
       }
+      if (msg.length >= 1000) {
+        console.log("CAREFUL: Maximum message length is 1000, but you passed a message of length " +
+            msg.length + 
+            ". The platform will try to zip the message, but if it is still big then the match will be ended in a tie");
+      }
       if (!playersInfo) {
-        throw new Error("You must not call realTimeService.sendReliableMessage(message) before getting game.startMatch");
+        throw new Error("You must not send a message before getting game.startMatch");
       }
       if (isLocalTesting || playersInfo.length === 1) {
-        throw new Error("You must not call realTimeService.sendReliableMessage(message) when a single player is playing.");
-      } else {
-        messageService.sendMessage({sendReliableMessage: msg});
+        throw new Error("You must not send a message when a single player is playing.");
       }
     }
 
+    function sendReliableMessage(msg) {
+      checkSendMessage(msg);
+      messageService.sendMessage({sendReliableMessage: msg});
+    }
+
     function sendUnreliableMessage(msg) {
-      if (!msg || typeof msg !== "string") {
-        throw new Error("When calling realTimeService.sendUnreliableMessage(message), " +
-            "you must pass a non-empty string as the message.");
-      }
-      if (!playersInfo) {
-        throw new Error("You must not call realTimeService.sendUnreliableMessage(message) before getting game.startMatch");
-      }
-      if (isLocalTesting || playersInfo.length === 1) {
-        throw new Error("You must not call realTimeService.sendUnreliableMessage(message) when a single player is playing.");
-      } else {
-        messageService.sendMessage({sendUnreliableMessage: msg});
-      }
+      checkSendMessage(msg);
+      messageService.sendMessage({sendUnreliableMessage: msg});
     }
 
     function endMatch(endMatchScores) {
@@ -93,10 +98,11 @@ angular.module('myApp')
         throw new Error("When calling realTimeService.endMatch(endMatchScores), " +
             "you must pass an array of the same length as the number of players in gotStartMatch.");
       }
+      playersInfo = null;
       if (isLocalTesting) {
         $timeout(function () {
+          $log.info("Calling game.gotEndMatch");
           game.gotEndMatch(endMatchScores);
-          playersInfo = null;
           sendLocalTestingStartMatch();
         }, 1000);
       } else {
