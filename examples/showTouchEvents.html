@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<!-- build:[manifest] index.appcache -->
+<html lang="en">
+<!-- /build -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
+  <script>
+  var randomId = Math.floor(100 * Math.random());
+  function recordEvent(event) {
+    console.log("MyId=", randomId, event);
+    var touch = event.changedTouches[0];
+
+    var msg = event.type + " #changedTouches" + (event.changedTouches.length) + "\n";
+    document.getElementById("gameArea").value += msg;
+  }
+
+  document.addEventListener("touchstart", recordEvent, true);
+  document.addEventListener("touchmove", recordEvent, true);
+  document.addEventListener("touchend", recordEvent, true);
+  document.addEventListener("touchcancel", recordEvent, true);
+  document.addEventListener("touchleave", recordEvent, true);
+  </script>
+</head>
+<body ng-cloak ng-controller="Ctrl">
+  <textarea style="width:100%; height:100%;" id="gameArea"></textarea>
+</body>
+</html>
