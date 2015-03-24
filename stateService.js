@@ -20,6 +20,9 @@ angular.module('myApp')
   var playMode = location.search === "?onlyAIs" ? "onlyAIs"
       : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer" : "passAndPlay"; // Default play mode
 
+  var randomSeed;
+  var moveNumber;
+
   // Global settings
   $rootScope.settings = {};
   $rootScope.settings.simulateServerDelayMilliseconds = 0;
@@ -30,6 +33,10 @@ angular.module('myApp')
       setPlayers();
       sendUpdateUi();
     }
+  }
+
+  function setRandomSeed(_randomSeed) {
+    randomSeed = _randomSeed;
   }
 
   function setPlayers() {
@@ -57,6 +64,7 @@ angular.module('myApp')
     turnIndexBeforeMove = 0;
     turnIndex = 0; // can be -1 in the last updateUI after the game ended.
     endMatchScores = null;
+    moveNumber = 0;
   }
 
   function startNewMatch() {
@@ -236,6 +244,8 @@ angular.module('myApp')
       turnIndexBeforeMove: turnIndexBeforeMove,
       turnIndex: turnIndex,
       endMatchScores: endMatchScores,
+      moveNumber: moveNumber,
+      randomSeed: randomSeed,
       lastMove: lastMove,
       lastState: lastState,
       currentState: currentState,
@@ -253,6 +263,8 @@ angular.module('myApp')
     turnIndexBeforeMove = data.turnIndexBeforeMove;
     turnIndex = data.turnIndex;
     endMatchScores = data.endMatchScores;
+    moveNumber = data.moveNumber ? data.moveNumber : 0;
+    randomSeed = data.randomSeed;
     lastMove = data.lastMove;
     lastState = data.lastState;
     currentState = data.currentState;
@@ -310,6 +322,8 @@ angular.module('myApp')
         yourPlayerIndex : getYourPlayerIndex(),
         playersInfo : playersInfo,
         playMode: playMode,
+        moveNumber: moveNumber,
+        randomSeed: randomSeed,
         endMatchScores: endMatchScores
       });
   }
@@ -339,6 +353,10 @@ angular.module('myApp')
     turnIndexBeforeMove = turnIndex;
     turnIndex = -1;
     lastMove = operations;
+    moveNumber++;
+    if (randomSeed) {
+      Math.seedrandom(randomSeed + moveNumber); // Math.random is used only in processApiOperation
+    }
     setTurnOrEndMatchCount = 0;
     for (var i = 0; i < lastMove.length; i++) {
       processApiOperation(lastMove[i]);
@@ -414,6 +432,7 @@ angular.module('myApp')
   this.startNewMatch = startNewMatch;
   this.init = init;
   this.setPlayMode = setPlayMode;
+  this.setRandomSeed = setRandomSeed;
   this.getMatchState = getMatchState;
   this.setMatchState = setMatchState;
 }]);
