@@ -30,8 +30,8 @@ angular.module('myApp')
     'use strict';
 
     return function (exception, cause) {
-      $log.info("Game had an exception:", exception, cause);
-      var exceptionString = angular.toJson({exception: exception, cause: cause, lastMessage: $window.lastMessage}, true);
+      $log.error("Game had an exception:", exception, cause);
+      var exceptionString = angular.toJson({exception: exception, stackTrace: exception.stack, cause: cause, lastMessage: $window.lastMessage}, true);
       var message =
           {
             emailJavaScriptError:
@@ -42,6 +42,6 @@ angular.module('myApp')
               }
           };
       $window.parent.postMessage(message, "*");
-      $window.alert(exceptionString);
+      throw exception;
     };
   }]);
