@@ -446,8 +446,27 @@ angular.module('myApp')
     var isLocalTesting = $window.parent === $window ||
         $window.location.search === "?test";
 
+    // We verify that you call makeMove at most once for every updateUI (and only when it's your turn)
+    var lastUpdateUI = null;
+    function passUpdateUI(updateUI) {
+      return function (params) {
+        lastUpdateUI = params;
+        updateUI(params);
+      };
+    }
+
     function makeMove(move) {
       $log.info(["Making move:", move]);
+      if (!lastUpdateUI) {
+        throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
+      }
+      var wasYourTurn = lastUpdateUI.turnIndexAfterMove >= 0 && // game is ongoing
+          lastUpdateUI.yourPlayerIndex === lastUpdateUI.turnIndexAfterMove; // it's my turn
+      if (!wasYourTurn) {
+        throw new Error("Game called makeMove when it wasn't your turn: yourPlayerIndex=" + lastUpdateUI.yourPlayerIndex + " turnIndexAfterMove=" + lastUpdateUI.turnIndexAfterMove);
+      }
+      lastUpdateUI = null; // to make sure you don't call makeMove until you get the next updateUI.
+
       if (isLocalTesting) {
         stateService.makeMove(move);
       } else {
@@ -465,6 +484,7 @@ angular.module('myApp')
 
     function setGame(game) {
       $window.gameDeveloperEmail = game.gameDeveloperEmail;
+      game.updateUI = passUpdateUI(game.updateUI);
       if (isLocalTesting) {
         stateService.setGame(game);
       } else {
@@ -480,6 +500,7 @@ angular.module('myApp')
             }
             messageService.sendMessage({isMoveOkResult: isMoveOkResult});
           } else if (message.updateUI !== undefined) {
+            lastUpdateUI = message.updateUI;
             updateUI(message.updateUI);
           }
         });
@@ -490,6 +511,7 @@ angular.module('myApp')
         messageService.sendMessage({gameReady : game});
 
         // Show an empty board to a viewer (so you can't perform moves).
+        $log.info("Passing a 'fake' updateUI message in order to show an empty board to a viewer (so you can NOT perform moves)");
         updateUI({
           move : [],
           turnIndexBeforeMove : 0,
