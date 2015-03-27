@@ -64,6 +64,7 @@ module.exports = function(grunt) {
       my_target: {
         files: {
           'angular-translate/angular-translate.2.6.1.min.js': ['angular-translate/angular-translate.2.6.1.js'],
+          'dist/dragAndDropListeners.min.js': ['examples/drag_n_drop/dragAndDropListeners.js'],
           'dist/gameServices.min.js': ['dist/gameServices.js'],
           'dist/realTimeServices.min.js': ['dist/realTimeServices.js'],
           'dist/stateService.min.js': ['stateService.js'], // In my mega-game, I don't want the angular error catcher (that passes emailJavaScriptError to the parent!)
