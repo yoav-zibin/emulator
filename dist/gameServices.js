@@ -474,6 +474,9 @@ angular.module('myApp')
       if (!wasYourTurn) {
         throw new Error("Game called makeMove when it wasn't your turn: yourPlayerIndex=" + lastUpdateUI.yourPlayerIndex + " turnIndexAfterMove=" + lastUpdateUI.turnIndexAfterMove);
       }
+      if (!move || !move.length) {
+        throw new Error("Game called makeMove with an empty move=" + move);
+      }
       lastUpdateUI = null; // to make sure you don't call makeMove until you get the next updateUI.
 
       if (isLocalTesting) {
