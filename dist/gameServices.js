@@ -96,7 +96,6 @@ angular.module('myApp')
   function throwError() {
     $log.error("Throwing an error with these arguments=", arguments);
     var msg = Array.prototype.join.call(arguments, ", ");
-    $window.alert("Error: " + msg);
     throw new Error(msg);
   }
 
