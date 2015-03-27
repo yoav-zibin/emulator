@@ -41,7 +41,9 @@ angular.module('myApp')
 
   function setPlayers() {
     playersInfo = [];
-    for (var i = 0; i < game.maxNumberOfPlayers; i++) {
+    var actualNumberOfPlayers =
+        randomFromTo(game.minNumberOfPlayers, game.maxNumberOfPlayers + 1);
+    for (var i = 0; i < actualNumberOfPlayers; i++) {
       var playerId =
         playMode === "onlyAIs" ||
           i !== 0 && playMode === "playAgainstTheComputer" ?
@@ -146,11 +148,18 @@ angular.module('myApp')
     var keysCopy = keys.slice(0);
     var result = [];
     while (keysCopy.length >= 1) {
-      var index = Math.floor(Math.random() * keysCopy.length);
+      var index = randomFromTo(0, keysCopy.length);
       var removed = keysCopy.splice(index, 1);
       result.push(removed);
     }
     return result;
+  }
+
+  function randomFromTo(from, to) {
+    if (!from || !to || from >= to) {
+      throw new Error("In randomFromTo(from,to), you must have from<to, but from=" + from + " to=" + to);
+    }
+    return Math.floor(Math.random() * (to - from) + from);
   }
 
   function processApiOperation(operation) {
@@ -180,7 +189,7 @@ angular.module('myApp')
       if (isNull(key) || isNull(from) || isNull(to)) {
         throwError("Fields key, from, and to, in SetRandomInteger operation must be non null. operation=" + angular.toJson(operation, true));
       }
-      var randomValue = Math.floor(Math.random() * (to - from) + from);
+      var randomValue = randomFromTo(from, to);
       currentState[key] = randomValue;
       currentVisibleTo[key] = null;
     } else if (!isNull(operation.setVisibility)) {
