@@ -156,7 +156,7 @@ angular.module('myApp')
   }
 
   function randomFromTo(from, to) {
-    if (!from || !to || from >= to) {
+    if (isNull(from) || isNull(to) || from >= to) {
       throw new Error("In randomFromTo(from,to), you must have from<to, but from=" + from + " to=" + to);
     }
     return Math.floor(Math.random() * (to - from) + from);
