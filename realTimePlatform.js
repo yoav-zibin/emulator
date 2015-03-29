@@ -58,6 +58,9 @@ angular.module('myApp', [])
       }
       sendMessageTo(1 - fromIndex, {gotMessage: {fromPlayerIndex: fromIndex, message: msg}});
     } else if (message.endMatch) {
+      if (!isOngoing) {
+        return;
+      }
       isOngoing = false;
       var endMsg = {gotEndMatch: message.endMatch};
       sendMessageTo(0, endMsg);
