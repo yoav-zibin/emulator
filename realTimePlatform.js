@@ -33,9 +33,9 @@ angular.module('myApp', [])
     }
     isOngoing = true;
     var playersInfo = [{playerId: 42}, {playerId: 43}];
-    var matchId = "SomeMatchId" + Math.random();
+    var randomSeed = "SomeRandomSeed" + Math.random();
     for (var index = 0; index < 2; index++) {
-      sendMessageTo(index, {gotStartMatch: {playersInfo: playersInfo, yourPlayerIndex: index, matchId: matchId}});
+      sendMessageTo(index, {gotStartMatch: {playersInfo: playersInfo, yourPlayerIndex: index, randomSeed: randomSeed}});
     }
   };
   $scope.getStatus = function () {

@@ -755,7 +755,7 @@ angular.module('myApp')
   return {alphaBetaDecision: alphaBetaDecision};
 }]);
 ;angular.module('myApp')
-  .service('resizeGameAreaService', 
+  .service('resizeGameAreaService',
     ['$window', '$log',
       function($window, $log) {
 
@@ -767,8 +767,10 @@ angular.module('myApp')
 
     function setWidthToHeight(_widthToHeight) {
       widthToHeight = _widthToHeight;
+      oldSizes = null;
       rescale();
     }
+    
     function round2(num) {
       return Math.round(num * 100) / 100;
     }

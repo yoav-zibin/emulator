@@ -23,7 +23,6 @@ module.exports = function(grunt) {
         nonbsp: true,
         nonew: true,
         notypeof: true,
-        singleGroups: true,
         jasmine: true,
         jquery: true,
         exported: {
@@ -42,7 +41,7 @@ module.exports = function(grunt) {
       all: ['Gruntfile.js', 'stateService.js', 'gameService.js',
           'messageService.js', 'alphaBetaService.js', 'resizeGameAreaService.js',
           'examples/resizeMapArea.js', 'examples/drag_n_drop/dragAndDropListeners.js',
-          'platform.js', 'realTimePlatform.js', 'realTimeService.js']
+          'platform.js', 'realTimePlatform.js', 'realTimeService.js', 'realTimeExample.js']
     },
     concat: {
       options: {

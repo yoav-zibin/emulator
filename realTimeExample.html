@@ -6,67 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
-  <script>
-  angular.module('myApp', [])
-    .controller('Ctrl',
-        function ($scope, $log, realTimeService) {
-      'use strict';
-
-      $scope.isOngoing = false;
-      $scope.isSinglePlayer = false;
-      function gotStartMatch(params) {
-        //var yourPlayerIndex = params.yourPlayerIndex;
-        //var matchId = params.matchId;
-        var playersInfo = params.playersInfo;
-        $scope.isOngoing = true;
-        $scope.isSinglePlayer = playersInfo.length === 1;
-        $scope.startMatchParams = angular.toJson(params);
-      }
-      function gotMessage(params) {
-        //var fromPlayerIndex = params.fromPlayerIndex;
-        //var message = params.message;
-        $scope.lastMessage = angular.toJson(params);
-      }
-      function gotEndMatch(endMatchScores) {
-        $scope.isOngoing = false;
-        $scope.endMatchScores = angular.toJson(endMatchScores);
-      }
-      $scope.nextMessage = 'Any string';
-      $scope.endMatchScores = '[1, 0]';
-      $scope.sendReliableMessage = function () {
-        realTimeService.sendReliableMessage($scope.nextMessage);
-      };
-      $scope.sendUnreliableMessage = function () {
-        realTimeService.sendUnreliableMessage($scope.nextMessage);
-      };
-      $scope.endMatch = function () {
-        $scope.isOngoing = false;
-        realTimeService.endMatch(angular.fromJson($scope.endMatchScores));
-        $scope.endMatchScores = '';
-        $scope.startMatchParams = '';
-      };
-      realTimeService.setGame({
-        gotStartMatch: gotStartMatch,
-        gotMessage: gotMessage,
-        gotEndMatch: gotEndMatch
-      });
-    });
-  </script>
+  <script src="realTimeExample.js"></script>
   <script src="realTimeService.js"></script>
+  <script src="resizeGameAreaService.js"></script>
   <script src="messageService.js"></script>
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.11/seedrandom.min.js'></script>
 </head>
-<body ng-cloak ng-controller="Ctrl">
-  Start match params:<br>
-  <input type="text" style="width:100%" ng-model="startMatchParams" readonly></input><br>
-  Last got message:<br>
-  <input type="text" style="width:100%" ng-model="lastMessage" readonly></input><br>
-  Enter your message:<br>
-  <input type="text" style="width:100%" ng-model="nextMessage"></input><br>
-  <button ng-click="sendReliableMessage()"  ng-disabled="!isOngoing || isSinglePlayer">Send reliable message</button>
-  <button ng-click="sendUnreliableMessage()"  ng-disabled="!isOngoing || isSinglePlayer">Send unreliable message</button>
-  <br>
-  End match scores:<br>
-  <input type="text" ng-model="endMatchScores"></input><br>
-  <button ng-click="endMatch()"  ng-disabled="!isOngoing">End match!</button>
+<body>
 </body>
 </html>
