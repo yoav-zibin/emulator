@@ -28,9 +28,9 @@
   }
 
   function handleEvent(event, type, clientX, clientY) {
-    event.preventDefault();
+    event.preventDefault(); // Prevents generating mouse events for touch.
     console.log("handleDragEvent:", type, clientX, clientY);
-    handleDragEvent(type, clientX, clientY);
+    handleDragEvent(type, clientX, clientY, event);
   }
 
   document.addEventListener("touchstart", touchHandler, true);
