@@ -509,8 +509,6 @@ angular.module('myApp')
           windowWidth: windowWidth,
           windowHeight: windowHeight
       };
-      // Take 5% margin (so the game won't touch the end of the screen)
-      var keepMargin = 0.05;
 
       var gameArea = doc.getElementById('gameArea');
       if (windowWidth === 0 || windowHeight === 0) {
@@ -531,10 +529,14 @@ angular.module('myApp')
           " so setting gameArea size to " + windowWidth + "x" + windowHeight +
           " because widthToHeight=" + widthToHeight);
 
+      // Take 5% margin (so the game won't touch the end of the screen)
+      var keepMargin = 0.95;
+      windowWidth *= keepMargin;
+      windowHeight *= keepMargin;
       var marginTop = -windowHeight / 2;
       var marginLeft = -windowWidth / 2;
-      gameArea.style.width = ((1 - keepMargin) * windowWidth) + 'px';
-      gameArea.style.height = ((1 - keepMargin) * windowHeight) + 'px';
+      gameArea.style.width = windowWidth + 'px';
+      gameArea.style.height = windowHeight + 'px';
       gameArea.style.marginTop = '' + marginTop + 'px';
       gameArea.style.marginLeft = '' + marginLeft + 'px';
       gameArea.style.position = "absolute";
