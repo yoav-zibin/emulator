@@ -656,7 +656,7 @@ angular.module('myApp')
       if (nextBestScore === Number.POSITIVE_INFINITY ||
           nextBestScore === Number.NEGATIVE_INFINITY) {
         var isWin = nextBestScore ===
-            playerIndex === 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+            (playerIndex === 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY);
         console.log("Discovered that AI is going to " + 
             (isWin ? "win" : "lose") + " with maxDepth=" + maxDepth);
         if (getDebugStateToString != null) {
