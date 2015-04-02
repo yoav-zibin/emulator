@@ -33,12 +33,19 @@
     handleDragEvent(type, clientX, clientY, event);
   }
 
-  document.addEventListener("touchstart", touchHandler, true);
-  document.addEventListener("touchmove", touchHandler, true);
-  document.addEventListener("touchend", touchHandler, true);
-  document.addEventListener("touchcancel", touchHandler, true);
-  document.addEventListener("touchleave", touchHandler, true);
-  document.addEventListener("mousedown", mouseDownHandler, true);
-  document.addEventListener("mousemove", mouseMoveHandler, true);
-  document.addEventListener("mouseup", mouseUpHandler, true);
+  window.addEventListener("load", function () {
+    var gameArea = document.getElementById("gameArea");
+    if (!gameArea) {
+      throw new Error("You must have <div id='gameArea'>...</div>");
+    }
+    gameArea.addEventListener("touchstart", touchHandler, true);
+    gameArea.addEventListener("touchmove", touchHandler, true);
+    gameArea.addEventListener("touchend", touchHandler, true);
+    gameArea.addEventListener("touchcancel", touchHandler, true);
+    gameArea.addEventListener("touchleave", touchHandler, true);
+    gameArea.addEventListener("mousedown", mouseDownHandler, true);
+    gameArea.addEventListener("mousemove", mouseMoveHandler, true);
+    gameArea.addEventListener("mouseup", mouseUpHandler, true);
+  }, false );
+  
 })();
