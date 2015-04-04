@@ -432,8 +432,10 @@ angular.module('myApp')
 
     'use strict';
 
+    var gameUrl = location.toString();
     this.sendMessage = function (message) {
       $log.info("Game sent message", message);
+      message.gameUrl = gameUrl;
       $window.parent.postMessage(message, "*");
     };
     this.addMessageListener = function (listener) {

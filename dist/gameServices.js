@@ -481,7 +481,7 @@ angular.module('myApp')
       if (isLocalTesting) {
         stateService.makeMove(move);
       } else {
-        messageService.sendMessage({makeMove: move, gameUrl: location.toString()});
+        messageService.sendMessage({makeMove: move});
       }
     }
 
@@ -506,9 +506,6 @@ angular.module('myApp')
           $window.lastMessage = message;
           if (message.isMoveOk !== undefined) {
             var isMoveOkResult = isMoveOk(message.isMoveOk);
-            if (isMoveOkResult !== true) {
-              isMoveOkResult = {gameUrl: location.toString(), isMoveOkResult: isMoveOkResult};
-            }
             messageService.sendMessage({isMoveOkResult: isMoveOkResult});
           } else if (message.updateUI !== undefined) {
             lastUpdateUI = message.updateUI;
@@ -547,8 +544,10 @@ angular.module('myApp')
 
     'use strict';
 
+    var gameUrl = location.toString();
     this.sendMessage = function (message) {
       $log.info("Game sent message", message);
+      message.gameUrl = gameUrl;
       $window.parent.postMessage(message, "*");
     };
     this.addMessageListener = function (listener) {
