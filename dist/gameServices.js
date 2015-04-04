@@ -656,7 +656,7 @@ angular.module('myApp')
           nextBestScore === Number.NEGATIVE_INFINITY) {
         var isWin = nextBestScore ===
             (playerIndex === 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY);
-        console.log("Discovered that AI is going to " + 
+        console.log("Discovered that AI is going to " +
             (isWin ? "win" : "lose") + " with maxDepth=" + maxDepth);
         if (getDebugStateToString != null) {
             console.log("Best state is " + getDebugStateToString(nextBestState));
@@ -699,21 +699,29 @@ angular.module('myApp')
   function getScoreForIndex0(
       startingState, playerIndex, getNextStates, getStateScoreForIndex0,
       getDebugStateToString, alphaBetaLimits, startTime, depth, alpha, beta) {
-    var states = getNextStates(startingState, playerIndex);
     var bestScore = null;
     var bestState = null;
+    if (isTimeout(alphaBetaLimits, startTime)) {
+      if (getDebugStateToString != null) {
+        console.log("Run out of time, just quitting from this traversal.");
+      }
+      return {bestScore: 0, bestState: null}; // This traversal is "ruined" anyway because we ran out of time.
+    }
+    if (depth === alphaBetaLimits.maxDepth) {
+      bestScore = getStateScoreForIndex0(startingState, playerIndex);
+      if (getDebugStateToString != null) {
+        console.log("Max depth reached, score is " + bestScore);
+      }
+      return {bestScore: bestScore, bestState: null};
+    }
+    var states = getNextStates(startingState, playerIndex);
     if (getDebugStateToString != null) {
       console.log(getDebugStateToString(startingState) + " has " + states.length + " next states");
     }
-    if (states.length === 0 ||
-        depth === alphaBetaLimits.maxDepth ||
-        isTimeout(alphaBetaLimits, startTime)) {
+    if (states.length === 0) {
       bestScore = getStateScoreForIndex0(startingState, playerIndex);
       if (getDebugStateToString != null) {
-        console.log(
-          (states.length === 0 ? "Terminal state"
-              : depth === alphaBetaLimits.maxDepth ? "Max depth reached"
-              : "Time limit reached") + ", score is " + bestScore);
+        console.log("Terminal state, score is " + bestScore);
       }
       return {bestScore: bestScore, bestState: null};
     }
