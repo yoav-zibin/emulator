@@ -329,6 +329,7 @@ angular.module('myApp')
   }
 
   function handleGotStartMatch(gotStartMatch) {
+    handleGotEndMatch(null); // stop all existing matches.
     playersInfo = gotStartMatch.playersInfo;
     if (!playersInfo || !playersInfo.length) {
       throw new Error("Got gotStartMatch where playersInfo wasn't a non-empty array");
