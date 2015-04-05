@@ -205,10 +205,33 @@ angular.module('myApp')
         throw new Error("createCanvasController should return a canvasController " +
             "with the methods: gotStartMatch, gotMessage, and gotEndMatch.");
       }
-      canvasControllers[i] = canvasController;
+      canvasControllers[i] = safeCanvasController(canvasController);
       canvasControllersMessageQueue[i] = [];
     }
     messagePasser.init();
+  }
+
+  function safeCanvasController(canvasController) {
+    var isOngoing = false;
+    function gotStartMatch(p) {
+      if (isOngoing) {
+        canvasController.gotEndMatch(null);
+      }
+      isOngoing = true;
+      canvasController.gotStartMatch(p);
+    }
+    function gotMessage(p) {
+      if (isOngoing) {
+        canvasController.gotMessage(p);
+      }
+    }
+    function gotEndMatch(p) {
+      if (isOngoing) {
+        canvasController.gotEndMatch(p);
+      }
+      isOngoing = false;
+    }
+    return {gotStartMatch: gotStartMatch, gotMessage: gotMessage, gotEndMatch: gotEndMatch};
   }
 
   function createSingleDeviceMatchController(playerIndex) {
