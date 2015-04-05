@@ -329,9 +329,6 @@ angular.module('myApp')
   }
 
   function handleGotStartMatch(gotStartMatch) {
-    if (playersInfo) {
-      throw new Error("Got message.gotStartMatch before getting gotEndMatch");
-    }
     playersInfo = gotStartMatch.playersInfo;
     if (!playersInfo || !playersInfo.length) {
       throw new Error("Got gotStartMatch where playersInfo wasn't a non-empty array");
@@ -377,11 +374,12 @@ angular.module('myApp')
   }
 
   function handleGotEndMatch(gotEndMatch) {
-    if (isSingleDevice) {
-      throw new Error("Got gotMessage when isSingleDevice");
-    }
+    // The user can cancel a single-device game
     playersInfo = null;
-    canvasControllers[0].gotEndMatch(gotEndMatch);
+    // Because of safeCanvasController, we can just send gotEndMatch to all controllers.
+    for (var i = 0; i < canvasControllers.length; i++) {
+      canvasControllers[i].gotEndMatch(gotEndMatch);
+    }
   }
 
   function handleMessage(message) {
