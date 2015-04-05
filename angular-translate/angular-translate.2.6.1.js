@@ -54,7 +54,7 @@ angular.module('myApp')
 
       if (window.localStorage) { // ADDED
         var data = window.localStorage.getItem(url);
-        console.log("Load translations from local-storage for ", url, " data=", data);
+        console.log("Load translations from local-storage for ", url);
         if (data) {
           resolve(data);
           // Loading the file to update localStorage
@@ -66,7 +66,7 @@ angular.module('myApp')
         params: ''
       }, options.$http)).success(function (data) {
         if (window.localStorage) { // ADDED
-          console.log("Storing translations for ", url, " data=", data);
+          console.log("Storing translations for ", url);
           window.localStorage.setItem(url, data);
         }
         resolve(data);
