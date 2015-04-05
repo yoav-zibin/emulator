@@ -151,7 +151,7 @@ angular.module('myApp')
       canvasController.gotMessage(msg.gotMessage);
     } else if (msg.gotStartMatch) {
       canvasController.gotStartMatch(msg.gotStartMatch);
-    } else if (msg.gotEndMatch) {
+    } else if (msg.gotEndMatch !== undefined) { // can be null
       canvasController.gotEndMatch(msg.gotEndMatch);
     } else {
       throw new Error("Unknown msg=" + angular.toJson(msg));
@@ -367,7 +367,7 @@ angular.module('myApp')
       handleGotStartMatch(message.gotStartMatch);
     } else if (message.gotMessage) {
       handleGotMessage(message.gotMessage);
-    } else if (message.gotEndMatch) {
+    } else if (message.gotEndMatch !== undefined) { // can be null
       handleGotEndMatch(message.gotEndMatch);
     } else {
       throw new Error("Unknown message: " + angular.toJson(message));
