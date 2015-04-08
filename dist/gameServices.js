@@ -446,8 +446,8 @@ angular.module('myApp')
 }]);
 ;angular.module('myApp')
 .service('gameService',
-    ["$window", "$log", "stateService", "messageService",
-      function($window, $log, stateService, messageService) {
+    ["$window", "$log", "stateService", "messageService", "$timeout",
+      function($window, $log, stateService, messageService, $timeout) {
 
     'use strict';
 
@@ -479,7 +479,9 @@ angular.module('myApp')
       lastUpdateUI = null; // to make sure you don't call makeMove until you get the next updateUI.
 
       if (isLocalTesting) {
-        stateService.makeMove(move);
+        $timeout(function () {
+          stateService.makeMove(move);
+        }, 100);
       } else {
         messageService.sendMessage({makeMove: move});
       }
