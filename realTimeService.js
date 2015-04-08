@@ -337,6 +337,9 @@ angular.module('myApp')
     if (playersInfo.length > maxPlayers) {
       throw new Error("Got gotStartMatch where playersInfo has more than 8 players!");
     }
+    if (!gotStartMatch.randomSeed) {
+      throw new Error("Got gotStartMatch without randomSeed!");
+    }
     isSingleDevice = gotStartMatch.yourPlayerIndex === undefined;
     changeCanvasesDispay(isSingleDevice ? playersInfo.length : 1);
     randomService.setSeed(gotStartMatch.randomSeed);
