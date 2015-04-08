@@ -192,7 +192,7 @@ angular.module('myApp')
     }
     canvases = [];
     canvasControllers = [];
-    document.body.innerHTML = bodyStr + '</div>';
+    document.body.innerHTML += bodyStr + '</div>';
     for (i = 0; i < maxPlayers; i++) {
       var canvas = document.getElementById("canvas" + i);
       if (!canvas) {
