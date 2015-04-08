@@ -6,6 +6,7 @@ angular.module('myApp')
     throw new Error("You forgot to include in your HTML: <script src='http://cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.11/seedrandom.min.js'></script>");
   }
   var originalRandom = Math.random;
+  var seededRandom = null;
   var randomValues = null;
   var seed = null;
 
@@ -13,6 +14,7 @@ angular.module('myApp')
     seed = _seed;
     randomValues = [];
     Math.seedrandom(seed);
+    seededRandom = Math.random;
     Math.random = function () {
       throw new Error("Do NOT use Math.random(); Instead, use randomService.random(randomIndex)");
     };
@@ -27,7 +29,7 @@ angular.module('myApp')
   this.random = function (randomIndex) {
     checkRandomIndex(randomIndex);
     for (var i = randomValues.length; i <= randomIndex; i++) {
-      randomValues[i] = originalRandom();
+      randomValues[i] = seededRandom();
     }
     return randomValues[randomIndex];
   };
