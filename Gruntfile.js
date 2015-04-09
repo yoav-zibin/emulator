@@ -41,7 +41,7 @@ module.exports = function(grunt) {
       all: ['Gruntfile.js', 'stateService.js', 'gameService.js',
           'messageService.js', 'alphaBetaService.js', 'resizeGameAreaService.js',
           'examples/resizeMapArea.js', 'examples/drag_n_drop/dragAndDropListeners.js',
-          'platform.js', 'realTimePlatform.js', 'realTimeService.js', 'realTimeExample.js']
+          'platform.js', 'realTimePlatform.js', 'realTimeService.js', 'realTimeSimpleService.js', 'realTimeExample.js']
     },
     concat: {
       options: {
@@ -55,6 +55,10 @@ module.exports = function(grunt) {
         src: ['realTimeService.js', 'messageService.js', 'resizeGameAreaService.js'],
         dest: 'dist/realTimeServices.js',
       },
+      realTimeSimple: {
+        src: ['realTimeSimpleService.js', 'messageService.js', 'resizeGameAreaService.js'],
+        dest: 'dist/realTimeSimpleServices.js',
+      },
     },
     uglify: {
       options: {
@@ -66,6 +70,7 @@ module.exports = function(grunt) {
           'dist/dragAndDropListeners.min.js': ['examples/drag_n_drop/dragAndDropListeners.js'],
           'dist/gameServices.min.js': ['dist/gameServices.js'],
           'dist/realTimeServices.min.js': ['dist/realTimeServices.js'],
+          'dist/realTimeSimpleServices.min.js': ['dist/realTimeSimpleServices.js'],
           'dist/stateService.min.js': ['stateService.js'], // In my mega-game, I don't want the angular error catcher (that passes emailJavaScriptError to the parent!)
         }
       }

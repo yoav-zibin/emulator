@@ -407,9 +407,9 @@ angular.module('myApp')
           "you must pass a non-empty string as the message.");
     }
     if (msg.length >= 1000) {
-      console.log("CAREFUL: Maximum message length is 1000, but you passed a message of length " +
+      console.error("CAREFUL: Maximum message length is 1000, but you passed a message of length " +
           msg.length +
-          ". The platform will try to zip the message, but if it is still big then the match will be ended in a tie");
+          ". The platform will try to zip the message, but if it is still big then we might send it in chunks or the match will be ended in a tie");
     }
     if (!playersInfo) {
       throw new Error("You must not send a message before getting game.startMatch");
