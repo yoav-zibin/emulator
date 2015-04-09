@@ -9,7 +9,7 @@
   <script>
   angular.module('myApp', [])
     .controller('Ctrl',
-        function ($rootScope, $scope, $log, realTimeSimpleService) {
+        function ($timeout, $scope, $log, realTimeSimpleService) {
     'use strict';
 
     $scope.lines = [];
@@ -23,13 +23,12 @@
         "playersInfo:",
         angular.toJson(playersInfo)
       ];
-      $rootScope.$apply();
 
-      setTimeout(function () {
+      $timeout(function () {
         realTimeSimpleService.sendReliableMessage('Reliable');
-        setTimeout(function () {
+        $timeout(function () {
           realTimeSimpleService.sendUnreliableMessage('Unreliable');
-          setTimeout(function () {
+          $timeout(function () {
             var endMatchScores = [];
             for (var i = 0; i < playersInfo.length; i++) {
               endMatchScores.push(42 + i);
@@ -45,13 +44,11 @@
       var fromPlayerIndex = params.fromPlayerIndex;
       var message = params.message;
       $scope.lines.push("msg=" + message + " from " + fromPlayerIndex);
-      $rootScope.$apply();
     }
 
     function gotEndMatch(endMatchScores) {
       $log.info("gotEndMatch:", endMatchScores);
       $scope.lines.push("end match scores=" + endMatchScores);
-      $rootScope.$apply();
     }
 
     realTimeSimpleService.init({
