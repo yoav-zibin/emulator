@@ -38,6 +38,16 @@ angular.module('myApp')
             file.suffix
           ].join('');
 
+
+      if (url === 'languages/en.js') {
+        if (!window.englishAngularTranslations) {
+          throw new Error("You must call $translateProvider.init([...])");
+        }
+        deferred.resolve(window.englishAngularTranslations);
+        return;
+      }
+
+
       var didCallResolve = false;
       function resolve(data) {
         if (didCallResolve) {
@@ -820,6 +830,21 @@ angular.module('myApp').provider('$translate', ['$STORAGE_KEY', '$windowProvider
   this.usePostCompiling = function (value) {
     $postCompilingEnabled = !(!value);
     return this;
+  };
+
+  this.init = function (availableLanguages) {
+    if (!window.angularTranslations) {
+      throw new Error("We forgot to include languages/en.js in our HTML");
+    }
+    window.englishAngularTranslations = window.angularTranslations;
+    this.translations('en', window.angularTranslations);
+    this.useStaticFilesLoader({
+        prefix: 'languages/',
+        suffix: '.js'
+      })
+      .registerAvailableLanguageKeys(availableLanguages)
+      .fallbackLanguage(['en'])
+      .determinePreferredLanguage();
   };
 
   /**
