@@ -517,7 +517,7 @@ angular.module('myApp')
       oldSizes = null;
       rescale();
     }
-    
+
     function round2(num) {
       return Math.round(num * 100) / 100;
     }
@@ -526,8 +526,10 @@ angular.module('myApp')
       if (widthToHeight === null) {
         return;
       }
-      var windowWidth = $window.innerWidth; // doc.body.clientWidth
-      var windowHeight = $window.innerHeight; // I saw cases where doc.body.clientHeight was 0.
+      var originalWindowWidth = $window.innerWidth; // doc.body.clientWidth
+      var originalWindowHeight = $window.innerHeight; // I saw cases where doc.body.clientHeight was 0.
+      var windowWidth = originalWindowWidth;
+      var windowHeight = originalWindowHeight;
       if (oldSizes !== null) {
         if (oldSizes.windowWidth === windowWidth &&
             oldSizes.windowHeight === windowHeight) {
@@ -562,15 +564,11 @@ angular.module('myApp')
       var keepMargin = 0.95;
       windowWidth *= keepMargin;
       windowHeight *= keepMargin;
-      var marginTop = -windowHeight / 2;
-      var marginLeft = -windowWidth / 2;
       gameArea.style.width = windowWidth + 'px';
       gameArea.style.height = windowHeight + 'px';
-      gameArea.style.marginTop = '' + marginTop + 'px';
-      gameArea.style.marginLeft = '' + marginLeft + 'px';
       gameArea.style.position = "absolute";
-      gameArea.style.left = "50%";
-      gameArea.style.top = "50%";
+      gameArea.style.left = ((originalWindowWidth - windowWidth)/2) + 'px';
+      gameArea.style.top = ((originalWindowHeight - windowHeight)/2) + 'px';
     }
 
     $window.onresize = rescale;
