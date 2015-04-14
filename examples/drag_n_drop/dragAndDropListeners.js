@@ -34,7 +34,8 @@
   }
 
   window.addEventListener("load", function () {
-    var gameArea = document.getElementById("gameArea");
+    var touchElementId = window.touchElementId ? window.touchElementId : "gameArea";
+    var gameArea = document.getElementById(touchElementId);
     if (!gameArea) {
       throw new Error("You must have <div id='gameArea'>...</div>");
     }
@@ -47,5 +48,5 @@
     gameArea.addEventListener("mousemove", mouseMoveHandler, true);
     gameArea.addEventListener("mouseup", mouseUpHandler, true);
   }, false );
-  
+
 })();
