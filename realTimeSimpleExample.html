@@ -9,9 +9,10 @@
   <script>
   angular.module('myApp', [])
     .controller('Ctrl',
-        function ($timeout, $scope, $log, realTimeSimpleService) {
+        function ($timeout, $scope, $log, realTimeSimpleService, resizeGameAreaService) {
     'use strict';
 
+    resizeGameAreaService.setWidthToHeight(1);
     $scope.lines = [];
     var isOngoing = false;
 
@@ -75,6 +76,8 @@
   <script src="messageService.js"></script>
 </head>
 <body ng-cloak ng-controller="Ctrl">
-  <div ng-repeat="line in lines track by $index">{{line}}</div>
+  <div id="gameArea">
+    <div ng-repeat="line in lines track by $index">{{line}}</div>
+  </div>
 </body>
 </html>

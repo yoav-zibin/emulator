@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Real-time game example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+
+  <script>
+  function log(msg) {
+    console.log(msg);
+    alert(msg);
+  }
+
+  function gotStartMatch(params) {
+    isOngoing = true;
+    var yourPlayerIndex = params.yourPlayerIndex;
+    var playersInfo = params.playersInfo;
+    var numberOfPlayers = playersInfo.length;
+    realTimeSimpleService.sendReliableMessage('Reliable');
+    realTimeSimpleService.sendUnreliableMessage('Unreliable');
+    log("gotStartMatch: yourPlayerIndex=" + yourPlayerIndex + " numberOfPlayers=" + numberOfPlayers);
+    var scores = [];
+    for (var i = 0; i < numberOfPlayers; i++) {
+      scores.push(42);
+    }
+    realTimeSimpleService.endMatch(scores);
+  }
+
+  function gotMessage(params) {
+    var fromPlayerIndex = params.fromPlayerIndex;
+    var message = params.message;
+    log("msg=" + message + " from " + fromPlayerIndex);
+  }
+
+  function gotEndMatch(endMatchScores) {
+    log("gotEndMatch:" + endMatchScores);
+  }
+
+  function setRealTimeSimpleService(realTimeSimpleService) {
+    window.realTimeSimpleService = realTimeSimpleService;
+    realTimeSimpleService.init({
+      gotStartMatch: gotStartMatch,
+      gotMessage: gotMessage,
+      gotEndMatch: gotEndMatch
+    });
+  }
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
+  <script>
+  angular.module('myApp', [])
+    .run(function (realTimeSimpleService, resizeGameAreaService) {
+    resizeGameAreaService.setWidthToHeight(1);
+    window.setRealTimeSimpleService(realTimeSimpleService);
+  });
+  </script>
+  <script src="http://yoav-zibin.github.io/emulator/dist/realTimeSimpleServices.min.js"></script>
+</head>
+<body ng-cloak ng-app="myApp">
+  <div id="gameArea">
+  </div>
+</body>
+</html>

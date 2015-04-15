@@ -198,9 +198,13 @@ angular.module('myApp')
 
     'use strict';
 
-    var doc = $window.document;
     var widthToHeight = null;
     var oldSizes = null;
+    var doc = $window.document;
+    var gameArea = doc.getElementById('gameArea');
+    if (!gameArea) {
+      throw new Error("You forgot to add to your <body> this div: <div id='gameArea'>...</div>");
+    }
 
     function setWidthToHeight(_widthToHeight) {
       widthToHeight = _widthToHeight;
@@ -231,7 +235,6 @@ angular.module('myApp')
           windowHeight: windowHeight
       };
 
-      var gameArea = doc.getElementById('gameArea');
       if (windowWidth === 0 || windowHeight === 0) {
         $log.info("Window width/height is 0 so hiding gameArea div.");
         gameArea.style.display = "none";
