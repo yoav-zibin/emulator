@@ -28,7 +28,15 @@
   }
 
   function handleEvent(event, type, clientX, clientY) {
-    event.preventDefault(); // Prevents generating mouse events for touch.
+    // http://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android
+    if (event.preventDefault) {
+      event.preventDefault(); // Also prevents generating mouse events for touch.
+    }
+    if (event.stopPropagation) {
+      event.stopPropagation();
+    }
+    event.cancelBubble = true;
+    event.returnValue = false;
     console.log("handleDragEvent:", type, clientX, clientY);
     handleDragEvent(type, clientX, clientY, event);
   }

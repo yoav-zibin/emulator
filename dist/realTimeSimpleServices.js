@@ -1,5 +1,4 @@
 angular.module('myApp')
-
 .service('realTimeSimpleService',
   ["$window", "$log", "$timeout", "messageService",
     function($window, $log, $timeout, messageService) {
