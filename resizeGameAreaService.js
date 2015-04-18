@@ -8,13 +8,14 @@ angular.module('myApp')
     var widthToHeight = null;
     var oldSizes = null;
     var doc = $window.document;
-    var gameArea = doc.getElementById('gameArea');
-    if (!gameArea) {
-      throw new Error("You forgot to add to your <body> this div: <div id='gameArea'>...</div>");
-    }
+    var gameArea;
 
     function setWidthToHeight(_widthToHeight) {
       widthToHeight = _widthToHeight;
+      gameArea = doc.getElementById('gameArea');
+      if (!gameArea) {
+        throw new Error("You forgot to add to your <body> this div: <div id='gameArea'>...</div>");
+      }
       oldSizes = null;
       rescale();
     }
