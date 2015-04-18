@@ -29,6 +29,7 @@
 
   function handleEvent(event, type, clientX, clientY) {
     // http://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android
+    // I also have:  touch-callout:none and user-select:none in main.css
     if (event.preventDefault) {
       event.preventDefault(); // Also prevents generating mouse events for touch.
     }
