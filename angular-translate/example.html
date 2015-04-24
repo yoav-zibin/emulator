@@ -9,36 +9,16 @@
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
   <script>
     angular.module('myApp', [])
-    .config(["$translateProvider",
-        function($translateProvider) {
-      $translateProvider.init(['en', 'de']);
-    }])
     .controller('Ctrl',
       ['$translate', '$scope', '$timeout',
       function($translate, $scope, $timeout) {
-        console.log("Creating Ctrl using: preferredLanguage=" + $translate.preferredLanguage() + " useLanguage=" + $translate.use());
-        $scope.getPreferredLanguage = function () {
-          return $translate.preferredLanguage();
-        };
-        $scope.getUseLanguage = function () {
-          return $translate.use();
-        };
-        $scope.changeLanguage = function (langKey) {
-          $translate.use(langKey);
-        };
-        $scope.someText1 = function () {
-          return $translate.instant('INTRO_TEXT');
-        };
-        $scope.someText2 = function () {
-          return $translate.instant('WITH_VALUES', {value: 42});
-        };
+        $scope.language = $translate.getLanguage();
+        $scope.someText1 = $translate('INTRO_TEXT');
+        $scope.someText2 = $translate('WITH_VALUES', {value: 42});
 
         // Test that missing translations throw an error that is caught by $exceptionHandler.
         $timeout(function () {
-          $translate('MISSING_TEXT2').then(function (translation) {
-            console.log('MISSING_TEXT2 is:' + translation);
-          });
-          console.log('MISSING_TEXT1 translation is: ' + $translate.instant('MISSING_TEXT1'));
+          console.log('MISSING_TEXT2 is:' + $translate('MISSING_TEXT2'));
         }, 0);
 
       }])
@@ -53,21 +33,18 @@
         };
       }]);
   </script>
-  <script src="angular-translate.2.6.1.js"></script>
-  <script src="languages/en.js"></script>
+
+  <script>
+  window.angularTranslationLanguages = ['en', 'de'];
+  </script>
+  <script src="angular-translate.js"></script>
 </head>
 <body ng-cloak ng-controller="Ctrl">
-  <pre>Example of I18N (getPreferredLanguage={{getPreferredLanguage()}}, getUseLanguage={{getUseLanguage()}}):</pre>
+  <pre>Example of I18N (language={{language}}):</pre>
+  <pre>{{someText1}}</pre>
+  <pre>{{someText2}}</pre>
   <pre>{{ 'HEADLINE' | translate }}</pre>
   <pre>{{ 'MISSING_TEXT3' | translate }}</pre>
   <pre>{{ 'WITH_VALUES' | translate:'{value: 5}' }}</pre>
-  <pre>{{someText1()}}</pre>
-  <pre>{{someText2()}}</pre>
-  <pre translate="HEADLINE"></pre>
-  <pre translate="WITH_VALUES" translate-values="{value: 5}"></pre>
-  <div>
-    <button ng-click="changeLanguage('de')" translate="BUTTON_TEXT_DE"></button>
-    <button ng-click="changeLanguage('en')" translate="BUTTON_TEXT_EN"></button>
-  </div>
 </body>
 </html>

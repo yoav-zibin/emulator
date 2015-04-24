@@ -40,6 +40,7 @@ module.exports = function(grunt) {
       },
       all: ['Gruntfile.js', 'stateService.js', 'gameService.js',
           'messageService.js', 'alphaBetaService.js', 'resizeGameAreaService.js',
+          'angular-translate/angular-translate.js',
           'examples/resizeMapArea.js', 'examples/drag_n_drop/dragAndDropListeners.js',
           'platform.js', 'realTimePlatform.js', 'realTimeService.js', 'realTimeSimpleService.js', 'realTimeExample.js']
     },
@@ -66,7 +67,8 @@ module.exports = function(grunt) {
       },
       my_target: {
         files: {
-          'angular-translate/angular-translate.2.6.1.min.js': ['angular-translate/angular-translate.2.6.1.js'],
+          'angular-translate/angular-translate.2.6.1.min.js': ['angular-translate/angular-translate.2.6.1.js'], // TODO: delete
+          'angular-translate/angular-translate.min.js': ['angular-translate/angular-translate.js'],
           'dist/dragAndDropListeners.min.js': ['examples/drag_n_drop/dragAndDropListeners.js'],
           'dist/gameServices.min.js': ['dist/gameServices.js'],
           'dist/realTimeServices.min.js': ['dist/realTimeServices.js'],
