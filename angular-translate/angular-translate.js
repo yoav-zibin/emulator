@@ -131,7 +131,7 @@ angular.module('myApp')
   if (angularTranslations) {
     // store in local storage (for offline usage)
     if (window.localStorage) {
-      console.log("Storing translations for ", language, angularTranslations);
+      console.log("Storing translations for " + language);
       window.localStorage.setItem(language, angular.toJson(angularTranslations));
     }
   }
@@ -143,7 +143,7 @@ angular.module('myApp')
         if (str) {
           angularTranslations = angular.fromJson(str);
           language = lang;
-          console.log("Loaded translations from localStorage for ", lang, angularTranslations);
+          console.log("Loaded translations from localStorage for " + lang);
         }
       }
     }
@@ -173,7 +173,7 @@ angular.module('myApp')
 }])
 .filter('translate', ['$parse', '$translate', function ($parse, $translate) {
   'use strict';
-  
+
   return function (translationId, interpolateParams) {
     if (!angular.isObject(interpolateParams)) {
       interpolateParams = $parse(interpolateParams)(this);
