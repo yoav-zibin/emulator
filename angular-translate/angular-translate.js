@@ -115,6 +115,9 @@
   var language = getLanguage();
   console.log("Language is " + language);
   window.angularLanguage = language;
+  window.angularTranslationsLoaded = function (lang, codeToL10N) {
+    window.angularTranslations = codeToL10N;
+  };
   var script = "<script src='languages/" + language + ".js'></script>";
   document.write(script); // jshint ignore:line
 })();
