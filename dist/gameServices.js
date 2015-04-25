@@ -508,6 +508,9 @@ angular.module('myApp')
           $window.lastMessage = message;
           if (message.isMoveOk !== undefined) {
             var isMoveOkResult = isMoveOk(message.isMoveOk);
+            if (isMoveOkResult !== true) {
+              isMoveOkResult = {result: isMoveOkResult, isMoveOk: message.isMoveOk};
+            }
             messageService.sendMessage({isMoveOkResult: isMoveOkResult});
           } else if (message.updateUI !== undefined) {
             lastUpdateUI = message.updateUI;
