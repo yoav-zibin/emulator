@@ -6,27 +6,23 @@
 
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-touch.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
 <script>
-angular.module('myApp', [])
-.controller('Ctrl',
-      function ($scope) {
-  'use strict';
-
-  var isModalShowing = {};
-  $scope.isModalShown = function (modalName) {
-    return isModalShowing[modalName];
-  };
-  $scope.showModal = function (modalName) {
-    isModalShowing[modalName] = true;
-  };
-  $scope.dismissModal = function (modalName) {
-    delete isModalShowing[modalName];
-  };
-});
+angular.module('myApp', ['ngTouch', 'ui.bootstrap']);
 </script>
 
 <style>
+/* Is it needed? check
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+*/
+.carousel-indicators li {
+  background-color: black;
+}
+.carousel-indicators .active {
+  background-color: green;
+}
 .modal-dialog {
   z-index: 1001;
 }
@@ -50,26 +46,57 @@ angular.module('myApp', [])
 </style>
 
 </head>
-<body ng-cloak ng-controller="Ctrl">
-  <button type="button" class="btn" ng-click="showModal('signinModal')">
-    Open modal example
+<body ng-cloak>
+
+  <button type="button" class="btn btn-default btn-lg"
+      ng-click="isHelpModalShown = true"
+      style="position:absolute; top:5px; left: 5px">
+    <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
   </button>
-  <div class="overlayModal" ng-show="isModalShown('signinModal')" aria-hidden="true">
+
+  <div style="position:absolute; bottom:5px; left: 5px">
+    <span ng-click="isHelpModalShown = true"
+        class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+  </div>
+
+  <div class="overlayModal" ng-show="isHelpModalShown" aria-hidden="true">
     <div class="modal-backdrop in"></div>
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" ng-click="dismissModal('signinModal')" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="close" ng-click="isHelpModalShown = false" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title" id="myModalLabel">SOME TITLE</h4>
         </div>
         <div class="modal-body">
-          Some body
+          <carousel interval="5000" style="height: 150px">
+            <slide>
+              Slide1<br>
+              blablabla<br>
+              blablabla<br>
+              blablabla<br>
+            </slide>
+            <slide>
+              Slide2<br>
+              blablabla<br>
+              blablabla<br>
+              blablabla<br>
+            </slide>
+            <slide>
+              Slide3<br>
+              blablabla<br>
+              blablabla<br>
+              blablabla<br>
+            </slide>
+            <slide>
+              Slide4<br>
+              blablabla<br>
+              blablabla<br>
+              blablabla<br>
+            </slide>
+          </carousel>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn" ng-click="dismissModal('signinModal')">
-            Some other button
-          </button>
-          <button type="button" class="btn btn-primary" ng-click="dismissModal('signinModal')">
+          <button type="button" class="btn btn-primary" ng-click="isHelpModalShown = false">
             Close
           </button>
         </div>
