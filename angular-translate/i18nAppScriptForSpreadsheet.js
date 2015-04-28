@@ -127,10 +127,9 @@ function sendEmail(sheet, sheetNameToData) {
     var needSheetName = needsSheets[i];
     var otherSheetData = sheetNameToData[needSheetName];
     var otherSheetLangToCodeAndL10N = otherSheetData.langToCodeAndL10N;
-    for (var lang in otherSheetLangToCodeAndL10N) {
-      if (!langToCodeAndL10N[lang]) {
-        langToCodeToL10N[lang] = {};
-        langToCodeAndL10N[lang] = {};
+    for (var lang in langToCodeToL10N) {
+      if (!otherSheetLangToCodeAndL10N[lang]) {
+        throw new Error("Language '" + lang + "' exist in sheet " + sheetName + " but is missing from sheet " + needSheetName + ". Either add it to " + needSheetName + ", or remove it from " + sheetName);
       }
       var codeAndL10N = otherSheetLangToCodeAndL10N[lang];
       for (var k = 0; k < codeAndL10N.length; k++) {
