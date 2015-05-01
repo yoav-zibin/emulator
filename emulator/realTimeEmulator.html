@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp" ng-strict-di>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Real-time Gaming Platform</title>
+  <meta name="description" content="Gaming Platform for real-time games">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
+
+  <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
+  <script crossorigin="anonymous" src="realTimeEmulator.js"></script>
+  <script crossorigin="anonymous" src="emulatorMessageService.js"></script>
+</head>
+<body ng-cloak ng-controller="PlatformCtrl">
+  <div style="height:10%; overflow: hidden;">
+    <button ng-click="startNewMatch()">New match</button>
+    <div>{{getStatus()}}</div>
+    Simulate delay of up to <input ng-model="simulateServerDelayMilliseconds"> milliseconds.
+  </div>
+  <iframe frameborder="1" id="game_iframe0" ng-src="{{gameUrl}}"
+      style="height:40%; width:100%; overflow: hidden;"
+      scrolling="no" seamless="seamless"></iframe>
+  <iframe frameborder="1" id="game_iframe1" ng-src="{{gameUrl}}"
+      style="height:40%; width:100%; overflow: hidden;"
+      scrolling="no" seamless="seamless"></iframe>
+</body>
+</html>

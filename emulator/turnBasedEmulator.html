@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp" ng-strict-di>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Gaming Platform</title>
+  <meta name="description" content="Gaming Platform for games using GameApi">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
+
+  <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
+
+  <script crossorigin="anonymous" src="intercom.js"></script>
+  <script crossorigin="anonymous" src="turnBasedEmulator.js"></script>
+  <script crossorigin="anonymous" src="emulatorMessageService.js"></script>
+  <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.2.js"></script>
+
+</head>
+<body ng-cloak ng-controller="PlatformCtrl">
+  <div style="height:10%; overflow: hidden;">
+    <button ng-click="startNewMatch()">New match</button>
+    <select ng-model="playMode">
+      <option value="passAndPlay">Single-window Pass-and-play</option>
+      <option value="playAgainstTheComputer">Single-window Play-against-the-computer</option>
+      <option value="playWhite">Multi-window play White</option>
+      <option value="playBlack">Multi-window play Black</option>
+      <option value="playViewer">Multi-window be a Viewer</option>
+    </select>
+    <div>{{getStatus()}}</div>
+    Simulate delay of <input ng-model="settings.simulateServerDelayMilliseconds"> milliseconds.
+  </div>
+  <iframe frameborder="1" id="game_iframe" ng-src="{{gameUrl}}"
+      style="height:90%; width:100%; overflow: hidden;"
+      scrolling="no" seamless="seamless"></iframe>
+</body>
+</html>

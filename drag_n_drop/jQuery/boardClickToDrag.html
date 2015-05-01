@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>jQuery UI Draggable - Default functionality</title>
+  <meta name="description" content="Example">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+  <script crossorigin="anonymous" src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <script crossorigin="anonymous" src="http://code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+  <style>
+  .draggable {}
+  .droppable {}
+  .snapTarget {}
+  </style>
+  <script>
+  $(function() {
+    'use strict';
+
+    function touchHandler(event) {
+        var touch = event.changedTouches[0];
+
+        var simulatedEvent = document.createEvent("MouseEvent");
+            simulatedEvent.initMouseEvent({
+            touchstart: "mousedown",
+            touchmove: "mousemove",
+            touchend: "mouseup"
+        }[event.type], true, true, window, 1,
+            touch.screenX, touch.screenY,
+            touch.clientX, touch.clientY, false,
+            false, false, false, 0, null);
+
+        //touch.target
+        $("#draggable").css("top", touch.clientY + "px").css("left", touch.clientX + "px");
+        $("#draggable")[0].dispatchEvent(simulatedEvent);
+        event.preventDefault();
+    }
+
+    function init() {
+        document.addEventListener("touchstart", touchHandler, true);
+        document.addEventListener("touchmove", touchHandler, true);
+        document.addEventListener("touchend", touchHandler, true);
+        //document.addEventListener("touchcancel", touchHandler, true);
+        //document.addEventListener("touchleave", touchHandler, true);
+    }
+    init();
+
+    $("#draggable").draggable();
+
+  });
+  </script>
+</head>
+<body>
+
+<div id="draggable" style="background-color: yellow; width:100px; height:100px;">
+</div>
+</body>
+</html>
