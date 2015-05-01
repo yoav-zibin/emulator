@@ -683,11 +683,7 @@ angular.module('myApp')
     throw new Error('You must first include angular: <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>');
   }
   if (!angular.isArray(window.angularTranslationLanguages)) {
-    throw new Error("You must include angularTranslate like this:\n" +
-        '<script>\n' +
-        "window.angularTranslationLanguages = ['en', ...];\n" +
-        '</script>\n' +
-        '<script src="http://yoav-zibin.github.io/emulator/angular-translate/angular-translate.min.js"></script>\n');
+    return; // you don't have to use I18N :)
   }
   var $availableLanguageKeys = window.angularTranslationLanguages;
 
@@ -794,6 +790,7 @@ angular.module('myApp')
   console.log("Language is " + language);
   window.angularLanguage = language;
   window.angularTranslationsLoaded = function (lang, codeToL10N) {
+    console.log("angularTranslationsLoaded called with language=" + lang);
     window.angularTranslations = codeToL10N;
   };
   var script = "<script crossorigin='anonymous' src='languages/" + language + ".js'></script>";
@@ -807,7 +804,11 @@ angular.module('myApp')
   var angularTranslations = window.angularTranslations;
   var language = window.angularLanguage;
   if (!language) {
-    throw new Error("Missing window.angularLanguage");
+    throw new Error("You must include angularTranslate like this:\n" +
+        '<script>\n' +
+        "window.angularTranslationLanguages = ['en', ...];\n" +
+        '</script>\n' +
+        '<script src="http://yoav-zibin.github.io/emulator/angular-translate/angular-translate.min.js"></script>\n');
   }
   if (angularTranslations) {
     // store in local storage (for offline usage)
