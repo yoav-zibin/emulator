@@ -1,4 +1,5 @@
-angular.module('myApp')
+var emulatorServicesCompilationDate = "Fri May 1 17:36:31 EDT 2015";
+;angular.module('myApp')
 .service('stateService',
     ["$window", "$timeout", "$log", "$rootScope",
       function($window, $timeout, $log, $rootScope) {
@@ -576,6 +577,8 @@ angular.module('myApp')
     console.log.apply(console, arguments);
   }
 
+  alwaysLog("emulatorServicesCompilationDate=" + emulatorServicesCompilationDate);
+  
   this.getCurrentTime = getCurrentTime;
   this.getLogs = getLogs;
   this.alwaysLog = alwaysLog;
@@ -1057,12 +1060,12 @@ angular.module('myApp')
     console.log("angularTranslationsLoaded called with language=" + lang);
     window.angularTranslations = codeToL10N;
   };
-  var script = "<script crossorigin='anonymous' src='languages/" + language + ".js'></script>";
+  var script = "<script crossorigin='anonymous' src='languages/" + language + ".js'></script>"; // It will block, thus preventing angular to start before the translations are loaded.
   document.write(script); // jshint ignore:line
 })();
 
 angular.module('myApp')
-.factory('$translate', ['$interpolate', function ($interpolate) {
+.factory('$translate', ['$interpolate', 'logSaver', function ($interpolate, logSaver) {
   'use strict';
 
   var angularTranslations = window.angularTranslations;
@@ -1077,7 +1080,7 @@ angular.module('myApp')
   if (angularTranslations) {
     // store in local storage (for offline usage)
     if (window.localStorage) {
-      console.log("Storing translations for " + language);
+      logSaver.alwaysLog("Storing translations for " + language);
       window.localStorage.setItem(language, angular.toJson(angularTranslations));
     }
   }
@@ -1089,7 +1092,7 @@ angular.module('myApp')
         if (str) {
           angularTranslations = angular.fromJson(str);
           language = lang;
-          console.log("Loaded translations from localStorage for " + lang);
+          logSaver.alwaysLog("Loaded translations from localStorage for " + lang);
         }
       }
     }
