@@ -78,7 +78,7 @@ module.exports = function(grunt) {
           'dist/turnBasedServices.2.min.js': ['dist/turnBasedServices.2.js'],
           'dist/realTimeServices.2.min.js': ['dist/realTimeServices.2.js'],
           'dist/realTimeSimpleServices.2.min.js': ['dist/realTimeSimpleServices.2.js'],
-          'dist/appServices.2.min.js': ['dist/appServices.js'], // In my mega-game, I don't want the angular error catcher (that passes emailJavaScriptError to the parent!)
+          'dist/appServices.2.min.js': ['dist/appServices.2.js'], // In my mega-game, I don't want the angular error catcher (that passes emailJavaScriptError to the parent!)
         }
       }
     }
