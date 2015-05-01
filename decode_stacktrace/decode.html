@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
-  <script type="text/javascript"
-    src="sourcemapped-stacktrace.js"></script>
+  <script crossorigin="anonymous" src="sourcemapped-stacktrace.js"></script>
 <body>
   <p>A page to decode a JavaScript stack trace using source maps.</p>
 
   <p>Enter the unmapped Stack trace (pointing to transpiled code):</p>
   <!--
-In Mozilla:  
+In Mozilla:
   Exception: Error: [$rootScope:inprog] http://errors.angularjs.org/1.3.8/$rootScope/inprog?p0=%24apply
 Stack: k@http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:118:287
 $apply@http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:126:294
@@ -34,7 +33,7 @@ $apply@http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js:126:2
   <pre id="mapped">
   </pre>
 
-  <script type="text/javascript">
+  <script>
     var errorAndPrint = function() {
       var stack = document.getElementById("unmapped").value;
       console.log(stack);

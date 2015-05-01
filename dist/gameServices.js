@@ -445,6 +445,147 @@ angular.module('myApp')
   this.setMatchState = setMatchState;
 }]);
 ;angular.module('myApp')
+  .service('messageService',
+      ["$window", "logSaver", "$rootScope",
+        function($window, logSaver, $rootScope) {
+
+    'use strict';
+
+    var gameUrl = location.toString();
+    this.sendMessage = function (message) {
+      logSaver.info("Game sent message", message);
+      message.gameUrl = gameUrl;
+      $window.parent.postMessage(message, "*");
+    };
+    this.addMessageListener = function (listener) {
+      $window.addEventListener("message", function (event) {
+        var source = event.source;
+        if (source !== $window.parent) {
+          return;
+        }
+        var message = event.data;
+        logSaver.info("Game got message", message);
+        $rootScope.$apply(function () {
+          listener(message);
+        });
+      }, false);
+    };
+  }])
+  .factory('$exceptionHandler',
+      ["$window", "logSaver",
+        function ($window, logSaver) {
+
+    'use strict';
+
+    function angularErrorHandler(exception, cause) {
+      var lines = [];
+      lines.push("Game URL: " + $window.location);
+      lines.push("exception: " + exception);
+      lines.push("stackTrace: " + (exception && exception.stack ? exception.stack.replace(/\n/g,"\n\t") : "no stack trace :("));
+      lines.push("cause: " + cause);
+      lines.push("Game logs: " + logSaver.getLogs().replace(/\n/g,"\n\t"));
+      var errStr = lines.join("\n\t");
+      console.error("Game had an exception:\n", errStr);
+      $window.parent.postMessage({emailJavaScriptError: errStr}, "*");
+    }
+
+    window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+      angularErrorHandler(errorObj,
+          'Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber +
+          ' Column: ' + column);
+    };
+
+    return angularErrorHandler;
+  }]);
+;angular.module('myApp')
+.service('logSaver', function () {
+  'use strict';
+
+  function getCurrentTime() {
+    return window.performance ? window.performance.now() : new Date().getTime();
+  }
+
+  var alwaysLogs = [];
+  var lastLogs = [];
+  var startTime = getCurrentTime();
+
+  function getLogEntry(args) {
+    return {time: getCurrentTime() - startTime, args: args};
+  }
+
+  function storeLog(args) {
+    if (lastLogs.length > 100) {
+      lastLogs.shift();
+    }
+    lastLogs.push(getLogEntry(args));
+  }
+
+  function convertLogEntriesToStrings(logs, lines) {
+    // In reverse order (in case the email gets truncated)
+    for (var i = logs.length - 1; i >= 0; i--) {
+      var entry = logs[i];
+      var stringArgs = [];
+      for (var j = 0; j < entry.args.length; j++) {
+        var arg = entry.args[j];
+        var stringArg = "" + arg;
+        if (stringArg === "[object Object]") {
+          stringArg = angular.toJson(arg);
+        }
+        stringArgs.push(stringArg);
+      }
+      lines.push("Time " + (entry.time / 1000).toFixed(3) + ": " + stringArgs.join(","));
+    }
+  }
+
+  function getLogs() {
+    var lines = [];
+    lines.push("Always-logs:\n");
+    convertLogEntriesToStrings(alwaysLogs, lines);
+    lines.push("\n\nRecent-logs:\n");
+    convertLogEntriesToStrings(lastLogs, lines);
+    return lines.join('\n');
+  }
+
+  function alwaysLog() {
+    alwaysLogs.push(getLogEntry(arguments));
+    console.info.apply(console, arguments);
+  }
+
+  function info() {
+    storeLog(arguments);
+    console.info.apply(console, arguments);
+  }
+
+  function debug() {
+    storeLog(arguments);
+    console.debug.apply(console, arguments);
+  }
+
+  function warn() {
+    storeLog(arguments);
+    console.warn.apply(console, arguments);
+  }
+
+  function error() {
+    storeLog(arguments);
+    console.error.apply(console, arguments);
+  }
+
+  function log() {
+    storeLog(arguments);
+    console.log.apply(console, arguments);
+  }
+
+  this.getCurrentTime = getCurrentTime;
+  this.getLogs = getLogs;
+  this.alwaysLog = alwaysLog;
+  this.info = info;
+  this.debug = debug;
+  this.error = error;
+  this.warn = warn;
+  this.log = log;
+});
+;angular.module('myApp')
 .service('gameService',
     ["$window", "$log", "stateService", "messageService", "$timeout",
       function($window, $log, stateService, messageService, $timeout) {
@@ -542,55 +683,6 @@ angular.module('myApp')
     this.makeMove = makeMove;
     this.setGame = setGame;
 }]);
-;angular.module('myApp')
-  .service('messageService',
-      ["$window", "$log", "$rootScope",
-        function($window, $log, $rootScope) {
-
-    'use strict';
-
-    var gameUrl = location.toString();
-    this.sendMessage = function (message) {
-      $log.info("Game sent message", message);
-      message.gameUrl = gameUrl;
-      $window.parent.postMessage(message, "*");
-    };
-    this.addMessageListener = function (listener) {
-      $window.addEventListener("message", function (event) {
-        var source = event.source;
-        if (source !== $window.parent) {
-          return;
-        }
-        $rootScope.$apply(function () {
-          var message = event.data;
-          $log.info("Game got message", message);
-          listener(message);
-        });
-      }, false);
-    };
-  }])
-  .factory('$exceptionHandler',
-      ["$window", "$log",
-        function ($window, $log) {
-
-    'use strict';
-
-    return function (exception, cause) {
-      $log.error("Game had an exception:", exception, cause);
-      var exceptionString = angular.toJson({exception: exception, stackTrace: exception.stack, cause: cause, lastMessage: $window.lastMessage}, true);
-      var message =
-          {
-            emailJavaScriptError:
-              {
-                gameDeveloperEmail: $window.gameDeveloperEmail,
-                emailSubject: "Error in game " + $window.location,
-                emailBody: exceptionString
-              }
-          };
-      $window.parent.postMessage(message, "*");
-      throw exception;
-    };
-  }]);
 ;angular.module('myApp').factory('alphaBetaService', [function() {
 
   'use strict';

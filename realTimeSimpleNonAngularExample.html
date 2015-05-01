@@ -47,7 +47,7 @@
   </script>
 
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
+  <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
   <script>
   angular.module('myApp', [])
     .run(function (realTimeSimpleService, resizeGameAreaService) {
@@ -55,7 +55,8 @@
     window.setRealTimeSimpleService(realTimeSimpleService);
   });
   </script>
-  <script src="http://yoav-zibin.github.io/emulator/dist/realTimeSimpleServices.min.js"></script>
+  <script crossorigin="anonymous" src="dist/realTimeSimpleServices.min.js"></script>
+  <script crossorigin="anonymous" src='http://cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.11/seedrandom.min.js'></script>
 </head>
 <body ng-cloak ng-app="myApp">
   <div id="gameArea">

@@ -38,27 +38,35 @@ module.exports = function(grunt) {
           browser: false, element: false, by: false, // Protractor
         },
       },
-      all: ['Gruntfile.js', 'stateService.js', 'gameService.js',
-          'messageService.js', 'alphaBetaService.js', 'resizeGameAreaService.js',
-          'angular-translate/angular-translate.js',
-          'examples/resizeMapArea.js', 'examples/drag_n_drop/dragAndDropListeners.js',
-          'platform.js', 'realTimePlatform.js', 'realTimeService.js', 'realTimeSimpleService.js', 'realTimeExample.js']
+      all: [
+        'Gruntfile.js',
+        'src/*.js',
+        'drag_n_drop/*.js',
+        'angular-translate/angular-translate.js',
+        'examples/*.js',
+        'emulator/turnBasedEmulator.js',
+        'emulator/realTimeEmulator.js'
+      ]
     },
     concat: {
       options: {
         separator: ';',
       },
       dist: {
-        src: ['stateService.js', 'gameService.js', 'messageService.js', 'alphaBetaService.js', 'resizeGameAreaService.js'],
-        dest: 'dist/gameServices.js',
+        src: ['src/stateService.js', 'src/messageService.js', 'src/logSaver.js', 'src/gameService.js', 'src/alphaBetaService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
+        dest: 'dist/turnBasedServices.2.js',
       },
       realTime: {
-        src: ['realTimeService.js', 'messageService.js', 'resizeGameAreaService.js'],
-        dest: 'dist/realTimeServices.js',
+        src: ['src/realTimeService.js', 'src/messageService.js', 'src/logSaver.js', 'src/randomService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
+        dest: 'dist/realTimeServices.2.js',
       },
       realTimeSimple: {
-        src: ['realTimeSimpleService.js', 'messageService.js', 'resizeGameAreaService.js'],
-        dest: 'dist/realTimeSimpleServices.js',
+        src: ['src/realTimeSimpleService.js', 'src/messageService.js', 'src/logSaver.js', 'src/randomService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
+        dest: 'dist/realTimeSimpleServices.2.js',
+      },
+      app: {
+        src: ['src/stateService.js', 'src/logSaver.js'],
+        dest: 'dist/appServices.2.js',
       },
     },
     uglify: {
@@ -67,20 +75,10 @@ module.exports = function(grunt) {
       },
       my_target: {
         files: {
-          'angular-translate/angular-translate.2.6.1.min.js': ['angular-translate/angular-translate.2.6.1.js'], // TODO: delete
-          'angular-translate/angular-translate.min.js': ['angular-translate/angular-translate.js'],
-          'dist/dragAndDropListeners.min.js': ['examples/drag_n_drop/dragAndDropListeners.js'],
-          'dist/gameServices.min.js': ['dist/gameServices.js'],
-          'dist/realTimeServices.min.js': ['dist/realTimeServices.js'],
-          'dist/realTimeSimpleServices.min.js': ['dist/realTimeSimpleServices.js'],
-          'dist/stateService.min.js': ['stateService.js'], // In my mega-game, I don't want the angular error catcher (that passes emailJavaScriptError to the parent!)
-        }
-      }
-    },
-    processhtml: {
-      dist: {
-        files: {
-          'platform.min.html': ['platform.html']
+          'dist/turnBasedServices.2.min.js': ['dist/turnBasedServices.2.js'],
+          'dist/realTimeServices.2.min.js': ['dist/realTimeServices.2.js'],
+          'dist/realTimeSimpleServices.2.min.js': ['dist/realTimeSimpleServices.2.js'],
+          'dist/appServices.2.min.js': ['dist/appServices.js'], // In my mega-game, I don't want the angular error catcher (that passes emailJavaScriptError to the parent!)
         }
       }
     }
@@ -89,9 +87,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-processhtml');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'processhtml']);
+  grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
 
 };
