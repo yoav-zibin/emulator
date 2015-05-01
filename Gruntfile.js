@@ -67,7 +67,7 @@ module.exports = function(grunt) {
         dest: 'dist/realTimeSimpleServices.2.js',
       },
       app: {
-        src: ['dist/compilationDate.js', 'src/stateService.js', 'src/logSaver.js'],
+        src: ['dist/compilationDate.js', 'src/stateService.js', 'src/logSaver.js', 'src/angular-translate.js'],
         dest: 'dist/appServices.2.js',
       },
     },
