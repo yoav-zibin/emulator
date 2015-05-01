@@ -1,4 +1,4 @@
-var emulatorServicesCompilationDate = "Fri May 1 17:36:31 EDT 2015";
+var emulatorServicesCompilationDate = "Fri May 1 17:56:15 EDT 2015";
 ;angular.module('myApp')
 .service('realTimeSimpleService',
   ["$window", "$log", "$timeout", "messageService", "randomService",
