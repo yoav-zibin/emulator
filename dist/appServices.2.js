@@ -1,4 +1,5 @@
-angular.module('myApp')
+var emulatorServicesCompilationDate = "Fri May 1 17:36:31 EDT 2015";
+;angular.module('myApp')
 .service('stateService',
     ["$window", "$timeout", "$log", "$rootScope",
       function($window, $timeout, $log, $rootScope) {
@@ -523,6 +524,8 @@ angular.module('myApp')
     console.log.apply(console, arguments);
   }
 
+  alwaysLog("emulatorServicesCompilationDate=" + emulatorServicesCompilationDate);
+  
   this.getCurrentTime = getCurrentTime;
   this.getLogs = getLogs;
   this.alwaysLog = alwaysLog;

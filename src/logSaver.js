@@ -77,6 +77,8 @@ angular.module('myApp')
     console.log.apply(console, arguments);
   }
 
+  alwaysLog("emulatorServicesCompilationDate=" + emulatorServicesCompilationDate);
+  
   this.getCurrentTime = getCurrentTime;
   this.getLogs = getLogs;
   this.alwaysLog = alwaysLog;

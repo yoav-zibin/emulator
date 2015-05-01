@@ -29,6 +29,8 @@ module.exports = function(grunt) {
           resizeMapArea: false
         },
         globals: {
+          require: false,
+          emulatorServicesCompilationDate: false,
           handleDragEvent: false,
           module: false, // for Gruntfile.js
           exports: false, // for protractor.conf.js
@@ -53,19 +55,19 @@ module.exports = function(grunt) {
         separator: ';',
       },
       dist: {
-        src: ['src/stateService.js', 'src/messageService.js', 'src/logSaver.js', 'src/gameService.js', 'src/alphaBetaService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
+        src: ['dist/compilationDate.js', 'src/stateService.js', 'src/messageService.js', 'src/logSaver.js', 'src/gameService.js', 'src/alphaBetaService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
         dest: 'dist/turnBasedServices.2.js',
       },
       realTime: {
-        src: ['src/realTimeService.js', 'src/messageService.js', 'src/logSaver.js', 'src/randomService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
+        src: ['dist/compilationDate.js', 'src/realTimeService.js', 'src/messageService.js', 'src/logSaver.js', 'src/randomService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
         dest: 'dist/realTimeServices.2.js',
       },
       realTimeSimple: {
-        src: ['src/realTimeSimpleService.js', 'src/messageService.js', 'src/logSaver.js', 'src/randomService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
+        src: ['dist/compilationDate.js', 'src/realTimeSimpleService.js', 'src/messageService.js', 'src/logSaver.js', 'src/randomService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
         dest: 'dist/realTimeSimpleServices.2.js',
       },
       app: {
-        src: ['src/stateService.js', 'src/logSaver.js'],
+        src: ['dist/compilationDate.js', 'src/stateService.js', 'src/logSaver.js'],
         dest: 'dist/appServices.2.js',
       },
     },
@@ -81,14 +83,21 @@ module.exports = function(grunt) {
           'dist/appServices.2.min.js': ['dist/appServices.2.js'], // In my mega-game, I don't want the angular error catcher (that passes emailJavaScriptError to the parent!)
         }
       }
+    },
+    shell: {
+      compilationDate: {
+        command: 'echo var emulatorServicesCompilationDate = \\"`date`\\"\\; > dist/compilationDate.js'
+      }
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
+  require('load-grunt-tasks')(grunt);
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
-
+  grunt.registerTask('default', [
+    'jshint',
+    'shell:compilationDate',
+    'concat',
+    'uglify'
+  ]);
 };
