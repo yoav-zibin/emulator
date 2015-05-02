@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <style>
+    /* both overflow and position are required for the bug to happen. */
     html, body {
       overflow: hidden;
       position: fixed!important;
     }
 
     .slowlyAppear {
-        -webkit-animation: slowlyAppear 0.5s ease-in-out forwards; /* Chrome, Safari, Opera */
+        -webkit-animation: slowlyAppear 0.5s forwards; /* forwards is required for the bug to happen */
     }
     @-webkit-keyframes slowlyAppear {
         from {
