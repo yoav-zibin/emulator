@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: fixed!important;
+    }
+    /* To prevent long-press that will bring up copy-paste dialog. */
+    * {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      -moz-touch-callout: none;
+      -ms-touch-callout: none;
+      touch-callout: none;
+    }
+
+    .slowlyAppear {
+        -webkit-animation: slowlyAppear 0.5s ease-in-out forwards; /* Chrome, Safari, Opera */
+        animation: slowlyAppear 0.5s ease-in-out forwards;
+    }
+
+    /* Chrome, Safari, Opera */
+    @-webkit-keyframes slowlyAppear {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slowlyAppear {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    </style>
+    <script>
+    window.addEventListener("load", function () {
+      var gameArea = document.getElementById("gameArea");
+      gameArea.addEventListener("touchmove", handleEvent, true);
+      var counter = 0;
+      function handleEvent(event) {
+        console.log("handleEvent counter=" + counter++);
+      }
+      setTimeout(function () {
+        console.log("animating img");
+        var myImg = document.getElementById("myImg");
+        myImg.style.display = "block";
+        myImg.classList.add("slowlyAppear"); // This causes the BUG
+      }, 2000);
+    }, false);
+    </script>
+</head>
+<body>
+
+<div id="gameArea" style="width:300px;height:300px;">
+    <div id="myImg" style="display:none; width:200px;height:200px; background-color: red;">
+</div>
+</body>
+</html>
