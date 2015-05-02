@@ -6,31 +6,13 @@
 
     <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
       overflow: hidden;
       position: fixed!important;
-    }
-    /* To prevent long-press that will bring up copy-paste dialog. */
-    * {
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-      -webkit-touch-callout: none;
-      -moz-touch-callout: none;
-      -ms-touch-callout: none;
-      touch-callout: none;
     }
 
     .slowlyAppear {
         -webkit-animation: slowlyAppear 0.5s ease-in-out forwards; /* Chrome, Safari, Opera */
-        animation: slowlyAppear 0.5s ease-in-out forwards;
     }
-
-    /* Chrome, Safari, Opera */
     @-webkit-keyframes slowlyAppear {
         from {
             opacity: 0;
@@ -39,16 +21,6 @@
             opacity: 1;
         }
     }
-
-    @keyframes slowlyAppear {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-
     </style>
     <script>
     window.addEventListener("load", function () {
