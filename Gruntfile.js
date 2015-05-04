@@ -55,7 +55,7 @@ module.exports = function(grunt) {
         separator: ';',
       },
       dist: {
-        src: ['dist/compilationDate.js', 'src/stateService.js', 'src/messageService.js', 'src/logSaver.js', 'src/gameService.js', 'src/alphaBetaService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
+        src: ['dist/compilationDate.js', 'src/stateService.js', 'src/messageService.js', 'src/logSaver.js', 'src/gameService.js', 'src/resizeMapArea.js', 'src/alphaBetaService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
         dest: 'dist/turnBasedServices.2.js',
       },
       realTime: {

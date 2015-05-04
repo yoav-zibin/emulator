@@ -115,7 +115,8 @@
     console.log("angularTranslationsLoaded called with language=" + lang);
     window.angularTranslations = codeToL10N;
   };
-  var script = "<script crossorigin='anonymous' src='languages/" + language + ".js'></script>"; // It will block, thus preventing angular to start before the translations are loaded.
+  // Do not add "crossorigin='anonymous'" because it will prevent local testing.
+  var script = "<script src='languages/" + language + ".js'></script>"; // It will block, thus preventing angular to start before the translations are loaded.
   document.write(script); // jshint ignore:line
 })();
 

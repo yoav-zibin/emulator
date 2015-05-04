@@ -1,46 +1,4 @@
-<<<<<<< HEAD
-=======
-function resizeMapArea(params) {
-  'use strict';
-
-  var imageId = params.imageId;
-  var mapId = params.mapId;
-  var originalWidth = params.originalWidth;
-  var originalHeight = params.originalHeight;
-
-  function rescale() {
-    var image = document.getElementById(imageId);
-    var map = document.getElementById(mapId);
-    var widthScale = image.width / originalWidth;
-    var heightScale = image.height / originalHeight;
-    //console.log("widthScale=", widthScale, "heightScale=", heightScale);
-    var areaElements = map.getElementsByTagName("area");
-    for (var areaIndex = 0; areaIndex < areaElements.length; areaIndex++) {
-      var areaElement = areaElements[areaIndex];
-      var originalCoords = areaElement.getAttribute("data-original-coords");
-      if (!originalCoords) {
-        areaElement.setAttribute("data-original-coords", areaElement.getAttribute("coords"));
-      }
-      var coords = areaElement.getAttribute("data-original-coords").split(',');
-      var coordsPercent = [];
-      for (var i = 0; i < coords.length; ++i) {
-        if (i % 2 === 0) {
-          coordsPercent[i] = Math.round(coords[i] * widthScale);
-        } else {
-          coordsPercent[i] = Math.round(coords[i] * heightScale);
-        }
-      }
-      //console.log("before=", coords, "after=", coordsPercent);
-      areaElement.setAttribute("coords", coordsPercent.toString());
-    }
-  }
-  document.addEventListener("onresize", rescale);
-  document.addEventListener("orientationchange", rescale);
-  setInterval(rescale, 1000);
-}
-
->>>>>>> e9bb08bfbf7d716766505dc68e6f682bcde9ab9f
-var emulatorServicesCompilationDate = "Fri May 1 17:56:15 EDT 2015";
+var emulatorServicesCompilationDate = "Mon May 4 11:37:24 EDT 2015";
 ;angular.module('myApp')
 .service('stateService',
     ["$window", "$timeout", "$log", "$rootScope",
@@ -620,11 +578,7 @@ var emulatorServicesCompilationDate = "Fri May 1 17:56:15 EDT 2015";
   }
 
   alwaysLog("emulatorServicesCompilationDate=" + emulatorServicesCompilationDate);
-<<<<<<< HEAD
   
-=======
-
->>>>>>> e9bb08bfbf7d716766505dc68e6f682bcde9ab9f
   this.getCurrentTime = getCurrentTime;
   this.getLogs = getLogs;
   this.alwaysLog = alwaysLog;
@@ -732,6 +686,44 @@ var emulatorServicesCompilationDate = "Fri May 1 17:56:15 EDT 2015";
     this.makeMove = makeMove;
     this.setGame = setGame;
 }]);
+;function resizeMapArea(params) {
+  'use strict';
+
+  var imageId = params.imageId;
+  var mapId = params.mapId;
+  var originalWidth = params.originalWidth;
+  var originalHeight = params.originalHeight;
+
+  function rescale() {
+    var image = document.getElementById(imageId);
+    var map = document.getElementById(mapId);
+    var widthScale = image.width / originalWidth;
+    var heightScale = image.height / originalHeight;
+    //console.log("widthScale=", widthScale, "heightScale=", heightScale);
+    var areaElements = map.getElementsByTagName("area");
+    for (var areaIndex = 0; areaIndex < areaElements.length; areaIndex++) {
+      var areaElement = areaElements[areaIndex];
+      var originalCoords = areaElement.getAttribute("data-original-coords");
+      if (!originalCoords) {
+        areaElement.setAttribute("data-original-coords", areaElement.getAttribute("coords"));
+      }
+      var coords = areaElement.getAttribute("data-original-coords").split(',');
+      var coordsPercent = [];
+      for (var i = 0; i < coords.length; ++i) {
+        if (i % 2 === 0) {
+          coordsPercent[i] = Math.round(coords[i] * widthScale);
+        } else {
+          coordsPercent[i] = Math.round(coords[i] * heightScale);
+        }
+      }
+      //console.log("before=", coords, "after=", coordsPercent);
+      areaElement.setAttribute("coords", coordsPercent.toString());
+    }
+  }
+  document.addEventListener("onresize", rescale);
+  document.addEventListener("orientationchange", rescale);
+  setInterval(rescale, 1000);
+}
 ;angular.module('myApp').factory('alphaBetaService', [function() {
 
   'use strict';
@@ -1106,11 +1098,8 @@ var emulatorServicesCompilationDate = "Fri May 1 17:56:15 EDT 2015";
     console.log("angularTranslationsLoaded called with language=" + lang);
     window.angularTranslations = codeToL10N;
   };
-<<<<<<< HEAD
-  var script = "<script crossorigin='anonymous' src='languages/" + language + ".js'></script>"; // It will block, thus preventing angular to start before the translations are loaded.
-=======
+  // Do not add "crossorigin='anonymous'" because it will prevent local testing.
   var script = "<script src='languages/" + language + ".js'></script>"; // It will block, thus preventing angular to start before the translations are loaded.
->>>>>>> e9bb08bfbf7d716766505dc68e6f682bcde9ab9f
   document.write(script); // jshint ignore:line
 })();
 
