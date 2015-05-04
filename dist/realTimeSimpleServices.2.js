@@ -276,7 +276,11 @@ var emulatorServicesCompilationDate = "Fri May 1 17:56:15 EDT 2015";
   }
 
   alwaysLog("emulatorServicesCompilationDate=" + emulatorServicesCompilationDate);
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> e9bb08bfbf7d716766505dc68e6f682bcde9ab9f
   this.getCurrentTime = getCurrentTime;
   this.getLogs = getLogs;
   this.alwaysLog = alwaysLog;
@@ -533,7 +537,11 @@ var emulatorServicesCompilationDate = "Fri May 1 17:56:15 EDT 2015";
     console.log("angularTranslationsLoaded called with language=" + lang);
     window.angularTranslations = codeToL10N;
   };
+<<<<<<< HEAD
   var script = "<script crossorigin='anonymous' src='languages/" + language + ".js'></script>"; // It will block, thus preventing angular to start before the translations are loaded.
+=======
+  var script = "<script src='languages/" + language + ".js'></script>"; // It will block, thus preventing angular to start before the translations are loaded.
+>>>>>>> e9bb08bfbf7d716766505dc68e6f682bcde9ab9f
   document.write(script); // jshint ignore:line
 })();
 

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <style>
+    /* both overflow and position are required for the bug to happen. */
+    html, body {
+      overflow: hidden;
+      position: fixed!important;
+    }
+
+    .slowlyAppear {
+        -webkit-animation: slowlyAppear 0.5s forwards; /* forwards is required for the bug to happen */
+    }
+    @-webkit-keyframes slowlyAppear {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    </style>
+    <script>
+    window.addEventListener("load", function () {
+      var gameArea = document.getElementById("gameArea");
+      gameArea.addEventListener("touchmove", handleEvent, true);
+      var counter = 0;
+      function handleEvent(event) {
+        console.log("handleEvent counter=" + counter++);
+        document.getElementById("counter").innerHTML = counter;
+      }
+      setTimeout(function () {
+        console.log("animating img");
+        var myImg = document.getElementById("myImg");
+        myImg.style.display = "block";
+        myImg.classList.add("slowlyAppear"); // This causes the BUG
+      }, 2000);
+    }, false);
+    </script>
+</head>
+<body>
+
+<div id="gameArea" style="width:300px;height:300px; background-color: green;">
+  Touch here and see the counter increase.<br>
+  After the red box is animated, touchmove stop being fired and the counter will not increase.
+  Counter: <div id="counter"></div>
+  <div id="myImg" style="display:none; width:200px;height:200px; background-color: red;"></div>
+</div>
+</body>
+</html>
