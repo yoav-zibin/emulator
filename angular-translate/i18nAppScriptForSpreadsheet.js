@@ -264,7 +264,47 @@ function readSheetData(sheet) {
     langToCodeAndL10N[lang] = codeAndL10N;
     langToCodeToL10N[lang] = data;
   }
+  if (!langToCodeAndL10N['en']) {
+    throw new Error("You have to have an 'en' translation!");
+  }
+  // Check all l10n had the exact same placeholders, e.g., "Downloaded {{x}} out of {{y}} games" has "x" and "y" placeholders.
+  for (var r = 0; r < langToCodeAndL10N['en'].length; r++) {
+    var enCodeAndL10N = langToCodeAndL10N['en'][r];
+    var code = enCodeAndL10N.code;
+    var enL10N = enCodeAndL10N.l10n;
+    var enPlaceholders = JSON.stringify(getPlaceholders(enL10N));
+    for (var lang in langToCodeAndL10N) {
+      var codeAndL10N = langToCodeAndL10N[lang][r];
+      if (codeAndL10N.code != code) {
+        throw new Error("Internal error! email yoav.zibin@gmail.com");
+      }
+      var l10n = codeAndL10N.l10n;
+      var placeholders = JSON.stringify(getPlaceholders(l10n));
+      if (placeholders != enPlaceholders) {
+        throw new Error("The placeholders for code=" + code + " is not the same in two l10n! English placeholders are '" + enPlaceholders + "' vs '" + placeholders + "'. The two l10n are: en=" + enL10N + " " + lang + "=" + l10n);
+      }
+    }
+  }
   return {langToCodeAndL10N: langToCodeAndL10N, langToCodeToL10N: langToCodeToL10N, needsSheets: needsSheets, email: email};
+}
+
+// E.g., "Downloaded {{x}} out of {{y}} games" returns ["x","y"] (sorted).
+function getPlaceholders(txt) {
+  var placeholders = [];
+  if (!txt.match(/^[^{}]*([^{}]*\{\{[\w]+\}\}[^{}]*)*[^{}]*$/i)) {
+    throw new Error("Number of '{{' and '}}' is not balanced in l10n='" + txt + "'");
+  }
+  var myRegexp = /\{\{([\w]+)\}\}/g;
+  match = myRegexp.exec(txt);
+  while (match != null) {
+    // matched text: match[0]
+    // match start: match.index
+    // capturing group n: match[n]
+    placeholders.push(match[1]);
+    match = myRegexp.exec(txt);
+  }
+  placeholders.sort();
+  return placeholders;
 }
 
 function sendEmail(sheet, sheetNameToData) {
