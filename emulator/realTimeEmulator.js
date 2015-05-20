@@ -50,6 +50,9 @@ angular.module('myApp', [])
     $log.info("from player index " + fromIndex);
     if (message.gameReady) {
       gotGameReadys++;
+      if (gotGameReadys > 2) {
+        throw new Error("Platform got too many gameReady messages! Your game must send exactly one gameReady message!");
+      }
     } else if (message.sendReliableMessage || message.sendUnreliableMessage) {
       var msg = message.sendReliableMessage ? message.sendReliableMessage : message.sendUnreliableMessage;
       // Lose unreliable messages in 0.5 probability

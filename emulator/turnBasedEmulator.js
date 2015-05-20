@@ -33,6 +33,9 @@ angular.module('myApp', [])
 
   emulatorMessageService.addMessageListener(function (message) {
     if (message.gameReady !== undefined) {
+      if (gotGameReady) {
+        throw new Error("Got a second gameReady message! Your game must send exactly one gameReady message!");
+      }
       gotGameReady = true;
       var game = message.gameReady;
       game.isMoveOk = function (params) {
