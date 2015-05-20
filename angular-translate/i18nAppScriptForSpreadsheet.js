@@ -49,7 +49,7 @@ function emailGamesConfig() {
     game.email = "" + row[8];
     game.notInIos = "" + row[9];
     game.achievementId = "" + row[10];
-    game.isRealTime = "" + row[11];
+    game.realTimeService = "" + row[11];
     if (row[12]) {
       throw new Error("Cell in position M" + (r+1) + " should be empty, but it was: " + row[12]);
     }
@@ -63,6 +63,9 @@ function emailGamesConfig() {
     games.push(game);
     if (game.isForBetaTesters != '' && game.isForBetaTesters != 'yes') {
       throw new Error("Beta tester can be either empty or yes in cell B" + (r+1));
+    }
+    if (game.realTimeService != '' && game.realTimeService != 'realTimeSimpleService' && game.realTimeService != 'realTimeService') {
+      throw new Error("Real-time service can be either empty or realTimeSimpleService or realTimeService in cell L" + (r+1));
     }
     if (!game.playersColors) {
       throw new Error("Players colors can NOT be empty (it can be 'null') in cell C" + (r+1));
@@ -123,7 +126,7 @@ function emailGamesConfig() {
     lines.push("      email: " + JSON.stringify(game.email) + ",");
     lines.push("      achievementId: " + JSON.stringify(game.achievementId) + ",");
     lines.push("      notInIos: " + (game.notInIos ? true : false) + ",");
-    lines.push("      isRealTime: " + (game.isRealTime ? true : false));
+    lines.push("      realTimeService: " + JSON.stringify(game.realTimeService));
     lines.push("    }" + (k == games.length-1 ? "" : ","));
   }
   lines.push("  ];");

@@ -30,8 +30,8 @@ angular.module('myApp')
     }
 
     function listenMessage(event) {
-      if (serverApiIframe === null 
-          || serverApiIframe.contentWindow !== event.source) {
+      if (serverApiIframe === null ||
+          serverApiIframe.contentWindow !== event.source) {
         return;
       }
       var msg = event.data;

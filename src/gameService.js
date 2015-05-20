@@ -49,7 +49,12 @@ angular.module('myApp')
       return playersInfo;
     }
 
+    var didCallSetGame = false;
     function setGame(game) {
+      if (didCallSetGame) {
+        throw new Error("You can call setGame exactly once!");
+      }
+      didCallSetGame = true;
       $window.gameDeveloperEmail = game.gameDeveloperEmail;
       game.updateUI = passUpdateUI(game.updateUI);
       if (isLocalTesting) {

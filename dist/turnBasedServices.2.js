@@ -1,4 +1,4 @@
-var emulatorServicesCompilationDate = "Mon May 4 11:37:24 EDT 2015";
+var emulatorServicesCompilationDate = "Wed May 20 15:09:27 EDT 2015";
 ;angular.module('myApp')
 .service('stateService',
     ["$window", "$timeout", "$log", "$rootScope",
@@ -639,7 +639,12 @@ var emulatorServicesCompilationDate = "Mon May 4 11:37:24 EDT 2015";
       return playersInfo;
     }
 
+    var didCallSetGame = false;
     function setGame(game) {
+      if (didCallSetGame) {
+        throw new Error("You can call setGame exactly once!");
+      }
+      didCallSetGame = true;
       $window.gameDeveloperEmail = game.gameDeveloperEmail;
       game.updateUI = passUpdateUI(game.updateUI);
       if (isLocalTesting) {
