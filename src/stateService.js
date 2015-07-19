@@ -114,10 +114,11 @@ angular.module('myApp')
           !isNull(operation.set.visibleToPlayerIndexes) &&
           operation.set.visibleToPlayerIndexes.indexOf(playerIndex) === -1) {
         moveForPlayer.push({
-          type : "Set",
-          key : operation.set.key,
-          value : null,
-          visibleToPlayerIndexes : operation.set.visibleToPlayerIndexes
+          set: {
+            key : operation.set.key,
+            value : null,
+            visibleToPlayerIndexes : operation.set.visibleToPlayerIndexes
+          }
         });
       } else {
         moveForPlayer.push(operation);
@@ -148,7 +149,7 @@ angular.module('myApp')
     var result = [];
     while (keysCopy.length >= 1) {
       var index = randomFromTo(0, keysCopy.length);
-      var removed = keysCopy.splice(index, 1);
+      var removed = keysCopy.splice(index, 1)[0];
       result.push(removed);
     }
     return result;

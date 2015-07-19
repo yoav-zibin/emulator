@@ -1,4 +1,4 @@
-var emulatorServicesCompilationDate = "Wed May 20 15:26:21 EDT 2015";
+var emulatorServicesCompilationDate = "Sun Jul 19 19:25:52 EDT 2015";
 ;angular.module('myApp')
 .service('stateService',
     ["$window", "$timeout", "$log", "$rootScope",
@@ -115,10 +115,11 @@ var emulatorServicesCompilationDate = "Wed May 20 15:26:21 EDT 2015";
           !isNull(operation.set.visibleToPlayerIndexes) &&
           operation.set.visibleToPlayerIndexes.indexOf(playerIndex) === -1) {
         moveForPlayer.push({
-          type : "Set",
-          key : operation.set.key,
-          value : null,
-          visibleToPlayerIndexes : operation.set.visibleToPlayerIndexes
+          set: {
+            key : operation.set.key,
+            value : null,
+            visibleToPlayerIndexes : operation.set.visibleToPlayerIndexes
+          }
         });
       } else {
         moveForPlayer.push(operation);
@@ -149,7 +150,7 @@ var emulatorServicesCompilationDate = "Wed May 20 15:26:21 EDT 2015";
     var result = [];
     while (keysCopy.length >= 1) {
       var index = randomFromTo(0, keysCopy.length);
-      var removed = keysCopy.splice(index, 1);
+      var removed = keysCopy.splice(index, 1)[0];
       result.push(removed);
     }
     return result;
