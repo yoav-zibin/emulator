@@ -5,8 +5,9 @@ var $interval: angular.IIntervalService;
 var $interpolate: angular.IInterpolateService;
 
 angular.module('myApp')
-.run(['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
-function (_location: angular.ILocationService, _rootScope: angular.IScope,
+.service('initGameServices',
+  ['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
+  function (_location: angular.ILocationService, _rootScope: angular.IScope,
     _timeout: angular.ITimeoutService, _interval: angular.IIntervalService,
     _interpolate: angular.IInterpolateService) {
   $location = _location;

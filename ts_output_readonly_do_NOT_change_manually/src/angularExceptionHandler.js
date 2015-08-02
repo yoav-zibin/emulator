@@ -4,7 +4,7 @@ var $timeout;
 var $interval;
 var $interpolate;
 angular.module('myApp')
-    .run(['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
+    .service('initGameServices', ['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
     function (_location, _rootScope, _timeout, _interval, _interpolate) {
         $location = _location;
         $rootScope = _rootScope;

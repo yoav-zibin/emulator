@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sun Aug 2 14:58:04 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Sun Aug 2 15:05:43 EDT 2015";
 ;function createUrlParams() {
     var query = location.search.substr(1);
     var result = {};
@@ -1044,7 +1044,7 @@ var $timeout;
 var $interval;
 var $interpolate;
 angular.module('myApp')
-    .run(['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
+    .service('initGameServices', ['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
     function (_location, _rootScope, _timeout, _interval, _interpolate) {
         $location = _location;
         $rootScope = _rootScope;
