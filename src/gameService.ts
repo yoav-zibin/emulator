@@ -78,6 +78,7 @@ module gameService {
       stateService.setPlayMode(playMode);
       stateService.setPlayers(playersInfo);
       stateService.setGame({updateUI: updateUI, isMoveOk: game.isMoveOk});
+      stateService.sendUpdateUi();
     } else {
       var isMoveOk = game.isMoveOk;
       var updateUI = game.updateUI;
