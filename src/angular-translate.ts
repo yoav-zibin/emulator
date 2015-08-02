@@ -1,20 +1,38 @@
-(function () {
-  'use strict';
+// Defines $translate service and filter for I18N.
+interface TranslateService {
+  (translationId: string, interpolateParams?: StringDictionary): string;
+  getLanguage(): string;
+}
+interface StringDictionary {
+  [index: string]: string;
+}
+interface StringNumberDictionary {
+  [index: string]: (string|number);
+}
+interface Window {
+  angularTranslationLanguages: string[];
+  angularTranslationsLoaded: (lang: string, codeToL10N: StringDictionary) => void;
+}
+interface Navigator {
+  languages: string[];
+}
 
+// This can't be a module, because we use it like:  $translate(...) and not like $translate.foobar(...)
+function createTranslateService(): TranslateService {
   if (!angular) {
     throw new Error('You must first include angular: <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>');
   }
   if (!angular.isArray(window.angularTranslationLanguages)) {
-    return; // you don't have to use I18N :)
+    return null; // you don't have to use I18N :)
   }
   var $availableLanguageKeys = window.angularTranslationLanguages;
 
   // tries to determine the browsers language
-  function getFirstBrowserLanguage() {
+  function getFirstBrowserLanguage(): string {
     var nav = window.navigator,
         browserLanguagePropertyKeys = ['language', 'browserLanguage', 'systemLanguage', 'userLanguage'],
-        i,
-        language;
+        i: number,
+        language: string;
 
     // support for HTML 5.1 "navigator.languages"
     if (angular.isArray(nav.languages)) {
@@ -38,7 +56,7 @@
   }
 
   // tries to determine the browsers locale
-  function getLocale() {
+  function getLocale(): string {
     return (getFirstBrowserLanguage() || '').split('-').join('_');
   }
 
@@ -54,7 +72,7 @@
    *
    * @returns {int} Index of search element.
    */
-  function indexOf(array, searchElement) {
+  function indexOf(array: string[], searchElement: string): number {
     for (var i = 0, len = array.length; i < len; i++) {
       if (array[i] === searchElement) {
         return i;
@@ -63,10 +81,10 @@
     return -1;
   }
 
-  function negotiateLocale(preferred) {
+  function negotiateLocale(preferred: string): string {
 
-    var avail = [],
-        locale = angular.lowercase(preferred),
+    var avail: string[] = [],
+        locale: string = angular.lowercase(preferred),
         i = 0,
         n = $availableLanguageKeys.length;
 
@@ -78,7 +96,7 @@
       return preferred;
     }
 
-    var parts = preferred.split('_');
+    var parts: string[] = preferred.split('_');
 
     if (parts.length > 1 && indexOf(avail, angular.lowercase(parts[0])) > -1) {
       return parts[0];
@@ -88,18 +106,9 @@
     return $availableLanguageKeys[0];
   }
 
-  var urlParams = function () {
-    var query = location.search.substr(1);
-    var result = {};
-    query.split("&").forEach(function(part) {
-      var item = part.split("=");
-      result[item[0]] = decodeURIComponent(item[1]);
-    });
-    return result;
-  } ();
-
-  function getLanguage() {
-    var locale = urlParams.lang ? urlParams.lang : getLocale();
+  function getLanguage(): string {
+    var lang = urlParams.lang;
+    var locale = lang ? lang : getLocale();
 
     var language = negotiateLocale(locale);
     if ($availableLanguageKeys.indexOf(language) === -1) {
@@ -109,23 +118,6 @@
   }
 
   var language = getLanguage();
-  console.log("Language is " + language);
-  window.angularLanguage = language;
-  window.angularTranslationsLoaded = function (lang, codeToL10N) {
-    console.log("angularTranslationsLoaded called with language=" + lang);
-    window.angularTranslations = codeToL10N;
-  };
-  // Do not add "crossorigin='anonymous'" because it will prevent local testing.
-  var script = "<script src='languages/" + language + ".js'></script>"; // It will block, thus preventing angular to start before the translations are loaded.
-  document.write(script); // jshint ignore:line
-})();
-
-angular.module('myApp')
-.factory('$translate', ['$interpolate', 'logSaver', function ($interpolate, logSaver) {
-  'use strict';
-
-  var angularTranslations = window.angularTranslations;
-  var language = window.angularLanguage;
   if (!language) {
     throw new Error("You must include angularTranslate like this:\n" +
         '<script>\n' +
@@ -133,56 +125,43 @@ angular.module('myApp')
         '</script>\n' +
         '<script src="http://yoav-zibin.github.io/emulator/angular-translate/angular-translate.min.js"></script>\n');
   }
-  if (angularTranslations) {
-    // store in local storage (for offline usage)
-    if (window.localStorage) {
-      logSaver.alwaysLog("Storing translations for " + language);
-      window.localStorage.setItem(language, angular.toJson(angularTranslations));
-    }
-  }
+  console.log("Language is " + language);
+  var angularTranslations: StringDictionary = myStorage.getItem(language);
+  window.angularTranslationsLoaded = function (lang: string, codeToL10N: StringDictionary): void {
+    console.log("angularTranslationsLoaded called with language=" + lang);
+    angularTranslations = codeToL10N;
+    myStorage.setItem(language, angularTranslations);
+  };
+  // Do not add "crossorigin='anonymous'" because it will prevent local testing.
+  var script = "<script src='languages/" + language + ".js'></script>"; // It will block, thus preventing angular to start before the translations are loaded.
+  document.write(script); // jshint ignore:line
 
-  function loadFromLocalStorage(lang) {
+  function translate(translationId: string, interpolateParams: StringDictionary): string {
     if (!angularTranslations) {
-      if (window.localStorage) {
-        var str = window.localStorage.getItem(lang);
-        if (str) {
-          angularTranslations = angular.fromJson(str);
-          language = lang;
-          logSaver.alwaysLog("Loaded translations from localStorage for " + lang);
-        }
-      }
+      throw new Error("Couldn't load language=" + language + " neither from the internet nor from localStorage");
     }
-  }
-  loadFromLocalStorage(language);
-  if (!angularTranslations) {
-    // try any other language in local storage
-    var allLanguages = window.angularTranslationLanguages;
-    for (var i = 0; i < allLanguages.length; i++) {
-      loadFromLocalStorage(allLanguages[i]);
-    }
-  }
-  if (!angularTranslations) {
-    throw new Error("Couldn't load language=" + language + " neither from the internet nor from localStorage");
-  }
-
-  function translate(translationId, interpolateParams) {
     var translation = angularTranslations[translationId];
     if (!translation) {
       throw new Error("Couldn't find translationId=" + translationId + " in language=" + language);
     }
     return $interpolate(translation)(interpolateParams || {});
   }
-  window.$translate = translate; // for debugging
-  translate.getLanguage = function () { return language; };
-  return translate;
-}])
-.filter('translate', ['$parse', '$translate', function ($parse, $translate) {
+  var translateService: TranslateService;
+  translateService = <TranslateService>translate;
+  translateService.getLanguage = function (): string { return language; };
+  return translateService;
+}
+
+var $translate = createTranslateService(); // uses urlParams.lang
+
+angular.module('myApp')
+.filter('translate', ['$parse', function ($parse:angular.IParseService) {
   'use strict';
 
-  return function (translationId, interpolateParams) {
+  return function (translationId: string, interpolateParams: StringDictionary|string): string {
     if (!angular.isObject(interpolateParams)) {
-      interpolateParams = $parse(interpolateParams)(this);
+      interpolateParams = $parse(<string>interpolateParams)(this);
     }
-    return $translate(translationId, interpolateParams);
+    return $translate(translationId, <StringDictionary>interpolateParams);
   };
 }]);

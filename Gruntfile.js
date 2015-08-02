@@ -42,12 +42,7 @@ module.exports = function(grunt) {
       },
       all: [
         'Gruntfile.js',
-        'src/*.js',
-        'drag_n_drop/*.js',
-        'angular-translate/angular-translate.js',
-        'examples/*.js',
-        'emulator/turnBasedEmulator.js',
-        'emulator/realTimeEmulator.js'
+        'angular-translate/languages/*.js'
       ]
     },
     concat: {
@@ -55,20 +50,22 @@ module.exports = function(grunt) {
         separator: ';',
       },
       dist: {
-        src: ['dist/compilationDate.js', 'src/stateService.js', 'src/messageService.js', 'src/logSaver.js', 'src/gameService.js', 'src/resizeMapArea.js', 'src/alphaBetaService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
-        dest: 'dist/turnBasedServices.2.js',
-      },
-      realTime: {
-        src: ['dist/compilationDate.js', 'src/realTimeService.js', 'src/messageService.js', 'src/logSaver.js', 'src/randomService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
-        dest: 'dist/realTimeServices.2.js',
-      },
-      realTimeSimple: {
-        src: ['dist/compilationDate.js', 'src/realTimeSimpleService.js', 'src/messageService.js', 'src/logSaver.js', 'src/randomService.js', 'src/resizeGameAreaService.js', 'src/angular-translate.js', 'src/dragAndDropService.js'],
-        dest: 'dist/realTimeSimpleServices.2.js',
-      },
-      app: {
-        src: ['dist/compilationDate.js', 'src/stateService.js', 'src/logSaver.js', 'src/angular-translate.js'],
-        dest: 'dist/appServices.2.js',
+        src: [
+          'dist/compilationDate.js',
+          'ts_output_readonly_do_NOT_change_manually/src/urlParams.js',
+          'ts_output_readonly_do_NOT_change_manually/src/logSaver.js',
+          'ts_output_readonly_do_NOT_change_manually/src/myStorage.js',
+          'ts_output_readonly_do_NOT_change_manually/src/stateService.js',
+          'ts_output_readonly_do_NOT_change_manually/src/messageService.js',
+          'ts_output_readonly_do_NOT_change_manually/src/gameService.js',
+          'ts_output_readonly_do_NOT_change_manually/src/resizeMapArea.js',
+          'ts_output_readonly_do_NOT_change_manually/src/alphaBetaService.js',
+          'ts_output_readonly_do_NOT_change_manually/src/resizeGameAreaService.js',
+          'ts_output_readonly_do_NOT_change_manually/src/angular-translate.js',
+          'ts_output_readonly_do_NOT_change_manually/src/dragAndDropService.js',
+          'ts_output_readonly_do_NOT_change_manually/src/angularExceptionHandler.js',
+        ],
+        dest: 'dist/turnBasedServices.3.js',
       },
     },
     uglify: {
@@ -77,16 +74,13 @@ module.exports = function(grunt) {
       },
       my_target: {
         files: {
-          'dist/turnBasedServices.2.min.js': ['dist/turnBasedServices.2.js'],
-          'dist/realTimeServices.2.min.js': ['dist/realTimeServices.2.js'],
-          'dist/realTimeSimpleServices.2.min.js': ['dist/realTimeSimpleServices.2.js'],
-          'dist/appServices.2.min.js': ['dist/appServices.2.js'], // In my mega-game, I don't want the angular error catcher (that passes emailJavaScriptError to the parent!)
+          'dist/turnBasedServices.3.min.js': ['dist/turnBasedServices.3.js'],
         }
       }
     },
     shell: {
       compilationDate: {
-        command: 'echo var emulatorServicesCompilationDate = \\"`date`\\"\\; > dist/compilationDate.js'
+        command: 'echo \\"use strict\\"\\; var emulatorServicesCompilationDate = \\"`date`\\"\\; > dist/compilationDate.js'
       }
     }
   });

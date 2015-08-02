@@ -1,13 +1,17 @@
-function resizeMapArea(params) {
-  'use strict';
-
+interface ResizeMapAreaParams {
+  imageId: string;
+  mapId: string;
+  originalWidth: number;
+  originalHeight: number;
+}
+function resizeMapArea(params: ResizeMapAreaParams): void {
   var imageId = params.imageId;
   var mapId = params.mapId;
   var originalWidth = params.originalWidth;
   var originalHeight = params.originalHeight;
 
   function rescale() {
-    var image = document.getElementById(imageId);
+    var image = <HTMLImageElement>document.getElementById(imageId);
     var map = document.getElementById(mapId);
     var widthScale = image.width / originalWidth;
     var heightScale = image.height / originalHeight;
@@ -19,13 +23,14 @@ function resizeMapArea(params) {
       if (!originalCoords) {
         areaElement.setAttribute("data-original-coords", areaElement.getAttribute("coords"));
       }
-      var coords = areaElement.getAttribute("data-original-coords").split(',');
-      var coordsPercent = [];
+      var coords: string[] = areaElement.getAttribute("data-original-coords").split(',');
+      var coordsPercent: number[] = [];
       for (var i = 0; i < coords.length; ++i) {
+        var coordNum = Number(coords[i]);
         if (i % 2 === 0) {
-          coordsPercent[i] = Math.round(coords[i] * widthScale);
+          coordsPercent[i] = Math.round(coordNum * widthScale);
         } else {
-          coordsPercent[i] = Math.round(coords[i] * heightScale);
+          coordsPercent[i] = Math.round(coordNum * heightScale);
         }
       }
       //console.log("before=", coords, "after=", coordsPercent);

@@ -1,7 +1,9 @@
-angular.module('myApp').factory('alphaBetaService', [function() {
+interface IAlphaBetaLimits {
+  millisecondsLimit? : number;
+  maxDepth? : number;
+}
 
-  'use strict';
-
+module alphaBetaService {
   /**
    * Does alpha-beta search, starting from startingState,
    * where the first move is done by playerIndex (playerIndex is either 0 or 1),
@@ -24,9 +26,14 @@ angular.module('myApp').factory('alphaBetaService', [function() {
    * and it has either a millisecondsLimit or maxDepth field:
    * millisecondsLimit is a time limit, and maxDepth is a depth limit.
    */
-  function alphaBetaDecision(
-      startingState, playerIndex, getNextStates, getStateScoreForIndex0,
-      getDebugStateToString, alphaBetaLimits) {
+  export function alphaBetaDecision(
+      startingState: IMove,
+      playerIndex: number,
+      getNextStates: (move: IMove, playerIndex: number) => IMove[],
+      getStateScoreForIndex0: (move: IMove, playerIndex: number) => number,
+      // If you want to see debugging output in the console, then surf to game.html?debug
+      getDebugStateToString: (move: IMove) => string,
+      alphaBetaLimits: IAlphaBetaLimits): IMove {
     // Checking input
     if (!startingState || !getNextStates || !getStateScoreForIndex0) {
       throw new Error("startingState or getNextStates or getStateScoreForIndex0 is null/undefined");
@@ -51,7 +58,7 @@ angular.module('myApp').factory('alphaBetaService', [function() {
       console.log("Doing iterative-deepeninh (A*) until we run out of time or find a certain win/lose move.");
     }
     var maxDepth = 1;
-    var bestState;
+    var bestState: IMove;
     while (true) {
       if (getDebugStateToString != null) {
         console.log("Alpha-beta search until maxDepth=" + maxDepth);
@@ -103,16 +110,27 @@ angular.module('myApp').factory('alphaBetaService', [function() {
     }
   }
 
-  function isTimeout(alphaBetaLimits, startTime) {
+  function isTimeout(alphaBetaLimits: IAlphaBetaLimits, startTime: number): boolean {
     return alphaBetaLimits.millisecondsLimit &&
         new Date().getTime() - startTime > alphaBetaLimits.millisecondsLimit;
   }
 
+  interface ScoreState {
+    bestScore: number;
+    bestState: IMove;
+  }
+
   function getScoreForIndex0(
-      startingState, playerIndex, getNextStates, getStateScoreForIndex0,
-      getDebugStateToString, alphaBetaLimits, startTime, depth, alpha, beta) {
-    var bestScore = null;
-    var bestState = null;
+        startingState: IMove,
+        playerIndex: number,
+        getNextStates: (move: IMove, playerIndex: number) => IMove[],
+        getStateScoreForIndex0: (move: IMove, playerIndex: number) => number,
+        // If you want to see debugging output in the console, then surf to game.html?debug
+        getDebugStateToString: (move: IMove) => string,
+        alphaBetaLimits: IAlphaBetaLimits,
+        startTime: number, depth: number, alpha: number, beta: number): ScoreState {
+    var bestScore: number = null;
+    var bestState: IMove = null;
     if (isTimeout(alphaBetaLimits, startTime)) {
       if (getDebugStateToString != null) {
         console.log("Run out of time, just quitting from this traversal.");
@@ -170,6 +188,4 @@ angular.module('myApp').factory('alphaBetaService', [function() {
     }
     return {bestScore: bestScore, bestState: bestState};
   }
-
-  return {alphaBetaDecision: alphaBetaDecision};
-}]);
+}

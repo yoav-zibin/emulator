@@ -1,63 +1,125 @@
-angular.module('myApp')
-.service('stateService',
-    ["$window", "$timeout", "$log", "$rootScope",
-      function($window, $timeout, $log, $rootScope) {
+interface ISet {
+  key: string;
+  value: any;
+  visibleToPlayerIndexes?: number[];
+}
+interface ISetVisibility {
+  key: string;
+  visibleToPlayerIndexes?: number[];
+}
+interface ISetRandomInteger {
+  key: string;
+  from: number;
+  to: number;
+}
+interface IDelete {
+  key: string;
+}
+interface IShuffle {
+  keys: string[];
+}
+interface ISetTurn {
+  turnIndex: number;
+}
+interface IEndMatch {
+  endMatchScores: number[];
+}
+interface IOperation {
+  set?: ISet;
+  setVisibility?: ISetVisibility;
+  setRandomInteger?: ISetRandomInteger;
+  delete?: IDelete;
+  shuffle?: IShuffle;
+  setTurn?: ISetTurn;
+  endMatch?: IEndMatch;
+}
+type IMove = IOperation[];
+interface IState {
+  [index: string]: any;
+}
+interface IIsMoveOk {
+  move: IMove;
+  turnIndexBeforeMove : number;
+  turnIndexAfterMove: number;
+  stateBeforeMove: IState;
+  stateAfterMove: IState;
+  numberOfPlayers: number;
+}
+type PlayMode = string | number;
+interface IUpdateUI extends IIsMoveOk {
+  playersInfo: IPlayerInfo[];
+  yourPlayerIndex: number;
+  playMode: PlayMode;
+  moveNumber: number;
+  randomSeed: string;
+  endMatchScores?: number[];
+}
+interface IGameMethods {
+  isMoveOk(move: IIsMoveOk): boolean;
+  updateUI(update: IUpdateUI): void;
+}
+interface Math {
+  seedrandom(seed: string): void;
+  originalRandom(): number;
+}
+/*interface IStateService {
+  setGame(game: IGameMethods): void;
+  makeMove(move: IMove): void;
+}*/
 
-  'use strict';
+interface IVisibility {
+  [index: string]: number[];
+}
+interface IMatchState {
+  turnIndexBeforeMove: number;
+  turnIndex: number;
+  endMatchScores?: number[];
+  moveNumber: number;
+  randomSeed: string;
+  lastMove: IMove;
+  lastState: IState;
+  currentState: IState;
+  lastVisibleTo: IVisibility;
+  currentVisibleTo: IVisibility;
+}
 
-  var game;
+module stateService {
+  var game: IGameMethods;
+  var currentState: IState;
+  var lastState: IState;
+  var currentVisibleTo: IVisibility;
+  var lastVisibleTo: IVisibility;
+  var lastMove: IMove;
+  var turnIndexBeforeMove: number;
+  var turnIndex: number = 0; // turn after the move (-1 when the game ends)
+  var endMatchScores: number[] = null;
+  var setTurnOrEndMatchCount: number = 0;
+  var playersInfo: IPlayerInfo[];
+  var playMode: PlayMode = "passAndPlay"; // Default play mode
 
-  var currentState;
-  var lastState;
-  var currentVisibleTo;
-  var lastVisibleTo;
-  var lastMove;
-  var turnIndexBeforeMove;
-  var turnIndex = 0; // turn after the move (-1 when the game ends)
-  var endMatchScores = null;
-  var setTurnOrEndMatchCount;
-  var playersInfo;
-  var playMode = location.search === "?onlyAIs" ? "onlyAIs"
-      : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer" : "passAndPlay"; // Default play mode
+  var randomSeed: string;
+  var moveNumber: number;
 
-  var randomSeed;
-  var moveNumber;
+  var simulateServerDelayMilliseconds:number = 10;
 
-  // Global settings
-  $rootScope.settings = {};
-  $rootScope.settings.simulateServerDelayMilliseconds = 0;
-
-  function setPlayMode(_playMode) {
-    playMode = _playMode;
-    if (game !== undefined) {
-      setPlayers();
-      sendUpdateUi();
-    }
+  export function setSimulateServerDelayMilliseconds(_simulateServerDelayMilliseconds: number): void {
+    simulateServerDelayMilliseconds = _simulateServerDelayMilliseconds;
   }
-
-  function setRandomSeed(_randomSeed) {
+  export function setPlayMode(_playMode: PlayMode): void {
+    playMode = _playMode;
+  }
+  export function setRandomSeed(_randomSeed: string): void {
     randomSeed = _randomSeed;
   }
 
-  function setPlayers() {
-    playersInfo = [];
-    var actualNumberOfPlayers =
-        randomFromTo(game.minNumberOfPlayers, game.maxNumberOfPlayers + 1);
-    for (var i = 0; i < actualNumberOfPlayers; i++) {
-      var playerId =
-        playMode === "onlyAIs" ||
-          i !== 0 && playMode === "playAgainstTheComputer" ?
-          "" : // The playerId for the computer is "".
-          "" + (i + 42);
-      playersInfo.push({playerId : playerId});
-    }
+  export function setPlayers(_playersInfo: IPlayerInfo[]): void {
+    playersInfo = _playersInfo;
   }
 
-  function init() {
+  export function initNewMatch(): void {
     if (!game) {
       throwError("You must call setGame before any other method.");
     }
-    setPlayers();
     currentState = {};
     lastState = null;
     currentVisibleTo = {};
@@ -69,47 +131,36 @@ angular.module('myApp')
     moveNumber = 0;
   }
 
-  function startNewMatch() {
-    init();
-    broadcastUpdateUi();
-  }
-
   //Function to get the keys from a JSON object
-  function getKeys(object) {
-    var keys = [];
+  function getKeys(object: any): string[] {
+    if (Object && Object.keys) {
+      return Object.keys(object);
+    }
+    var keys: string[] = [];
     for (var key in object) {
-      if (object.hasOwnProperty(key)) {
-        keys.push(key);
-      }
+      keys.push(key);
     }
     return keys;
   }
 
-  function clone(obj) {
+  function clone<T>(obj: T): T {
     return angular.copy(obj);
   }
 
-  function isNull(obj) {
+  function isNull(obj: any): boolean {
     return obj === undefined || obj === null;
   }
 
-  function throwError() {
-    $log.error("Throwing an error with these arguments=", arguments);
-    var msg = Array.prototype.join.call(arguments, ", ");
+  function throwError(...args: any[]): void {
+    log.error("Throwing an error with these arguments=", args);
+    var msg = args.join(", ");
     throw new Error(msg);
   }
 
-  function get(obj, field) {
-    if (isNull(obj[field])) {
-      throwError("You must have a field named '", field, "' in this object=", obj);
-    }
-    return obj[field];
-  }
-
-  function getMoveForPlayerIndex(playerIndex, move) {
-    var moveForPlayer = [];
+  function getMoveForPlayerIndex(playerIndex: number, move: IMove): IMove {
+    var moveForPlayer: IMove = [];
     for (var k = 0; k < move.length; k++) {
-      var operation = move[k];
+      var operation: IOperation = move[k];
       if (!isNull(operation.set) &&
           !isNull(operation.set.visibleToPlayerIndexes) &&
           operation.set.visibleToPlayerIndexes.indexOf(playerIndex) === -1) {
@@ -127,15 +178,15 @@ angular.module('myApp')
     return moveForPlayer;
   }
 
-  function getStateForPlayerIndex(playerIndex, gameState, visibleTo) {
+  function getStateForPlayerIndex(playerIndex: number, gameState: IState, visibleTo: IVisibility): IState {
     if (gameState === null) {
       return null;
     }
-    var result = {};
-    var keys = getKeys(gameState);
+    var result: IState = {};
+    var keys: string[] = getKeys(gameState);
     for (var k = 0; k < keys.length; k++) {
       var visibleToPlayerIndexes = visibleTo[keys[k]];
-      var value = null;
+      var value: any = null;
       if (isNull(visibleToPlayerIndexes) || visibleToPlayerIndexes.indexOf(playerIndex) > -1) {
         value = gameState[keys[k]];
       }
@@ -144,9 +195,9 @@ angular.module('myApp')
     return result;
   }
 
-  function shuffle(keys) {
-    var keysCopy = keys.slice(0);
-    var result = [];
+  function shuffle(keys: string[]): string[] {
+    var keysCopy: string[] = keys.slice(0);
+    var result: string[] = [];
     while (keysCopy.length >= 1) {
       var index = randomFromTo(0, keysCopy.length);
       var removed = keysCopy.splice(index, 1)[0];
@@ -155,100 +206,107 @@ angular.module('myApp')
     return result;
   }
 
-  function randomFromTo(from, to) {
+  export function randomFromTo(from: number, to: number): number {
     if (isNull(from) || isNull(to) || from >= to) {
       throw new Error("In randomFromTo(from,to), you must have from<to, but from=" + from + " to=" + to);
     }
     return Math.floor(Math.random() * (to - from) + from);
   }
 
-  function processApiOperation(operation) {
+  function processApiOperation(operation: IOperation): void {
     //Check for all types of Operations
-    var key;
-    var op;
-    var visibleToPlayerIndexes;
+    var key: string;
+    var visibleToPlayerIndexes: number[];
     if (!isNull(operation.set)) {
-      op = operation.set;
-      key = op.key;
-      visibleToPlayerIndexes = op.visibleToPlayerIndexes;
-      var value = op.value;
+      var opSet = operation.set;
+      key = opSet.key;
+      visibleToPlayerIndexes = opSet.visibleToPlayerIndexes;
+      var value: any = opSet.value;
       if (isNull(key) || isNull(value)) {
         throwError("Fields key and value in Set operation must be non null. operation=" + angular.toJson(operation, true));
       }
       currentState[key] = value;
-      currentVisibleTo[key] = visibleToPlayerIndexes;
+      if (visibleToPlayerIndexes) {
+        currentVisibleTo[key] = visibleToPlayerIndexes;
+      } else {
+        delete currentVisibleTo[key];
+      }
     } else if (!isNull(operation.setTurn)) {
-      op = operation.setTurn;
-      turnIndex = get(op, "turnIndex");
+      var setTurn = operation.setTurn;
+      turnIndex = setTurn.turnIndex;
       setTurnOrEndMatchCount++;
     } else if (!isNull(operation.setRandomInteger)) {
-      op = operation.setRandomInteger;
-      key = op.key;
-      var from = op.from;
-      var to = op.to;
+      var setRandomInteger = operation.setRandomInteger;
+      key = setRandomInteger.key;
+      var from: number = setRandomInteger.from;
+      var to: number = setRandomInteger.to;
       if (isNull(key) || isNull(from) || isNull(to)) {
         throwError("Fields key, from, and to, in SetRandomInteger operation must be non null. operation=" + angular.toJson(operation, true));
       }
-      var randomValue = randomFromTo(from, to);
+      var randomValue: number = randomFromTo(from, to);
       currentState[key] = randomValue;
-      currentVisibleTo[key] = null;
+      delete currentVisibleTo[key];
     } else if (!isNull(operation.setVisibility)) {
-      op = operation.setVisibility;
-      key = op.key;
-      visibleToPlayerIndexes = op.visibleToPlayerIndexes;
+      var setVisibility = operation.setVisibility;
+      key = setVisibility.key;
+      visibleToPlayerIndexes = setVisibility.visibleToPlayerIndexes;
       if (isNull(key)) {
         throwError("Fields key in SetVisibility operation must be non null. operation=" + angular.toJson(operation, true));
       }
-      currentVisibleTo[key] = visibleToPlayerIndexes;
+      if (visibleToPlayerIndexes) {
+        currentVisibleTo[key] = visibleToPlayerIndexes;
+      } else {
+        delete currentVisibleTo[key];
+      }
     } else if (!isNull(operation['delete'])) {
-      op = operation['delete'];
-      key = op.key;
+      var opDelete = operation['delete'];
+      key = opDelete.key;
       if (isNull(key)) {
         throwError("Field key in Delete operation must be non null. operation=" + angular.toJson(operation, true));
       }
       delete currentState[key];
       delete currentVisibleTo[key];
     } else if (!isNull(operation.shuffle)) {
-      op = operation.shuffle;
-      var keys = op.keys;
+      var opShuffle = operation.shuffle;
+      var keys: string[] = opShuffle.keys;
       if (isNull(keys) || keys.length === 0) {
         throwError("Field keys in Shuffle operation must be a non empty array. operation=" + angular.toJson(operation, true));
       }
-      var shuffledKeys = shuffle(keys);
-      var oldGameState = clone(currentState);
-      var oldVisibleTo = clone(currentVisibleTo);
+      var shuffledKeys: string[] = shuffle(keys);
+      var oldGameState: IState = clone(currentState);
+      var oldVisibleTo: IVisibility = clone(currentVisibleTo);
       for (var j = 0; j < shuffledKeys.length; j++) {
-        var fromKey = keys[j];
-        var toKey = shuffledKeys[j];
+        var fromKey: string = keys[j];
+        var toKey: string = shuffledKeys[j];
         currentState[toKey] = oldGameState[fromKey];
         currentVisibleTo[toKey] = oldVisibleTo[fromKey];
       }
     } else if (!isNull(operation.endMatch)) {
-      op = operation.endMatch;
+      var endMatch = operation.endMatch;
       setTurnOrEndMatchCount++;
-      var scores = op.endMatchScores;
+      var scores: number[] = endMatch.endMatchScores;
       if (isNull(scores) || scores.length !== playersInfo.length) {
         throwError("Field scores in EndMatch operation must be an array of the same length as the number of players. operation=" + angular.toJson(operation, true));
       }
       endMatchScores = scores;
       if (playMode === "onlyAIs") {
-        $timeout(startNewMatch, 1000); // start a new match in 1 second.
+        $timeout(() => { initNewMatch(); }, 1000); // start a new match in 1 second.
       }
     } else {
       throwError("Illegal operation, it must contain either set, setRandomInteger, setVisibility, delete, shuffle, or endMatch: " + angular.toJson(operation, true));
     }
   }
 
-  function getYourPlayerIndex() {
+  function getYourPlayerIndex(): number {
     return playMode === "playWhite" ? 0 :
           playMode === "playBlack" ? 1 :
           playMode === "playViewer" ? -2 : // viewer is -2 (because -1 for turnIndexAfterMove means the game ended)
-          playMode === "playAgainstTheComputer" || playMode === "onlyAIs" ? turnIndex :
-          playMode === "passAndPlay" ? turnIndex :
-          playMode;
+          playMode === "playAgainstTheComputer" || playMode === "onlyAIs" ||
+              playMode === "passAndPlay" ? turnIndex :
+          Number(playMode);
   }
 
-  function getMatchState() {
+  export function getMatchState(): IMatchState {
     return {
       turnIndexBeforeMove: turnIndexBeforeMove,
       turnIndex: turnIndex,
@@ -263,12 +321,7 @@ angular.module('myApp')
     };
   }
 
-  function setMatchState(data) {
-    if (data.turnIndexBeforeMove === undefined ||
-        data.turnIndex === undefined ||
-        data.endMatchScores === undefined) {
-      return;
-    }
+  export function setMatchState(data: IMatchState): void {
     turnIndexBeforeMove = data.turnIndexBeforeMove;
     turnIndex = data.turnIndex;
     endMatchScores = data.endMatchScores;
@@ -281,31 +334,7 @@ angular.module('myApp')
     currentVisibleTo = data.currentVisibleTo;
   }
 
-  function getIntercom() {
-    if ($window.Intercom !== undefined) {
-      return $window.Intercom.getInstance();
-    }
-    return null;
-  }
-
-  function broadcastUpdateUi() {
-    var matchState = getMatchState();
-    var intercom = getIntercom();
-    if (intercom != null) {
-      $window.localStorage.setItem($window.location.toString(), angular.toJson(matchState));
-      intercom.emit('broadcastUpdateUi', matchState);
-    } else {
-      sendUpdateUi();
-    }
-  }
-
-  function gotBroadcastUpdateUi(data) {
-    $log.info("gotBroadcastUpdateUi:", data);
-    setMatchState(data);
-    sendUpdateUi();
-  }
-
-  function delayedSendUpdateUi() {
+  function delayedSendUpdateUi(): void {
     var moveForIndex = getMoveForPlayerIndex(turnIndex, lastMove);
     var stateBeforeMove = getStateForPlayerIndex(turnIndex, lastState, lastVisibleTo);
     var stateAfterMove = getStateForPlayerIndex(turnIndex, currentState, currentVisibleTo);
@@ -328,8 +357,9 @@ angular.module('myApp')
         turnIndexAfterMove : turnIndex,
         stateBeforeMove : stateBeforeMove,
         stateAfterMove : stateAfterMove,
-        yourPlayerIndex : getYourPlayerIndex(),
+        numberOfPlayers: playersInfo.length,
         playersInfo : playersInfo,
+        yourPlayerIndex : getYourPlayerIndex(),
         playMode: playMode,
         moveNumber: moveNumber,
         randomSeed: randomSeed,
@@ -337,15 +367,15 @@ angular.module('myApp')
       });
   }
 
-  function sendUpdateUi() {
-    if ($rootScope.settings.simulateServerDelayMilliseconds === 0) {
+  export function sendUpdateUi(): void {
+    if (simulateServerDelayMilliseconds === 0) {
       delayedSendUpdateUi();
     } else {
-      $timeout(delayedSendUpdateUi, $rootScope.settings.simulateServerDelayMilliseconds); // Delay to simulate server delay.
+      $timeout(() => { delayedSendUpdateUi(); }, simulateServerDelayMilliseconds);
     }
   }
 
-  function makeMove(operations) {
+  export function makeMove(operations: IMove): void {
     if (!game) {
       throwError("You must call setGame before any other method.");
     }
@@ -363,12 +393,12 @@ angular.module('myApp')
     turnIndex = -1;
     lastMove = operations;
     moveNumber++;
-    if (randomSeed) {
+    if (randomSeed && Math.seedrandom) {
       Math.seedrandom(randomSeed + moveNumber); // Math.random is used only in processApiOperation
     }
     setTurnOrEndMatchCount = 0;
-    for (var i = 0; i < lastMove.length; i++) {
-      processApiOperation(lastMove[i]);
+    for (var i = 0; i < operations.length; i++) {
+      processApiOperation(operations[i]);
     }
     // We must have either SetTurn or EndMatch
     if (setTurnOrEndMatchCount !== 1) {
@@ -377,71 +407,17 @@ angular.module('myApp')
     if (!(turnIndex >= -1 && turnIndex < playersInfo.length)) {
       throwError("turnIndex must be between -1 and " + playersInfo.length + ", but it was " + turnIndex + ".");
     }
-    broadcastUpdateUi();
+    sendUpdateUi();
   }
 
-  function setGame(_game) {
+  export function setGame(_game: IGameMethods): void {
     if (game !== undefined) {
       throwError("You can call setGame only once");
     }
     game = _game;
-    get(game, "minNumberOfPlayers");
-    get(game, "maxNumberOfPlayers");
-    get(game, "isMoveOk");
-    get(game, "updateUI");
-
-    init();
-    var intercom = getIntercom();
-    if (intercom != null) {
-      intercom.on('broadcastUpdateUi', gotBroadcastUpdateUi);
-      var matchState = $window.localStorage.getItem($window.location.toString());
-      if (!isNull(matchState)) {
-        setMatchState(angular.fromJson(matchState));
-      }
-    }
-    sendUpdateUi();
   }
 
-
-  function isTie() {
-    if (!endMatchScores) {
-      return false;
-    }
-    var score = endMatchScores[0];
-    for (var i = 0; i < endMatchScores.length; i++) {
-      if (score !== endMatchScores[i]) {
-        return false;
-      }
-    }
-    return true;
+  export function getEndMatchScores(): number[] {
+    return endMatchScores;
   }
-  function getWinnerIndex() {
-    if (!endMatchScores || isTie()) {
-      return null;
-    }
-    var winnerIndex = 0;
-    for (var i = 0; i < endMatchScores.length; i++) {
-      if (endMatchScores[winnerIndex] < endMatchScores[i]) {
-        winnerIndex = i;
-      }
-    }
-    return winnerIndex;
-  }
-
-  this.getTurnIndex = function () { return turnIndex; };
-  this.getYourPlayerIndex = getYourPlayerIndex;
-  this.isYourTurn = function () { return turnIndex !== -1 && turnIndex === getYourPlayerIndex(); };
-  this.getEndMatchScores = function () { return endMatchScores; };
-  this.isTie = isTie;
-  this.getWinnerIndex = getWinnerIndex;
-  this.isWinner = function () { return getWinnerIndex() === getYourPlayerIndex(); };
-
-  this.setGame = setGame;
-  this.makeMove = makeMove;
-  this.startNewMatch = startNewMatch;
-  this.init = init;
-  this.setPlayMode = setPlayMode;
-  this.setRandomSeed = setRandomSeed;
-  this.getMatchState = getMatchState;
-  this.setMatchState = setMatchState;
-}]);
+}
