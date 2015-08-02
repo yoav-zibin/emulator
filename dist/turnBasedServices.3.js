@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sun Aug 2 15:22:26 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Sun Aug 2 15:25:41 EDT 2015";
 ;function createUrlParams() {
     var query = location.search.substr(1);
     var result = {};
@@ -149,7 +149,7 @@ var urlParams = createUrlParams();
     var playMode = "passAndPlay"; // Default play mode
     var randomSeed;
     var moveNumber;
-    var simulateServerDelayMilliseconds = 10;
+    var simulateServerDelayMilliseconds = 100;
     function setSimulateServerDelayMilliseconds(_simulateServerDelayMilliseconds) {
         simulateServerDelayMilliseconds = _simulateServerDelayMilliseconds;
     }
@@ -580,22 +580,22 @@ var urlParams = createUrlParams();
                 }
             });
             messageService.sendMessage({ gameReady: {} });
-            // Show an empty board to a viewer (so you can't perform moves).
-            log.info("Passing a 'fake' updateUI message in order to show an empty board to a viewer (so you can NOT perform moves)");
-            updateUI({
-                move: [],
-                turnIndexBeforeMove: 0,
-                turnIndexAfterMove: 0,
-                stateBeforeMove: null,
-                stateAfterMove: {},
-                yourPlayerIndex: -2,
-                playersInfo: playersInfo,
-                playMode: "passAndPlay",
-                endMatchScores: null,
-                moveNumber: 0, randomSeed: "",
-                numberOfPlayers: playersInfo.length
-            });
         }
+        // Show an empty board to a viewer (so you can't perform moves).
+        log.info("Passing a 'fake' updateUI message in order to show an empty board to a viewer (so you can NOT perform moves)");
+        updateUI({
+            move: [],
+            turnIndexBeforeMove: 0,
+            turnIndexAfterMove: 0,
+            stateBeforeMove: null,
+            stateAfterMove: {},
+            yourPlayerIndex: -2,
+            playersInfo: playersInfo,
+            playMode: "passAndPlay",
+            endMatchScores: null,
+            moveNumber: 0, randomSeed: "",
+            numberOfPlayers: playersInfo.length
+        });
     }
     gameService.setGame = setGame;
 })(gameService || (gameService = {}));

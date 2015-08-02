@@ -97,22 +97,22 @@ module gameService {
         }
       });
       messageService.sendMessage({gameReady : {}});
-
-      // Show an empty board to a viewer (so you can't perform moves).
-      log.info("Passing a 'fake' updateUI message in order to show an empty board to a viewer (so you can NOT perform moves)");
-      updateUI({
-        move : [],
-        turnIndexBeforeMove : 0,
-        turnIndexAfterMove : 0,
-        stateBeforeMove : null,
-        stateAfterMove : {},
-        yourPlayerIndex : -2,
-        playersInfo : playersInfo,
-        playMode: "passAndPlay",
-        endMatchScores: null,
-        moveNumber: 0, randomSeed:"",
-        numberOfPlayers: playersInfo.length
-      });
     }
+    
+    // Show an empty board to a viewer (so you can't perform moves).
+    log.info("Passing a 'fake' updateUI message in order to show an empty board to a viewer (so you can NOT perform moves)");
+    updateUI({
+      move : [],
+      turnIndexBeforeMove : 0,
+      turnIndexAfterMove : 0,
+      stateBeforeMove : null,
+      stateAfterMove : {},
+      yourPlayerIndex : -2,
+      playersInfo : playersInfo,
+      playMode: "passAndPlay",
+      endMatchScores: null,
+      moveNumber: 0, randomSeed:"",
+      numberOfPlayers: playersInfo.length
+    });
   }
 }

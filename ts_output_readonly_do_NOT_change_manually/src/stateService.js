@@ -14,7 +14,7 @@ var stateService;
     var playMode = "passAndPlay"; // Default play mode
     var randomSeed;
     var moveNumber;
-    var simulateServerDelayMilliseconds = 10;
+    var simulateServerDelayMilliseconds = 100;
     function setSimulateServerDelayMilliseconds(_simulateServerDelayMilliseconds) {
         simulateServerDelayMilliseconds = _simulateServerDelayMilliseconds;
     }

@@ -100,7 +100,7 @@ module stateService {
   var randomSeed: string;
   var moveNumber: number;
 
-  var simulateServerDelayMilliseconds:number = 10;
+  var simulateServerDelayMilliseconds:number = 100;
 
   export function setSimulateServerDelayMilliseconds(_simulateServerDelayMilliseconds: number): void {
     simulateServerDelayMilliseconds = _simulateServerDelayMilliseconds;
