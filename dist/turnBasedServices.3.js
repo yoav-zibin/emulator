@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sun Aug 2 15:05:43 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Sun Aug 2 15:07:20 EDT 2015";
 ;function createUrlParams() {
     var query = location.search.substr(1);
     var result = {};
@@ -830,7 +830,7 @@ var urlParams = createUrlParams();
             windowHeight: windowHeight
         };
         if (windowWidth === 0 || windowHeight === 0) {
-            logSaver.info("Window width/height is 0 so hiding gameArea div.");
+            log.info("Window width/height is 0 so hiding gameArea div.");
             gameArea.style.display = "none";
             return;
         }
@@ -842,7 +842,7 @@ var urlParams = createUrlParams();
         else {
             windowHeight = round2(windowWidth / widthToHeight);
         }
-        logSaver.info("Window size is " + oldSizes.windowWidth + "x" + oldSizes.windowHeight +
+        log.info("Window size is " + oldSizes.windowWidth + "x" + oldSizes.windowHeight +
             " so setting gameArea size to " + windowWidth + "x" + windowHeight +
             " because widthToHeight=" + widthToHeight);
         // Take 5% margin (so the game won't touch the end of the screen)

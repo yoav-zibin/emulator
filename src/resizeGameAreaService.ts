@@ -42,7 +42,7 @@ module resizeGameAreaService {
     };
 
     if (windowWidth === 0 || windowHeight === 0) {
-      logSaver.info("Window width/height is 0 so hiding gameArea div.");
+      log.info("Window width/height is 0 so hiding gameArea div.");
       gameArea.style.display = "none";
       return;
     }
@@ -55,7 +55,7 @@ module resizeGameAreaService {
     } else {
       windowHeight = round2(windowWidth / widthToHeight);
     }
-    logSaver.info("Window size is " + oldSizes.windowWidth + "x" + oldSizes.windowHeight +
+    log.info("Window size is " + oldSizes.windowWidth + "x" + oldSizes.windowHeight +
         " so setting gameArea size to " + windowWidth + "x" + windowHeight +
         " because widthToHeight=" + widthToHeight);
 
