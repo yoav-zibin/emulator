@@ -53,7 +53,7 @@ module.exports = function(grunt) {
         src: [
           'dist/compilationDate.js',
           'ts_output_readonly_do_NOT_change_manually/src/urlParams.js',
-          'ts_output_readonly_do_NOT_change_manually/src/logSaver.js',
+          'ts_output_readonly_do_NOT_change_manually/src/log.js',
           'ts_output_readonly_do_NOT_change_manually/src/myStorage.js',
           'ts_output_readonly_do_NOT_change_manually/src/stateService.js',
           'ts_output_readonly_do_NOT_change_manually/src/messageService.js',
