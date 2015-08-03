@@ -1,4 +1,4 @@
-// This can't be a module, because we use it like:  $translate(...) and not like $translate.foobar(...)
+// This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
 function createTranslateService() {
     if (!angular) {
         throw new Error('You must first include angular: <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>');
@@ -109,7 +109,7 @@ function createTranslateService() {
     translateService.getLanguage = function () { return language; };
     return translateService;
 }
-var $translate = createTranslateService(); // uses urlParams.lang
+var translate = createTranslateService(); // uses urlParams.lang
 angular.module('myApp')
     .filter('translate', ['$parse', function ($parse) {
         'use strict';
@@ -117,6 +117,6 @@ angular.module('myApp')
             if (!angular.isObject(interpolateParams)) {
                 interpolateParams = $parse(interpolateParams)(this);
             }
-            return $translate(translationId, interpolateParams);
+            return translate(translationId, interpolateParams);
         };
     }]);

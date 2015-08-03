@@ -1,4 +1,4 @@
-// Defines $translate service and filter for I18N.
+// Defines translate service and filter for I18N.
 interface TranslateService {
   (translationId: string, interpolateParams?: StringDictionary): string;
   getLanguage(): string;
@@ -17,7 +17,7 @@ interface Navigator {
   languages: string[];
 }
 
-// This can't be a module, because we use it like:  $translate(...) and not like $translate.foobar(...)
+// This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
 function createTranslateService(): TranslateService {
   if (!angular) {
     throw new Error('You must first include angular: <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>');
@@ -152,7 +152,7 @@ function createTranslateService(): TranslateService {
   return translateService;
 }
 
-var $translate = createTranslateService(); // uses urlParams.lang
+var translate = createTranslateService(); // uses urlParams.lang
 
 angular.module('myApp')
 .filter('translate', ['$parse', function ($parse:angular.IParseService) {
@@ -162,6 +162,6 @@ angular.module('myApp')
     if (!angular.isObject(interpolateParams)) {
       interpolateParams = $parse(<string>interpolateParams)(this);
     }
-    return $translate(translationId, <StringDictionary>interpolateParams);
+    return translate(translationId, <StringDictionary>interpolateParams);
   };
 }]);
