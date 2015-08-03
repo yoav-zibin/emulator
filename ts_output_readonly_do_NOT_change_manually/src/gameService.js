@@ -62,12 +62,10 @@ var gameService;
             stateService.sendUpdateUi();
         }
         else {
-            var isMoveOk = game.isMoveOk;
-            var updateUI = game.updateUI;
             messageService.addMessageListener(function (message) {
                 gameService.lastMessage = message;
                 if (message.isMoveOk !== undefined) {
-                    var isMoveOkResult = isMoveOk(message.isMoveOk);
+                    var isMoveOkResult = game.isMoveOk(message.isMoveOk);
                     if (isMoveOkResult !== true) {
                         isMoveOkResult = { result: isMoveOkResult, isMoveOk: message.isMoveOk };
                     }

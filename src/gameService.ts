@@ -80,13 +80,10 @@ module gameService {
       stateService.setGame({updateUI: updateUI, isMoveOk: game.isMoveOk});
       stateService.sendUpdateUi();
     } else {
-      var isMoveOk = game.isMoveOk;
-      var updateUI = game.updateUI;
-
       messageService.addMessageListener(function (message) {
         lastMessage = message;
         if (message.isMoveOk !== undefined) {
-          var isMoveOkResult: any = isMoveOk(message.isMoveOk);
+          var isMoveOkResult: any = game.isMoveOk(message.isMoveOk);
           if (isMoveOkResult !== true) {
             isMoveOkResult = {result: isMoveOkResult, isMoveOk: message.isMoveOk};
           }
@@ -98,7 +95,7 @@ module gameService {
       });
       messageService.sendMessage({gameReady : {}});
     }
-    
+
     // Show an empty board to a viewer (so you can't perform moves).
     log.info("Passing a 'fake' updateUI message in order to show an empty board to a viewer (so you can NOT perform moves)");
     updateUI({

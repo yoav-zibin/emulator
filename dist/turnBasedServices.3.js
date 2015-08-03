@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sun Aug 2 15:25:41 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Mon Aug 3 07:47:32 EDT 2015";
 ;function createUrlParams() {
     var query = location.search.substr(1);
     var result = {};
@@ -563,12 +563,10 @@ var urlParams = createUrlParams();
             stateService.sendUpdateUi();
         }
         else {
-            var isMoveOk = game.isMoveOk;
-            var updateUI = game.updateUI;
             messageService.addMessageListener(function (message) {
                 gameService.lastMessage = message;
                 if (message.isMoveOk !== undefined) {
-                    var isMoveOkResult = isMoveOk(message.isMoveOk);
+                    var isMoveOkResult = game.isMoveOk(message.isMoveOk);
                     if (isMoveOkResult !== true) {
                         isMoveOkResult = { result: isMoveOkResult, isMoveOk: message.isMoveOk };
                     }
