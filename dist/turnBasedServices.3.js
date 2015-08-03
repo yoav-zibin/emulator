@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Mon Aug 3 07:47:32 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Mon Aug 3 07:54:31 EDT 2015";
 ;function createUrlParams() {
     var query = location.search.substr(1);
     var result = {};
@@ -557,9 +557,10 @@ var urlParams = createUrlParams();
         didCallSetGame = true;
         var playersInfo = getPlayers();
         if (isLocalTesting) {
+            stateService.setGame({ updateUI: updateUI, isMoveOk: game.isMoveOk });
+            stateService.initNewMatch();
             stateService.setPlayMode(playMode);
             stateService.setPlayers(playersInfo);
-            stateService.setGame({ updateUI: updateUI, isMoveOk: game.isMoveOk });
             stateService.sendUpdateUi();
         }
         else {

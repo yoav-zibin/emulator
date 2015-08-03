@@ -75,9 +75,10 @@ module gameService {
     didCallSetGame = true;
     var playersInfo = getPlayers();
     if (isLocalTesting) {
+      stateService.setGame({updateUI: updateUI, isMoveOk: game.isMoveOk});
+      stateService.initNewMatch();
       stateService.setPlayMode(playMode);
       stateService.setPlayers(playersInfo);
-      stateService.setGame({updateUI: updateUI, isMoveOk: game.isMoveOk});
       stateService.sendUpdateUi();
     } else {
       messageService.addMessageListener(function (message) {
