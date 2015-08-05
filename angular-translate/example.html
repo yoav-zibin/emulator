@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="myApp" ng-strict-di>
+<html lang="en" ng-app="myApp">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,37 +9,24 @@
   <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
   <script>
     angular.module('myApp', [])
-    .controller('Ctrl',
-      ['$translate', '$scope', '$timeout',
-      function($translate, $scope, $timeout) {
-        $scope.language = $translate.getLanguage();
-        $scope.someText1 = $translate('INTRO_TEXT');
-        $scope.someText2 = $translate('WITH_VALUES', {value: 42});
+    .run(function (initGameServices) {
+        $rootScope.language = translate.getLanguage();
+        $rootScope.someText1 = translate('INTRO_TEXT');
+        $rootScope.someText2 = translate('WITH_VALUES', {value: 42});
 
         // Test that missing translations throw an error that is caught by $exceptionHandler.
         $timeout(function () {
-          console.log('MISSING_TEXT2 is:' + $translate('MISSING_TEXT2'));
+          console.log('MISSING_TEXT2 is:' + translate('MISSING_TEXT2'));
         }, 0);
-
-      }])
-      .factory('$exceptionHandler',
-          ["$window", "$log",
-            function ($window, $log) {
-
-        'use strict';
-
-        return function (exception, cause) {
-          $log.error("Had an exception:", exception, cause);
-        };
-      }]);
+      });
   </script>
 
   <script>
   window.angularTranslationLanguages = ['en', 'de'];
   </script>
-  <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.2.js"></script>
+  <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.3.js"></script>
 </head>
-<body ng-cloak ng-controller="Ctrl">
+<body ng-cloak>
   <pre>Example of I18N (language={{language}}):</pre>
   <pre>{{someText1}}</pre>
   <pre>{{someText2}}</pre>

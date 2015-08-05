@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="myApp" ng-strict-di>
+<html lang="en" ng-app="myApp">
 <head>
   <meta charset="utf-8">
   <title>Example</title>
@@ -8,11 +8,8 @@
 
   <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
   <script>
-  angular.module('myApp', [])
-    .controller('Ctrl',
-        ['$timeout', '$rootScope', '$scope', '$log', 'resizeGameAreaService', 'dragAndDropService',
-        function ($timeout, $rootScope, $scope, $log, resizeGameAreaService, dragAndDropService) {
-
+    angular.module('myApp', [])
+    .run(function (initGameServices) {
       'use strict';
 
       var draggingLines = document.getElementById("draggingLines");
@@ -48,7 +45,7 @@
 
           if (type === "touchstart" && !draggingStartedRowCol) {
             // drag started
-            if ($scope.board[row][col]) {
+            if ($rootScope.board[row][col]) {
               draggingStartedRowCol = {row: row, col: col};
               draggingPiece = document.getElementById("MyPiece" + draggingStartedRowCol.row + "x" + draggingStartedRowCol.col);
               draggingPiece.style['z-index'] = ++nextZIndex;
@@ -114,11 +111,11 @@
       function dragDone(from, to) {
         $rootScope.$apply(function () {
           var msg = "Dragged piece " + from.row + "x" + from.col + " to square " + to.row + "x" + to.col;
-          $log.info(msg);
-          $scope.msg = msg;
+          log.info(msg);
+          $rootScope.msg = msg;
           // Update piece in board
-          $scope.board[from.row][from.col] = null;
-          $scope.board[to.row][to.col] = 'O';
+          $rootScope.board[from.row][from.col] = null;
+          $rootScope.board[to.row][to.col] = 'O';
         });
       }
 
@@ -145,25 +142,25 @@
         return board;
       }
 
-      $scope.rows = getIntegersTill(rowsNum);
-      $scope.cols = getIntegersTill(colsNum);
-      $scope.rowsNum = rowsNum;
-      $scope.colsNum = colsNum;
-      $scope.getSquareClass = function (row, col) {
+      $rootScope.rows = getIntegersTill(rowsNum);
+      $rootScope.cols = getIntegersTill(colsNum);
+      $rootScope.rowsNum = rowsNum;
+      $rootScope.colsNum = colsNum;
+      $rootScope.getSquareClass = function (row, col) {
         var isBlack = !isWhiteSquare(row,col);
         return {
           whiteSquare: !isBlack,
           blackSquare: isBlack
         };
       };
-      $scope.board = getInitialBoard();
-      $scope.isPieceShown = function (row, col) {
-        return $scope.board[row][col] === "O";
+      $rootScope.board = getInitialBoard();
+      $rootScope.isPieceShown = function (row, col) {
+        return $rootScope.board[row][col] === "O";
       };
 
-    }]);
+    });
   </script>
-  <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.2.js"></script>
+  <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.3.js"></script>
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
   <style>
   .whiteSquare {
@@ -174,7 +171,7 @@
   }
   </style>
 </head>
-<body ng-controller="Ctrl">
+<body>
   <div style="position:absolute; z-index: 60; color: red;">{{msg}}</div>
   <div id="gameArea">
 

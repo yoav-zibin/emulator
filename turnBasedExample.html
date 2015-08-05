@@ -8,18 +8,15 @@
   <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.js"></script>
   <script>
   angular.module('myApp', [])
-    .controller('Ctrl',
-        function ($scope, $log, gameService) {
-      'use strict';
+    .run(function (initGameServices) {
       function updateUI(params) {
-        $scope.lastUpdateUI = angular.toJson(params, true);
+        $rootScope.lastUpdateUI = angular.toJson(params, true);
       }
-      $scope.nextMove = '[{setTurn: {turnIndex: 0}}]';
-      $scope.sendMessage = function () {
-        gameService.makeMove(eval($scope.nextMove));
+      $rootScope.nextMove = '[{setTurn: {turnIndex: 0}}]';
+      $rootScope.sendMessage = function () {
+        gameService.makeMove(eval($rootScope.nextMove));
       };
       gameService.setGame({
-        gameDeveloperEmail: "yoav.zibin@gmail.com",
         minNumberOfPlayers: 2,
         maxNumberOfPlayers: 2,
         isMoveOk: function () { return true; },
@@ -27,9 +24,9 @@
       });
     });
   </script>
-  <script crossorigin="anonymous" src="dist/turnBasedServices.2.js"></script>
+  <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.3.js"></script>
 </head>
-<body ng-cloak ng-controller="Ctrl">
+<body ng-cloak>
 Last updateUI:<br>
 <textarea ng-model="lastUpdateUI" rows=7 cols=80 readonly>
 </textarea><br>

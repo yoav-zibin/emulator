@@ -8,10 +8,8 @@
 
   <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
   <script>
-  angular.module('myApp', [])
-    .controller('Ctrl',
-            ["resizeGameAreaService", "$scope",
-        function (resizeGameAreaService, $scope) {
+    angular.module('myApp', [])
+    .run(function (initGameServices) {
       'use strict';
 
       resizeGameAreaService.setWidthToHeight(1);
@@ -22,13 +20,13 @@
       var invisibleDivAboveAreaMap = document.getElementById("invisibleDivAboveAreaMap");
       var myimageId = document.getElementById("myimageId");
 
-      $scope.dragMessage = "Drag from one color to another";
-      $scope.countryClicked = function (countryColor) {
+      $rootScope.dragMessage = "Drag from one color to another";
+      $rootScope.countryClicked = function (countryColor) {
         console.log("Clicked on country " + countryColor + " startOrEnd=" + startOrEnd);
         if (startOrEnd === "start") {
           dragFromCountry = countryColor;
         } else if (dragFromCountry) {
-          $scope.dragMessage = "Dragged from " + dragFromCountry + " to " + countryColor;
+          $rootScope.dragMessage = "Dragged from " + dragFromCountry + " to " + countryColor;
         }
       };
 
@@ -48,13 +46,13 @@
         document.elementFromPoint(touch.clientX,touch.clientY).dispatchEvent(simulatedEvent);
         invisibleDivAboveAreaMap.style.display = "block";
       };
-    }]);
+    });
   </script>
-  <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.2.js"></script>
+  <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.3.js"></script>
   <link rel="stylesheet" type="text/css" href="http://yoav-zibin.github.io/emulator/main.css">
 
 </head>
-<body ng-cloak ng-controller="Ctrl">
+<body ng-cloak>
 
 <div style="color:red">{{dragMessage}}</div>
 
