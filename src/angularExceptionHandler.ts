@@ -20,9 +20,9 @@ angular.module('myApp')
   function angularErrorHandler(exception: any, cause: any): void {
     var errMsg = {
       gameUrl: '' + window.location,
-      exception: exception,
+      exception: "" + exception,
+      stack: "" + (exception ? exception.stack : "no stack"),
       cause: cause,
-      lastMessage: gameService.lastMessage,
       gameLogs: log.getLogs()
     };
     console.error("Game had an exception:\n", errMsg);

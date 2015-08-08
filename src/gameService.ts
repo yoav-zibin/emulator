@@ -64,8 +64,6 @@ module gameService {
     return playersInfo;
   }
 
-  export var lastMessage: any;
-
   var didCallSetGame = false;
   export function setGame(_game: IGame) {
     game = _game;
@@ -82,7 +80,6 @@ module gameService {
       stateService.sendUpdateUi();
     } else {
       messageService.addMessageListener(function (message) {
-        lastMessage = message;
         if (message.isMoveOk !== undefined) {
           var isMoveOkResult: any = game.isMoveOk(message.isMoveOk);
           if (isMoveOkResult !== true) {

@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sat Aug 8 12:23:01 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Sat Aug 8 13:46:36 EDT 2015";
 ;function createUrlParams() {
     var query = location.search.substr(1);
     var result = {};
@@ -555,7 +555,6 @@ var urlParams = createUrlParams();
         }
         else {
             messageService.addMessageListener(function (message) {
-                gameService.lastMessage = message;
                 if (message.isMoveOk !== undefined) {
                     var isMoveOkResult = game.isMoveOk(message.isMoveOk);
                     if (isMoveOkResult !== true) {
@@ -1048,9 +1047,9 @@ angular.module('myApp')
     function angularErrorHandler(exception, cause) {
         var errMsg = {
             gameUrl: '' + window.location,
-            exception: exception,
+            exception: "" + exception,
+            stack: "" + (exception ? exception.stack : "no stack"),
             cause: cause,
-            lastMessage: gameService.lastMessage,
             gameLogs: log.getLogs()
         };
         console.error("Game had an exception:\n", errMsg);

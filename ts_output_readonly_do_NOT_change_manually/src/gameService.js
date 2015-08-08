@@ -64,7 +64,6 @@ var gameService;
         }
         else {
             messageService.addMessageListener(function (message) {
-                gameService.lastMessage = message;
                 if (message.isMoveOk !== undefined) {
                     var isMoveOkResult = game.isMoveOk(message.isMoveOk);
                     if (isMoveOkResult !== true) {
