@@ -4,7 +4,9 @@ function createTranslateService() {
         throw new Error('You must first include angular: <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>');
     }
     if (!angular.isArray(window.angularTranslationLanguages)) {
-        return null; // you don't have to use I18N :)
+        log.info("You didn't set window.angularTranslationLanguages, so you can't use I18N.");
+        // you don't have to use I18N :)
+        return null;
     }
     var $availableLanguageKeys = window.angularTranslationLanguages;
     // tries to determine the browsers language
@@ -84,10 +86,10 @@ function createTranslateService() {
             '</script>\n' +
             '<script src="http://yoav-zibin.github.io/emulator/angular-translate/angular-translate.min.js"></script>\n');
     }
-    console.log("Language is " + language);
+    log.log("Language is " + language);
     var angularTranslations = myStorage.getItem(language);
     window.angularTranslationsLoaded = function (lang, codeToL10N) {
-        console.log("angularTranslationsLoaded called with language=" + lang);
+        log.log("languages/" + language + ".js finished loading, and it called angularTranslationsLoaded with language=" + lang);
         angularTranslations = codeToL10N;
         myStorage.setItem(language, angularTranslations);
     };

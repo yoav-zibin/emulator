@@ -28,10 +28,7 @@ var log;
         lastLogs.push(getLogEntry(args, logLevel));
     }
     function getLogs() {
-        var entries = [];
-        entries.concat(alwaysLogs);
-        entries.concat(lastLogs);
-        return entries;
+        return alwaysLogs.concat(lastLogs);
     }
     log_1.getLogs = getLogs;
     function alwaysLog() {
