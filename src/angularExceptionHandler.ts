@@ -18,16 +18,16 @@ angular.module('myApp')
 }])
 .factory('$exceptionHandler', function () {
   function angularErrorHandler(exception: any, cause: any): void {
-    var lines: string[] = [];
-    lines.push("Game URL: " + window.location);
-    lines.push("exception: " + exception);
-    lines.push("stackTrace: " + (exception && exception.stack ? exception.stack.replace(/\n/g,"\n\t") : "no stack trace :("));
-    lines.push("cause: " + cause);
-    lines.push("Last message: " + JSON.stringify(gameService.lastMessage));
-    lines.push("Game logs: " + log.getLogs().replace(/\n/g,"\n\t"));
-    var errStr = lines.join("\n\t");
-    console.error("Game had an exception:\n", errStr);
-    window.parent.postMessage({emailJavaScriptError: errStr}, "*");
+    var errMsg = {
+      gameUrl: window.location,
+      exception: exception,
+      cause: cause,
+      lastMessage: gameService.lastMessage,
+      gameLogs: log.getLogs()
+    };
+    console.error("Game had an exception:\n", errMsg);
+    window.parent.postMessage({emailJavaScriptError: errMsg}, "*");
+    window.alert("Game had an unexpected error. If you know JavaScript, you can look at the console and try to debug it :)");
   }
 
   window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {

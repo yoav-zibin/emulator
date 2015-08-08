@@ -1,84 +1,71 @@
 module log {
-  interface IError {
-    stack?: string;
+  class ILogLevel {
+    static ALWAYS: string = 'ALWAYS';
+    static LOG: string = 'LOG';
+    static INFO: string = 'INFO';
+    static DEBUG: string = 'DEBUG';
+    static WARN: string = 'WARN';
+    static ERROR: string = 'ERROR';
   }
-  interface LogEntry {
-    time: number;
-    args: any[];
+  interface ILogEntry {
+    args: Object[];
+    logLevel: string/*ILogLevel*/;
+    millisecondsFromStart: number;
   }
 
-  var alwaysLogs: LogEntry[] = [];
-  var lastLogs: LogEntry[] = [];
+  var alwaysLogs: ILogEntry[] = [];
+  var lastLogs: ILogEntry[] = [];
   var startTime: number = getCurrentTime();
 
   export function getCurrentTime(): number {
     return window.performance ? window.performance.now() : new Date().getTime();
   }
 
-  function getLogEntry(args: any[]): LogEntry {
-    return {time: getCurrentTime() - startTime, args: args};
+  function getLogEntry(args: any[], logLevel: string): ILogEntry {
+    return {millisecondsFromStart: getCurrentTime() - startTime, args: args, logLevel: logLevel};
   }
 
-  function storeLog(args: any[]): void {
+  function storeLog(args: any[], logLevel: string): void {
     if (lastLogs.length > 100) {
       lastLogs.shift();
     }
-    lastLogs.push(getLogEntry(args));
+    lastLogs.push(getLogEntry(args, logLevel));
   }
 
-  function convertLogEntriesToStrings(logs: LogEntry[], lines: string[]) {
-    // In reverse order (in case the email gets truncated)
-    for (var i: number = logs.length - 1; i >= 0; i--) {
-      var entry: LogEntry = logs[i];
-      var stringArgs: String[] = [];
-      for (var j = 0; j < entry.args.length; j++) {
-        var arg: any = entry.args[j];
-        var stringArg: string = "" + arg;
-        if (stringArg === "[object Object]") {
-          stringArg = JSON.stringify(arg);
-        }
-        stringArgs.push(stringArg);
-      }
-      lines.push("Time " + (entry.time / 1000).toFixed(3) + ": " + stringArgs.join(","));
-    }
-  }
-
-  export function getLogs():string {
-    var lines: string[] = [];
-    lines.push("Always-logs:\n");
-    convertLogEntriesToStrings(alwaysLogs, lines);
-    lines.push("\n\nRecent-logs:\n");
-    convertLogEntriesToStrings(lastLogs, lines);
-    return lines.join('\n');
+  export function getLogs(): ILogEntry[] {
+    var entries: ILogEntry[] = [];
+    entries.concat(alwaysLogs);
+    entries.concat(lastLogs);
+    return entries;
   }
 
   export function alwaysLog(... args: any[]):void {
-    alwaysLogs.push(getLogEntry(args));
+    alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS));
     console.info.apply(console, args);
   }
 
   export function info(... args: any[]):void {
-    storeLog(args);
+    storeLog(args, ILogLevel.INFO);
     console.info.apply(console, args);
   }
 
   export function debug(... args: any[]):void {
-    storeLog(args);
+    storeLog(args, ILogLevel.DEBUG);
     console.debug.apply(console, args);
   }
 
   export function warn(... args: any[]):void {
-    storeLog(args);
+    storeLog(args, ILogLevel.WARN);
     console.warn.apply(console, args);
   }
 
   export function error(... args: any[]):void {
-    storeLog(args);
+    storeLog(args, ILogLevel.ERROR);
     console.error.apply(console, args);
   }
 
   export function log(... args: any[]):void {
-    storeLog(args);
+    storeLog(args, ILogLevel.LOG);
     console.log.apply(console, args);
   }
 }

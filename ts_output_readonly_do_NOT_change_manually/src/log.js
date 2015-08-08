@@ -1,5 +1,16 @@
 var log;
 (function (log_1) {
+    var ILogLevel = (function () {
+        function ILogLevel() {
+        }
+        ILogLevel.ALWAYS = 'ALWAYS';
+        ILogLevel.LOG = 'LOG';
+        ILogLevel.INFO = 'INFO';
+        ILogLevel.DEBUG = 'DEBUG';
+        ILogLevel.WARN = 'WARN';
+        ILogLevel.ERROR = 'ERROR';
+        return ILogLevel;
+    })();
     var alwaysLogs = [];
     var lastLogs = [];
     var startTime = getCurrentTime();
@@ -7,38 +18,20 @@ var log;
         return window.performance ? window.performance.now() : new Date().getTime();
     }
     log_1.getCurrentTime = getCurrentTime;
-    function getLogEntry(args) {
-        return { time: getCurrentTime() - startTime, args: args };
+    function getLogEntry(args, logLevel) {
+        return { millisecondsFromStart: getCurrentTime() - startTime, args: args, logLevel: logLevel };
     }
-    function storeLog(args) {
+    function storeLog(args, logLevel) {
         if (lastLogs.length > 100) {
             lastLogs.shift();
         }
-        lastLogs.push(getLogEntry(args));
-    }
-    function convertLogEntriesToStrings(logs, lines) {
-        // In reverse order (in case the email gets truncated)
-        for (var i = logs.length - 1; i >= 0; i--) {
-            var entry = logs[i];
-            var stringArgs = [];
-            for (var j = 0; j < entry.args.length; j++) {
-                var arg = entry.args[j];
-                var stringArg = "" + arg;
-                if (stringArg === "[object Object]") {
-                    stringArg = JSON.stringify(arg);
-                }
-                stringArgs.push(stringArg);
-            }
-            lines.push("Time " + (entry.time / 1000).toFixed(3) + ": " + stringArgs.join(","));
-        }
+        lastLogs.push(getLogEntry(args, logLevel));
     }
     function getLogs() {
-        var lines = [];
-        lines.push("Always-logs:\n");
-        convertLogEntriesToStrings(alwaysLogs, lines);
-        lines.push("\n\nRecent-logs:\n");
-        convertLogEntriesToStrings(lastLogs, lines);
-        return lines.join('\n');
+        var entries = [];
+        entries.concat(alwaysLogs);
+        entries.concat(lastLogs);
+        return entries;
     }
     log_1.getLogs = getLogs;
     function alwaysLog() {
@@ -46,7 +39,7 @@ var log;
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        alwaysLogs.push(getLogEntry(args));
+        alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS));
         console.info.apply(console, args);
     }
     log_1.alwaysLog = alwaysLog;
@@ -55,7 +48,7 @@ var log;
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        storeLog(args);
+        storeLog(args, ILogLevel.INFO);
         console.info.apply(console, args);
     }
     log_1.info = info;
@@ -64,7 +57,7 @@ var log;
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        storeLog(args);
+        storeLog(args, ILogLevel.DEBUG);
         console.debug.apply(console, args);
     }
     log_1.debug = debug;
@@ -73,7 +66,7 @@ var log;
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        storeLog(args);
+        storeLog(args, ILogLevel.WARN);
         console.warn.apply(console, args);
     }
     log_1.warn = warn;
@@ -82,7 +75,7 @@ var log;
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        storeLog(args);
+        storeLog(args, ILogLevel.ERROR);
         console.error.apply(console, args);
     }
     log_1.error = error;
@@ -91,7 +84,7 @@ var log;
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        storeLog(args);
+        storeLog(args, ILogLevel.LOG);
         console.log.apply(console, args);
     }
     log_1.log = log;

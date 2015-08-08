@@ -40,7 +40,10 @@
         "./src/resizeMapArea.ts",
         "./src/stateService.ts",
         "./src/urlParams.ts",
+        "./typings/angular-protractor/angular-protractor.d.ts",
         "./typings/angularjs/angular.d.ts",
-        "./typings/jquery/jquery.d.ts"
+        "./typings/jasmine/jasmine.d.ts",
+        "./typings/jquery/jquery.d.ts",
+        "./typings/selenium-webdriver/selenium-webdriver.d.ts"
     ]
 }
