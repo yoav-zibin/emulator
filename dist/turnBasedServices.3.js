@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Mon Aug 3 08:45:45 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Sat Aug 8 09:11:31 EDT 2015";
 ;function createUrlParams() {
     var query = location.search.substr(1);
     var result = {};
@@ -11,6 +11,17 @@
 var urlParams = createUrlParams();
 ;var log;
 (function (log_1) {
+    var ILogLevel = (function () {
+        function ILogLevel() {
+        }
+        ILogLevel.ALWAYS = 'ALWAYS';
+        ILogLevel.LOG = 'LOG';
+        ILogLevel.INFO = 'INFO';
+        ILogLevel.DEBUG = 'DEBUG';
+        ILogLevel.WARN = 'WARN';
+        ILogLevel.ERROR = 'ERROR';
+        return ILogLevel;
+    })();
     var alwaysLogs = [];
     var lastLogs = [];
     var startTime = getCurrentTime();
@@ -18,38 +29,20 @@ var urlParams = createUrlParams();
         return window.performance ? window.performance.now() : new Date().getTime();
     }
     log_1.getCurrentTime = getCurrentTime;
-    function getLogEntry(args) {
-        return { time: getCurrentTime() - startTime, args: args };
+    function getLogEntry(args, logLevel) {
+        return { millisecondsFromStart: getCurrentTime() - startTime, args: args, logLevel: logLevel };
     }
-    function storeLog(args) {
+    function storeLog(args, logLevel) {
         if (lastLogs.length > 100) {
             lastLogs.shift();
         }
-        lastLogs.push(getLogEntry(args));
-    }
-    function convertLogEntriesToStrings(logs, lines) {
-        // In reverse order (in case the email gets truncated)
-        for (var i = logs.length - 1; i >= 0; i--) {
-            var entry = logs[i];
-            var stringArgs = [];
-            for (var j = 0; j < entry.args.length; j++) {
-                var arg = entry.args[j];
-                var stringArg = "" + arg;
-                if (stringArg === "[object Object]") {
-                    stringArg = JSON.stringify(arg);
-                }
-                stringArgs.push(stringArg);
-            }
-            lines.push("Time " + (entry.time / 1000).toFixed(3) + ": " + stringArgs.join(","));
-        }
+        lastLogs.push(getLogEntry(args, logLevel));
     }
     function getLogs() {
-        var lines = [];
-        lines.push("Always-logs:\n");
-        convertLogEntriesToStrings(alwaysLogs, lines);
-        lines.push("\n\nRecent-logs:\n");
-        convertLogEntriesToStrings(lastLogs, lines);
-        return lines.join('\n');
+        var entries = [];
+        entries.concat(alwaysLogs);
+        entries.concat(lastLogs);
+        return entries;
     }
     log_1.getLogs = getLogs;
     function alwaysLog() {
@@ -57,7 +50,7 @@ var urlParams = createUrlParams();
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        alwaysLogs.push(getLogEntry(args));
+        alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS));
         console.info.apply(console, args);
     }
     log_1.alwaysLog = alwaysLog;
@@ -66,7 +59,7 @@ var urlParams = createUrlParams();
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        storeLog(args);
+        storeLog(args, ILogLevel.INFO);
         console.info.apply(console, args);
     }
     log_1.info = info;
@@ -75,7 +68,7 @@ var urlParams = createUrlParams();
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        storeLog(args);
+        storeLog(args, ILogLevel.DEBUG);
         console.debug.apply(console, args);
     }
     log_1.debug = debug;
@@ -84,7 +77,7 @@ var urlParams = createUrlParams();
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        storeLog(args);
+        storeLog(args, ILogLevel.WARN);
         console.warn.apply(console, args);
     }
     log_1.warn = warn;
@@ -93,7 +86,7 @@ var urlParams = createUrlParams();
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        storeLog(args);
+        storeLog(args, ILogLevel.ERROR);
         console.error.apply(console, args);
     }
     log_1.error = error;
@@ -102,7 +95,7 @@ var urlParams = createUrlParams();
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i - 0] = arguments[_i];
         }
-        storeLog(args);
+        storeLog(args, ILogLevel.LOG);
         console.log.apply(console, args);
     }
     log_1.log = log;
@@ -1054,16 +1047,16 @@ angular.module('myApp')
     }])
     .factory('$exceptionHandler', function () {
     function angularErrorHandler(exception, cause) {
-        var lines = [];
-        lines.push("Game URL: " + window.location);
-        lines.push("exception: " + exception);
-        lines.push("stackTrace: " + (exception && exception.stack ? exception.stack.replace(/\n/g, "\n\t") : "no stack trace :("));
-        lines.push("cause: " + cause);
-        lines.push("Last message: " + JSON.stringify(gameService.lastMessage));
-        lines.push("Game logs: " + log.getLogs().replace(/\n/g, "\n\t"));
-        var errStr = lines.join("\n\t");
-        console.error("Game had an exception:\n", errStr);
-        window.parent.postMessage({ emailJavaScriptError: errStr }, "*");
+        var errMsg = {
+            gameUrl: window.location,
+            exception: exception,
+            cause: cause,
+            lastMessage: gameService.lastMessage,
+            gameLogs: log.getLogs()
+        };
+        console.error("Game had an exception:\n", errMsg);
+        window.parent.postMessage({ emailJavaScriptError: errMsg }, "*");
+        window.alert("Game had an unexpected error. If you know JavaScript, you can look at the console and try to debug it :)");
     }
     window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
         angularErrorHandler(errorObj, 'Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber +
