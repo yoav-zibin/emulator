@@ -19,15 +19,19 @@ angular.module('myApp')
 .factory('$exceptionHandler', function () {
   function angularErrorHandler(exception: any, cause: any): void {
     var errMsg = {
-      gameUrl: window.location,
+      gameUrl: '' + window.location,
       exception: exception,
       cause: cause,
       lastMessage: gameService.lastMessage,
       gameLogs: log.getLogs()
     };
     console.error("Game had an exception:\n", errMsg);
-    window.parent.postMessage({emailJavaScriptError: errMsg}, "*");
     window.alert("Game had an unexpected error. If you know JavaScript, you can look at the console and try to debug it :)");
+    // To make sure students don't get:
+    // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
+    // I serialize to string and back.
+    var plainPojoErr = angular.fromJson(angular.toJson(errMsg));
+    window.parent.postMessage({emailJavaScriptError: plainPojoErr}, "*");
   }
 
   window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
