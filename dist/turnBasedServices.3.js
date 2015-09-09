@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Wed Sep 9 17:58:21 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Wed Sep 9 18:07:20 EDT 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -532,6 +532,12 @@
                 }
                 else if (message.setLanguage) {
                     translate.setLanguage(message.setLanguage.language, message.setLanguage.codeToL10N);
+                    // we need to ack this message to the platform so the platform will make the game-iframe visible
+                    // (The platform waited until the game got the l10n.)
+                    // Using setTimeout to give time for angular to refresh it's UI (the default was in English)
+                    setTimeout(function () {
+                        messageService.sendMessage({ setLanguageResult: true });
+                    });
                 }
             });
             messageService.sendMessage({ gameReady: {} });
