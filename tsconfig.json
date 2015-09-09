@@ -9,7 +9,7 @@
         "rootDir": ".",
         "outDir": "ts_output_readonly_do_NOT_change_manually/",
         "sourceMap": false,
-        "newLine": "LF",
+        "newLine": "CRLF",
         "noLib": false
     },
     "filesGlob": [
@@ -19,7 +19,7 @@
     "formatCodeOptions": {
         "indentSize": 2,
         "tabSize": 2,
-        "newLineCharacter": "\n",
+        "newLineCharacter": "\r\n",
         "convertTabsToSpaces": true,
         "insertSpaceAfterCommaDelimiter": true,
         "insertSpaceAfterSemicolonInForStatements": true,

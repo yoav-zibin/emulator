@@ -77,6 +77,12 @@ var gameService;
                 }
                 else if (message.setLanguage) {
                     translate.setLanguage(message.setLanguage.language, message.setLanguage.codeToL10N);
+                    // we need to ack this message to the platform so the platform will make the game-iframe visible
+                    // (The platform waited until the game got the l10n.)
+                    // Using setTimeout to give time for angular to refresh it's UI (the default was in English)
+                    setTimeout(function () {
+                        messageService.sendMessage({ setLanguageResult: true });
+                    });
                 }
             });
             messageService.sendMessage({ gameReady: {} });

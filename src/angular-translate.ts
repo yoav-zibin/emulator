@@ -2,7 +2,7 @@
 interface TranslateService {
   (translationId: string, interpolateParams?: StringDictionary): string;
   getLanguage(): string;
-  setLanguage(lang: string, codeToL10N: StringDictionary): void;
+  setLanguage(language: string, codeToL10N: StringDictionary): void;
 }
 interface StringDictionary {
   [index: string]: string;
