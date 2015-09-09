@@ -5,45 +5,10 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    jshint: {
-      options: {
-        curly: true,
-        eqeqeq: true,
-        eqnull: true,
-        browser: true,
-        strict: true,
-        undef: true,
-        unused: true,
-        bitwise: true,
-        forin: true,
-        freeze: true,
-        latedef: true,
-        noarg: true,
-        nocomma: true,
-        nonbsp: true,
-        nonew: true,
-        notypeof: true,
-        jasmine: true,
-        jquery: true,
-        exported: {
-          resizeMapArea: false
-        },
-        globals: {
-          require: false,
-          emulatorServicesCompilationDate: false,
-          handleDragEvent: false,
-          module: false, // for Gruntfile.js
-          exports: false, // for protractor.conf.js
-          inject: false, // testing angular
-          angular: false,
-          console: false,
-          browser: false, element: false, by: false, // Protractor
-        },
-      },
-      all: [
-        'Gruntfile.js',
-        'angular-translate/languages/*.js'
-      ]
+    ts: {
+      default : {
+        tsconfig: true
+      }
     },
     concat: {
       options: {
@@ -52,9 +17,7 @@ module.exports = function(grunt) {
       dist: {
         src: [
           'dist/compilationDate.js',
-          'ts_output_readonly_do_NOT_change_manually/src/urlParams.js',
           'ts_output_readonly_do_NOT_change_manually/src/log.js',
-          'ts_output_readonly_do_NOT_change_manually/src/myStorage.js',
           'ts_output_readonly_do_NOT_change_manually/src/stateService.js',
           'ts_output_readonly_do_NOT_change_manually/src/messageService.js',
           'ts_output_readonly_do_NOT_change_manually/src/gameService.js',
@@ -89,7 +52,6 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', [
-    'jshint',
     'shell:compilationDate',
     'concat',
     'uglify'

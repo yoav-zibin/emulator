@@ -4,9 +4,12 @@
         "module": "commonjs",
         "declaration": false,
         "noImplicitAny": true,
+        "suppressImplicitAnyIndexErrors": false,
         "removeComments": false,
         "rootDir": ".",
         "outDir": "ts_output_readonly_do_NOT_change_manually/",
+        "sourceMap": false,
+        "newLine": "LF",
         "noLib": false
     },
     "filesGlob": [
@@ -16,7 +19,7 @@
     "formatCodeOptions": {
         "indentSize": 2,
         "tabSize": 2,
-        "newLineCharacter": "\r\n",
+        "newLineCharacter": "\n",
         "convertTabsToSpaces": true,
         "insertSpaceAfterCommaDelimiter": true,
         "insertSpaceAfterSemicolonInForStatements": true,
@@ -35,11 +38,9 @@
         "./src/gameService.ts",
         "./src/log.ts",
         "./src/messageService.ts",
-        "./src/myStorage.ts",
         "./src/resizeGameAreaService.ts",
         "./src/resizeMapArea.ts",
         "./src/stateService.ts",
-        "./src/urlParams.ts",
         "./typings/angular-protractor/angular-protractor.d.ts",
         "./typings/angularjs/angular.d.ts",
         "./typings/jasmine/jasmine.d.ts",

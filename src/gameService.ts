@@ -80,15 +80,17 @@ module gameService {
       stateService.sendUpdateUi();
     } else {
       messageService.addMessageListener(function (message) {
-        if (message.isMoveOk !== undefined) {
+        if (message.isMoveOk) {
           var isMoveOkResult: any = game.isMoveOk(message.isMoveOk);
           if (isMoveOkResult !== true) {
             isMoveOkResult = {result: isMoveOkResult, isMoveOk: message.isMoveOk};
           }
           messageService.sendMessage({isMoveOkResult: isMoveOkResult});
-        } else if (message.updateUI !== undefined) {
+        } else if (message.updateUI) {
           lastUpdateUI = message.updateUI;
           updateUI(message.updateUI);
+        } else if (message.setLanguage) {
+          translate.setLanguage(message.setLanguage.language, message.setLanguage.codeToL10N);
         }
       });
       messageService.sendMessage({gameReady : {}});

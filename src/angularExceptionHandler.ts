@@ -34,7 +34,7 @@ angular.module('myApp')
     window.parent.postMessage({emailJavaScriptError: plainPojoErr}, "*");
   }
 
-  window.onerror = function (errorMsg, url, lineNumber, column, errorObj) {
+  window.onerror = function (errorMsg: any, url: any, lineNumber: any, column: any, errorObj: any) {
     angularErrorHandler(errorObj,
         'Error: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber +
         ' Column: ' + column);
