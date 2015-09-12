@@ -43,10 +43,12 @@ angular.module('myApp')
 .filter('translate', ['$parse', function ($parse:angular.IParseService) {
   'use strict';
 
-  return function (translationId: string, interpolateParams: StringDictionary|string): string {
+  var translateFilter: any =  function (translationId: string, interpolateParams: StringDictionary|string): string {
     if (!angular.isObject(interpolateParams)) {
       interpolateParams = $parse(<string>interpolateParams)(this);
     }
     return translate(translationId, <StringDictionary>interpolateParams);
   };
+  translateFilter.$stateful = true;
+  return translateFilter;
 }]);

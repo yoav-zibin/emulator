@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Wed Sep 9 18:07:20 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Sat Sep 12 14:40:44 EDT 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -851,12 +851,14 @@ var translate = createTranslateService();
 angular.module('myApp')
     .filter('translate', ['$parse', function ($parse) {
         'use strict';
-        return function (translationId, interpolateParams) {
+        var translateFilter = function (translationId, interpolateParams) {
             if (!angular.isObject(interpolateParams)) {
                 interpolateParams = $parse(interpolateParams)(this);
             }
             return translate(translationId, interpolateParams);
         };
+        translateFilter.$stateful = true;
+        return translateFilter;
     }]);
 ;// You use dragAndDropService like this:
 // dragAndDropService.addDragListener(touchElementId, function handleDragEvent(type, clientX, clientY, event) {...});
