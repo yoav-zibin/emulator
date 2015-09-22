@@ -100,7 +100,7 @@ module stateService {
   let randomSeed: string;
   let moveNumber: number;
 
-  let simulateServerDelayMilliseconds:number = 100;
+  let simulateServerDelayMilliseconds:number = 10;
 
   export function setSimulateServerDelayMilliseconds(_simulateServerDelayMilliseconds: number): void {
     simulateServerDelayMilliseconds = _simulateServerDelayMilliseconds;
@@ -159,8 +159,7 @@ module stateService {
 
   function getMoveForPlayerIndex(playerIndex: number, move: IMove): IMove {
     let moveForPlayer: IMove = [];
-    for (let k = 0; k < move.length; k++) {
-      let operation: IOperation = move[k];
+    for (let operation of move) {
       if (!isNull(operation.set) &&
           !isNull(operation.set.visibleToPlayerIndexes) &&
           operation.set.visibleToPlayerIndexes.indexOf(playerIndex) === -1) {
@@ -184,13 +183,13 @@ module stateService {
     }
     let result: IState = {};
     let keys: string[] = getKeys(gameState);
-    for (let k = 0; k < keys.length; k++) {
-      let visibleToPlayerIndexes = visibleTo[keys[k]];
+    for (let key of keys) {
+      let visibleToPlayerIndexes = visibleTo[key];
       let value: any = null;
       if (isNull(visibleToPlayerIndexes) || visibleToPlayerIndexes.indexOf(playerIndex) > -1) {
-        value = gameState[keys[k]];
+        value = gameState[key];
       }
-      result[keys[k]] = value;
+      result[key] = value;
     }
     return result;
   }
@@ -397,8 +396,8 @@ module stateService {
       Math.seedrandom(randomSeed + moveNumber); // Math.random is used only in processApiOperation
     }
     setTurnOrEndMatchCount = 0;
-    for (let i = 0; i < operations.length; i++) {
-      processApiOperation(operations[i]);
+    for (let operation of operations) {
+      processApiOperation(operation);
     }
     // We must have either SetTurn or EndMatch
     if (setTurnOrEndMatchCount !== 1) {
