@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sat Sep 12 14:40:44 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Tue Sep 22 23:42:29 CEST 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -103,7 +103,7 @@
     var playMode = "passAndPlay"; // Default play mode
     var randomSeed;
     var moveNumber;
-    var simulateServerDelayMilliseconds = 100;
+    var simulateServerDelayMilliseconds = 10;
     function setSimulateServerDelayMilliseconds(_simulateServerDelayMilliseconds) {
         simulateServerDelayMilliseconds = _simulateServerDelayMilliseconds;
     }
@@ -163,8 +163,8 @@
     }
     function getMoveForPlayerIndex(playerIndex, move) {
         var moveForPlayer = [];
-        for (var k = 0; k < move.length; k++) {
-            var operation = move[k];
+        for (var _i = 0; _i < move.length; _i++) {
+            var operation = move[_i];
             if (!isNull(operation.set) &&
                 !isNull(operation.set.visibleToPlayerIndexes) &&
                 operation.set.visibleToPlayerIndexes.indexOf(playerIndex) === -1) {
@@ -188,13 +188,14 @@
         }
         var result = {};
         var keys = getKeys(gameState);
-        for (var k = 0; k < keys.length; k++) {
-            var visibleToPlayerIndexes = visibleTo[keys[k]];
+        for (var _i = 0; _i < keys.length; _i++) {
+            var key = keys[_i];
+            var visibleToPlayerIndexes = visibleTo[key];
             var value = null;
             if (isNull(visibleToPlayerIndexes) || visibleToPlayerIndexes.indexOf(playerIndex) > -1) {
-                value = gameState[keys[k]];
+                value = gameState[key];
             }
-            result[keys[k]] = value;
+            result[key] = value;
         }
         return result;
     }
@@ -402,8 +403,9 @@
             Math.seedrandom(randomSeed + moveNumber); // Math.random is used only in processApiOperation
         }
         setTurnOrEndMatchCount = 0;
-        for (var i = 0; i < operations.length; i++) {
-            processApiOperation(operations[i]);
+        for (var _i = 0; _i < operations.length; _i++) {
+            var operation = operations[_i];
+            processApiOperation(operation);
         }
         // We must have either SetTurn or EndMatch
         if (setTurnOrEndMatchCount !== 1) {
