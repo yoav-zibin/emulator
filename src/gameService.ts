@@ -12,13 +12,13 @@ interface IGame {
 }
 
 module gameService {
-  var isLocalTesting = window.parent === window ||
+  let isLocalTesting = window.parent === window ||
       window.location.search === "?test";
-  var playMode = location.search === "?onlyAIs" ? "onlyAIs"
+  let playMode = location.search === "?onlyAIs" ? "onlyAIs"
       : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer" : "passAndPlay"; // Default play mode
   // We verify that you call makeMove at most once for every updateUI (and only when it's your turn)
-  var lastUpdateUI: IUpdateUI = null;
-  var game: IGame;
+  let lastUpdateUI: IUpdateUI = null;
+  let game: IGame;
 
   function updateUI(params: IUpdateUI) {
     lastUpdateUI = params;
@@ -30,7 +30,7 @@ module gameService {
     if (!lastUpdateUI) {
       throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
     }
-    var wasYourTurn = lastUpdateUI.turnIndexAfterMove >= 0 && // game is ongoing
+    let wasYourTurn = lastUpdateUI.turnIndexAfterMove >= 0 && // game is ongoing
         lastUpdateUI.yourPlayerIndex === lastUpdateUI.turnIndexAfterMove; // it's my turn
     if (!wasYourTurn) {
       throw new Error("Game called makeMove when it wasn't your turn: yourPlayerIndex=" + lastUpdateUI.yourPlayerIndex + " turnIndexAfterMove=" + lastUpdateUI.turnIndexAfterMove);
@@ -50,11 +50,11 @@ module gameService {
   }
 
   function getPlayers(): IPlayerInfo[] {
-    var playersInfo: IPlayerInfo[] = [];
-    var actualNumberOfPlayers =
+    let playersInfo: IPlayerInfo[] = [];
+    let actualNumberOfPlayers =
         stateService.randomFromTo(game.minNumberOfPlayers, game.maxNumberOfPlayers + 1);
-    for (var i = 0; i < actualNumberOfPlayers; i++) {
-      var playerId =
+    for (let i = 0; i < actualNumberOfPlayers; i++) {
+      let playerId =
         playMode === "onlyAIs" ||
           i !== 0 && playMode === "playAgainstTheComputer" ?
           "" : // The playerId for the computer is "".
@@ -64,14 +64,14 @@ module gameService {
     return playersInfo;
   }
 
-  var didCallSetGame = false;
+  let didCallSetGame = false;
   export function setGame(_game: IGame) {
     game = _game;
     if (didCallSetGame) {
       throw new Error("You can call setGame exactly once!");
     }
     didCallSetGame = true;
-    var playersInfo = getPlayers();
+    let playersInfo = getPlayers();
     if (isLocalTesting) {
       stateService.setGame({updateUI: updateUI, isMoveOk: game.isMoveOk});
       stateService.initNewMatch();
@@ -81,7 +81,7 @@ module gameService {
     } else {
       messageService.addMessageListener(function (message) {
         if (message.isMoveOk) {
-          var isMoveOkResult: any = game.isMoveOk(message.isMoveOk);
+          let isMoveOkResult: any = game.isMoveOk(message.isMoveOk);
           if (isMoveOkResult !== true) {
             isMoveOkResult = {result: isMoveOkResult, isMoveOk: message.isMoveOk};
           }

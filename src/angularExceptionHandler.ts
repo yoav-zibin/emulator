@@ -1,8 +1,8 @@
-var $rootScope: angular.IScope;
-var $location: angular.ILocationService;
-var $timeout: angular.ITimeoutService;
-var $interval: angular.IIntervalService;
-var $interpolate: angular.IInterpolateService;
+let $rootScope: angular.IScope;
+let $location: angular.ILocationService;
+let $timeout: angular.ITimeoutService;
+let $interval: angular.IIntervalService;
+let $interpolate: angular.IInterpolateService;
 
 angular.module('myApp')
 .service('initGameServices',
@@ -18,7 +18,7 @@ angular.module('myApp')
 }])
 .factory('$exceptionHandler', function () {
   function angularErrorHandler(exception: any, cause: any): void {
-    var errMsg = {
+    let errMsg = {
       gameUrl: '' + window.location,
       exception: "" + exception,
       stack: "" + (exception ? exception.stack : "no stack"),
@@ -30,7 +30,7 @@ angular.module('myApp')
     // To make sure students don't get:
     // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
     // I serialize to string and back.
-    var plainPojoErr = angular.fromJson(angular.toJson(errMsg));
+    let plainPojoErr = angular.fromJson(angular.toJson(errMsg));
     window.parent.postMessage({emailJavaScriptError: plainPojoErr}, "*");
   }
 

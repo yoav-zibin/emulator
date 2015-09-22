@@ -13,9 +13,9 @@ module log {
     millisecondsFromStart: number;
   }
 
-  var alwaysLogs: ILogEntry[] = [];
-  var lastLogs: ILogEntry[] = [];
-  var startTime: number = getCurrentTime();
+  let alwaysLogs: ILogEntry[] = [];
+  let lastLogs: ILogEntry[] = [];
+  let startTime: number = getCurrentTime();
 
   export function getCurrentTime(): number {
     return window.performance ? window.performance.now() : new Date().getTime();

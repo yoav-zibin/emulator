@@ -3,10 +3,10 @@ module resizeGameAreaService {
     windowWidth: number;
     windowHeight: number;
   }
-  var widthToHeight: number = null;
-  var oldSizes: WindowSize = null;
-  var doc = window.document;
-  var gameArea: HTMLElement;
+  let widthToHeight: number = null;
+  let oldSizes: WindowSize = null;
+  let doc = window.document;
+  let gameArea: HTMLElement;
 
   export function setWidthToHeight(_widthToHeight: number): void {
     widthToHeight = _widthToHeight;
@@ -26,10 +26,10 @@ module resizeGameAreaService {
     if (widthToHeight === null) {
       return;
     }
-    var originalWindowWidth = window.innerWidth; // doc.body.clientWidth
-    var originalWindowHeight = window.innerHeight; // I saw cases where doc.body.clientHeight was 0.
-    var windowWidth = originalWindowWidth;
-    var windowHeight = originalWindowHeight;
+    let originalWindowWidth = window.innerWidth; // doc.body.clientWidth
+    let originalWindowHeight = window.innerHeight; // I saw cases where doc.body.clientHeight was 0.
+    let windowWidth = originalWindowWidth;
+    let windowHeight = originalWindowHeight;
     if (oldSizes !== null) {
       if (oldSizes.windowWidth === windowWidth &&
           oldSizes.windowHeight === windowHeight) {
@@ -48,7 +48,7 @@ module resizeGameAreaService {
     }
     gameArea.style.display = "block";
 
-    var newWidthToHeight = windowWidth / windowHeight;
+    let newWidthToHeight = windowWidth / windowHeight;
 
     if (newWidthToHeight > widthToHeight) {
       windowWidth = round2(windowHeight * widthToHeight);
@@ -60,7 +60,7 @@ module resizeGameAreaService {
         " because widthToHeight=" + widthToHeight);
 
     // Take 5% margin (so the game won't touch the end of the screen)
-    var keepMargin = 0.95;
+    let keepMargin = 0.95;
     windowWidth *= keepMargin;
     windowHeight *= keepMargin;
     gameArea.style.width = windowWidth + 'px';
