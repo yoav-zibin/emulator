@@ -25,7 +25,7 @@ function createTranslateService() {
     return translateService;
 }
 var translate = createTranslateService();
-angular.module('myApp')
+angular.module('translate', [])
     .filter('translate', ['$parse', function ($parse) {
         'use strict';
         return function (translationId, interpolateParams) {

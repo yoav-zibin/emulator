@@ -39,7 +39,7 @@ function createTranslateService(): TranslateService {
 
 var translate = createTranslateService();
 
-angular.module('myApp')
+angular.module('translate', [])
 .filter('translate', ['$parse', function ($parse:angular.IParseService) {
   'use strict';
 
