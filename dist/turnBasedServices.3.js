@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Wed Oct 7 13:55:37 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Wed Oct 7 14:08:44 EDT 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -924,7 +924,7 @@ var $location;
 var $timeout;
 var $interval;
 var $interpolate;
-angular.module('myApp')
+angular.module('gameServices', ['translate'])
     .service('initGameServices', ['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
     function (_location, _rootScope, _timeout, _interval, _interpolate) {
         $location = _location;

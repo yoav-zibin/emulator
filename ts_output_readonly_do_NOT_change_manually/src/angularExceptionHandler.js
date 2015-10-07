@@ -3,7 +3,7 @@ var $location;
 var $timeout;
 var $interval;
 var $interpolate;
-angular.module('myApp')
+angular.module('gameServices', ['translate'])
     .service('initGameServices', ['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
     function (_location, _rootScope, _timeout, _interval, _interpolate) {
         $location = _location;

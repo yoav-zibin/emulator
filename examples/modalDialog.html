@@ -10,7 +10,7 @@
   <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular-touch.min.js"></script>
   <script crossorigin="anonymous" src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
   <script>
-  angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'translate'])
+  angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
     .run(['initGameServices', function (initGameServices) {
       translate.setLanguage('en',  {
         RULES_OF_TICTACTOE: "Rules of TicTacToe"
@@ -76,7 +76,7 @@
               Slide1<br>
               blablabla<br>
               blablabla<br>
-              blablabla<br>
+              {{ 'NON_EXISTING_CODE' | translate}}<br>
             </slide>
             <slide>
               Slide2<br>
