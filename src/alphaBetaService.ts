@@ -45,7 +45,7 @@ module alphaBetaService {
       throw new Error("alphaBetaLimits must have either millisecondsLimit or maxDepth");
     }
 
-    var startTime = new Date().getTime(); // used for the time limit
+    let startTime = new Date().getTime(); // used for the time limit
     if (alphaBetaLimits.maxDepth) {
       return getScoreForIndex0(
           startingState, playerIndex, getNextStates, getStateScoreForIndex0,
@@ -57,23 +57,23 @@ module alphaBetaService {
     if (getDebugStateToString != null) {
       console.log("Doing iterative-deepeninh (A*) until we run out of time or find a certain win/lose move.");
     }
-    var maxDepth = 1;
-    var bestState: IMove;
+    let maxDepth = 1;
+    let bestState: IMove;
     while (true) {
       if (getDebugStateToString != null) {
         console.log("Alpha-beta search until maxDepth=" + maxDepth);
       }
-      var nextBestStateAndScore = getScoreForIndex0(
+      let nextBestStateAndScore = getScoreForIndex0(
           startingState, playerIndex, getNextStates, getStateScoreForIndex0,
           getDebugStateToString,
           {maxDepth: maxDepth, millisecondsLimit: alphaBetaLimits.millisecondsLimit},
           startTime, 0,
           Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY);
-      var nextBestScore = nextBestStateAndScore.bestScore;
-      var nextBestState = nextBestStateAndScore.bestState;
+      let nextBestScore = nextBestStateAndScore.bestScore;
+      let nextBestState = nextBestStateAndScore.bestState;
       if (nextBestScore === Number.POSITIVE_INFINITY ||
           nextBestScore === Number.NEGATIVE_INFINITY) {
-        var isWin = nextBestScore ===
+        let isWin = nextBestScore ===
             (playerIndex === 0 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY);
         console.log("Discovered that AI is going to " +
             (isWin ? "win" : "lose") + " with maxDepth=" + maxDepth);
@@ -82,16 +82,16 @@ module alphaBetaService {
         }
         return nextBestState;
       }
-      var isHalfTimePassed =
+      let isHalfTimePassed =
           isTimeout({millisecondsLimit: alphaBetaLimits.millisecondsLimit / 2}, startTime);
-      var isAllTimePassed = isTimeout(alphaBetaLimits, startTime);
+      let isAllTimePassed = isTimeout(alphaBetaLimits, startTime);
       if (isHalfTimePassed || isAllTimePassed) {
         // If we run out of half the time, then no point of starting a new search that
         // will most likely take more time than all previous searches.
         // It's more accurate to return the best state for the previous alpha-beta search
         // if we run out of time, because we finished traversing all
         // immediate children of the starting state.
-        var result = !isAllTimePassed || maxDepth === 1 ? nextBestState : bestState;
+        let result = !isAllTimePassed || maxDepth === 1 ? nextBestState : bestState;
         if (isAllTimePassed) {
           console.log("Run out of time when maxDepth=" + maxDepth +
               ", so returning the best state for maxDepth=" +
@@ -129,8 +129,8 @@ module alphaBetaService {
         getDebugStateToString: (move: IMove) => string,
         alphaBetaLimits: IAlphaBetaLimits,
         startTime: number, depth: number, alpha: number, beta: number): ScoreState {
-    var bestScore: number = null;
-    var bestState: IMove = null;
+    let bestScore: number = null;
+    let bestState: IMove = null;
     if (isTimeout(alphaBetaLimits, startTime)) {
       if (getDebugStateToString != null) {
         console.log("Run out of time, just quitting from this traversal.");
@@ -144,7 +144,7 @@ module alphaBetaService {
       }
       return {bestScore: bestScore, bestState: null};
     }
-    var states = getNextStates(startingState, playerIndex);
+    let states = getNextStates(startingState, playerIndex);
     if (getDebugStateToString != null) {
       console.log(getDebugStateToString(startingState) + " has " + states.length + " next states");
     }
@@ -155,9 +155,9 @@ module alphaBetaService {
       }
       return {bestScore: bestScore, bestState: null};
     }
-    for (var i = 0; i < states.length; i++) {
-      var state = states[i];
-      var scoreForIndex0 = getScoreForIndex0(
+    for (let i = 0; i < states.length; i++) {
+      let state = states[i];
+      let scoreForIndex0 = getScoreForIndex0(
           state, 1 - playerIndex, getNextStates, getStateScoreForIndex0,
           getDebugStateToString, alphaBetaLimits,
           startTime, depth + 1, alpha, beta).bestScore;

@@ -5,28 +5,28 @@ interface ResizeMapAreaParams {
   originalHeight: number;
 }
 function resizeMapArea(params: ResizeMapAreaParams): void {
-  var imageId = params.imageId;
-  var mapId = params.mapId;
-  var originalWidth = params.originalWidth;
-  var originalHeight = params.originalHeight;
+  let imageId = params.imageId;
+  let mapId = params.mapId;
+  let originalWidth = params.originalWidth;
+  let originalHeight = params.originalHeight;
 
   function rescale() {
-    var image = <HTMLImageElement>document.getElementById(imageId);
-    var map = document.getElementById(mapId);
-    var widthScale = image.width / originalWidth;
-    var heightScale = image.height / originalHeight;
+    let image = <HTMLImageElement>document.getElementById(imageId);
+    let map = document.getElementById(mapId);
+    let widthScale = image.width / originalWidth;
+    let heightScale = image.height / originalHeight;
     //console.log("widthScale=", widthScale, "heightScale=", heightScale);
-    var areaElements = map.getElementsByTagName("area");
-    for (var areaIndex = 0; areaIndex < areaElements.length; areaIndex++) {
-      var areaElement = areaElements[areaIndex];
-      var originalCoords = areaElement.getAttribute("data-original-coords");
+    let areaElements = map.getElementsByTagName("area");
+    for (let areaIndex = 0; areaIndex < areaElements.length; areaIndex++) {
+      let areaElement = areaElements[areaIndex];
+      let originalCoords = areaElement.getAttribute("data-original-coords");
       if (!originalCoords) {
         areaElement.setAttribute("data-original-coords", areaElement.getAttribute("coords"));
       }
-      var coords: string[] = areaElement.getAttribute("data-original-coords").split(',');
-      var coordsPercent: number[] = [];
-      for (var i = 0; i < coords.length; ++i) {
-        var coordNum = Number(coords[i]);
+      let coords: string[] = areaElement.getAttribute("data-original-coords").split(',');
+      let coordsPercent: number[] = [];
+      for (let i = 0; i < coords.length; ++i) {
+        let coordNum = Number(coords[i]);
         if (i % 2 === 0) {
           coordsPercent[i] = Math.round(coordNum * widthScale);
         } else {

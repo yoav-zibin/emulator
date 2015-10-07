@@ -28,10 +28,12 @@ var translate = createTranslateService();
 angular.module('translate', [])
     .filter('translate', ['$parse', function ($parse) {
         'use strict';
-        return function (translationId, interpolateParams) {
+        var translateFilter = function (translationId, interpolateParams) {
             if (!angular.isObject(interpolateParams)) {
                 interpolateParams = $parse(interpolateParams)(this);
             }
             return translate(translationId, interpolateParams);
         };
+        translateFilter.$stateful = true;
+        return translateFilter;
     }]);

@@ -84,23 +84,23 @@ interface IMatchState {
 }
 
 module stateService {
-  var game: IGameMethods;
-  var currentState: IState;
-  var lastState: IState;
-  var currentVisibleTo: IVisibility;
-  var lastVisibleTo: IVisibility;
-  var lastMove: IMove;
-  var turnIndexBeforeMove: number;
-  var turnIndex: number = 0; // turn after the move (-1 when the game ends)
-  var endMatchScores: number[] = null;
-  var setTurnOrEndMatchCount: number = 0;
-  var playersInfo: IPlayerInfo[];
-  var playMode: PlayMode = "passAndPlay"; // Default play mode
+  let game: IGameMethods;
+  let currentState: IState;
+  let lastState: IState;
+  let currentVisibleTo: IVisibility;
+  let lastVisibleTo: IVisibility;
+  let lastMove: IMove;
+  let turnIndexBeforeMove: number;
+  let turnIndex: number = 0; // turn after the move (-1 when the game ends)
+  let endMatchScores: number[] = null;
+  let setTurnOrEndMatchCount: number = 0;
+  let playersInfo: IPlayerInfo[];
+  let playMode: PlayMode = "passAndPlay"; // Default play mode
 
-  var randomSeed: string;
-  var moveNumber: number;
+  let randomSeed: string;
+  let moveNumber: number;
 
-  var simulateServerDelayMilliseconds:number = 100;
+  let simulateServerDelayMilliseconds:number = 10;
 
   export function setSimulateServerDelayMilliseconds(_simulateServerDelayMilliseconds: number): void {
     simulateServerDelayMilliseconds = _simulateServerDelayMilliseconds;
@@ -136,8 +136,8 @@ module stateService {
     if (Object && Object.keys) {
       return Object.keys(object);
     }
-    var keys: string[] = [];
-    for (var key in object) {
+    let keys: string[] = [];
+    for (let key in object) {
       keys.push(key);
     }
     return keys;
@@ -153,14 +153,13 @@ module stateService {
 
   function throwError(...args: any[]): void {
     log.error("Throwing an error with these arguments=", args);
-    var msg = args.join(", ");
+    let msg = args.join(", ");
     throw new Error(msg);
   }
 
   function getMoveForPlayerIndex(playerIndex: number, move: IMove): IMove {
-    var moveForPlayer: IMove = [];
-    for (var k = 0; k < move.length; k++) {
-      var operation: IOperation = move[k];
+    let moveForPlayer: IMove = [];
+    for (let operation of move) {
       if (!isNull(operation.set) &&
           !isNull(operation.set.visibleToPlayerIndexes) &&
           operation.set.visibleToPlayerIndexes.indexOf(playerIndex) === -1) {
@@ -182,25 +181,25 @@ module stateService {
     if (gameState === null) {
       return null;
     }
-    var result: IState = {};
-    var keys: string[] = getKeys(gameState);
-    for (var k = 0; k < keys.length; k++) {
-      var visibleToPlayerIndexes = visibleTo[keys[k]];
-      var value: any = null;
+    let result: IState = {};
+    let keys: string[] = getKeys(gameState);
+    for (let key of keys) {
+      let visibleToPlayerIndexes = visibleTo[key];
+      let value: any = null;
       if (isNull(visibleToPlayerIndexes) || visibleToPlayerIndexes.indexOf(playerIndex) > -1) {
-        value = gameState[keys[k]];
+        value = gameState[key];
       }
-      result[keys[k]] = value;
+      result[key] = value;
     }
     return result;
   }
 
   function shuffle(keys: string[]): string[] {
-    var keysCopy: string[] = keys.slice(0);
-    var result: string[] = [];
+    let keysCopy: string[] = keys.slice(0);
+    let result: string[] = [];
     while (keysCopy.length >= 1) {
-      var index = randomFromTo(0, keysCopy.length);
-      var removed = keysCopy.splice(index, 1)[0];
+      let index = randomFromTo(0, keysCopy.length);
+      let removed = keysCopy.splice(index, 1)[0];
       result.push(removed);
     }
     return result;
@@ -215,13 +214,13 @@ module stateService {
 
   function processApiOperation(operation: IOperation): void {
     //Check for all types of Operations
-    var key: string;
-    var visibleToPlayerIndexes: number[];
+    let key: string;
+    let visibleToPlayerIndexes: number[];
     if (!isNull(operation.set)) {
-      var opSet = operation.set;
+      let opSet = operation.set;
       key = opSet.key;
       visibleToPlayerIndexes = opSet.visibleToPlayerIndexes;
-      var value: any = opSet.value;
+      let value: any = opSet.value;
       if (isNull(key) || isNull(value)) {
         throwError("Fields key and value in Set operation must be non null. operation=" + angular.toJson(operation, true));
       }
@@ -232,22 +231,22 @@ module stateService {
         delete currentVisibleTo[key];
       }
     } else if (!isNull(operation.setTurn)) {
-      var setTurn = operation.setTurn;
+      let setTurn = operation.setTurn;
       turnIndex = setTurn.turnIndex;
       setTurnOrEndMatchCount++;
     } else if (!isNull(operation.setRandomInteger)) {
-      var setRandomInteger = operation.setRandomInteger;
+      let setRandomInteger = operation.setRandomInteger;
       key = setRandomInteger.key;
-      var from: number = setRandomInteger.from;
-      var to: number = setRandomInteger.to;
+      let from: number = setRandomInteger.from;
+      let to: number = setRandomInteger.to;
       if (isNull(key) || isNull(from) || isNull(to)) {
         throwError("Fields key, from, and to, in SetRandomInteger operation must be non null. operation=" + angular.toJson(operation, true));
       }
-      var randomValue: number = randomFromTo(from, to);
+      let randomValue: number = randomFromTo(from, to);
       currentState[key] = randomValue;
       delete currentVisibleTo[key];
     } else if (!isNull(operation.setVisibility)) {
-      var setVisibility = operation.setVisibility;
+      let setVisibility = operation.setVisibility;
       key = setVisibility.key;
       visibleToPlayerIndexes = setVisibility.visibleToPlayerIndexes;
       if (isNull(key)) {
@@ -259,7 +258,7 @@ module stateService {
         delete currentVisibleTo[key];
       }
     } else if (!isNull(operation['delete'])) {
-      var opDelete = operation['delete'];
+      let opDelete = operation['delete'];
       key = opDelete.key;
       if (isNull(key)) {
         throwError("Field key in Delete operation must be non null. operation=" + angular.toJson(operation, true));
@@ -267,24 +266,24 @@ module stateService {
       delete currentState[key];
       delete currentVisibleTo[key];
     } else if (!isNull(operation.shuffle)) {
-      var opShuffle = operation.shuffle;
-      var keys: string[] = opShuffle.keys;
+      let opShuffle = operation.shuffle;
+      let keys: string[] = opShuffle.keys;
       if (isNull(keys) || keys.length === 0) {
         throwError("Field keys in Shuffle operation must be a non empty array. operation=" + angular.toJson(operation, true));
       }
-      var shuffledKeys: string[] = shuffle(keys);
-      var oldGameState: IState = clone(currentState);
-      var oldVisibleTo: IVisibility = clone(currentVisibleTo);
-      for (var j = 0; j < shuffledKeys.length; j++) {
-        var fromKey: string = keys[j];
-        var toKey: string = shuffledKeys[j];
+      let shuffledKeys: string[] = shuffle(keys);
+      let oldGameState: IState = clone(currentState);
+      let oldVisibleTo: IVisibility = clone(currentVisibleTo);
+      for (let j = 0; j < shuffledKeys.length; j++) {
+        let fromKey: string = keys[j];
+        let toKey: string = shuffledKeys[j];
         currentState[toKey] = oldGameState[fromKey];
         currentVisibleTo[toKey] = oldVisibleTo[fromKey];
       }
     } else if (!isNull(operation.endMatch)) {
-      var endMatch = operation.endMatch;
+      let endMatch = operation.endMatch;
       setTurnOrEndMatchCount++;
-      var scores: number[] = endMatch.endMatchScores;
+      let scores: number[] = endMatch.endMatchScores;
       if (isNull(scores) || scores.length !== playersInfo.length) {
         throwError("Field scores in EndMatch operation must be an array of the same length as the number of players. operation=" + angular.toJson(operation, true));
       }
@@ -335,9 +334,9 @@ module stateService {
   }
 
   function delayedSendUpdateUi(): void {
-    var moveForIndex = getMoveForPlayerIndex(turnIndex, lastMove);
-    var stateBeforeMove = getStateForPlayerIndex(turnIndex, lastState, lastVisibleTo);
-    var stateAfterMove = getStateForPlayerIndex(turnIndex, currentState, currentVisibleTo);
+    let moveForIndex = getMoveForPlayerIndex(turnIndex, lastMove);
+    let stateBeforeMove = getStateForPlayerIndex(turnIndex, lastState, lastVisibleTo);
+    let stateAfterMove = getStateForPlayerIndex(turnIndex, currentState, currentVisibleTo);
     if (lastMove.length > 0 && game.isMoveOk(
       {
         move : moveForIndex,
@@ -397,8 +396,8 @@ module stateService {
       Math.seedrandom(randomSeed + moveNumber); // Math.random is used only in processApiOperation
     }
     setTurnOrEndMatchCount = 0;
-    for (var i = 0; i < operations.length; i++) {
-      processApiOperation(operations[i]);
+    for (let operation of operations) {
+      processApiOperation(operation);
     }
     // We must have either SetTurn or EndMatch
     if (setTurnOrEndMatchCount !== 1) {
