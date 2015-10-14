@@ -11,11 +11,11 @@
   <script crossorigin="anonymous" src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.12.1/ui-bootstrap-tpls.min.js"></script>
   <script>
   angular.module('myApp', ['ngTouch', 'ui.bootstrap', 'gameServices'])
-    .run(['initGameServices', function (initGameServices) {
+    .run(function () {
       translate.setLanguage('en',  {
         RULES_OF_TICTACTOE: "Rules of TicTacToe"
       });
-    }]);
+    });
   </script>
   <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.3.js"></script>
 
