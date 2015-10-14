@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Wed Oct 7 14:10:07 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Wed Oct 14 17:36:30 EDT 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -925,13 +925,14 @@ var $timeout;
 var $interval;
 var $interpolate;
 angular.module('gameServices', ['translate'])
-    .service('initGameServices', ['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
+    .run(['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
     function (_location, _rootScope, _timeout, _interval, _interpolate) {
         $location = _location;
         $rootScope = _rootScope;
         $timeout = _timeout;
         $interval = _interval;
         $interpolate = _interpolate;
+        console.log("Finished init of gameServices");
     }])
     .factory('$exceptionHandler', function () {
     function angularErrorHandler(exception, cause) {

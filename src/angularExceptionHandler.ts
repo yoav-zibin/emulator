@@ -5,7 +5,7 @@ let $interval: angular.IIntervalService;
 let $interpolate: angular.IInterpolateService;
 
 angular.module('gameServices', ['translate'])
-.service('initGameServices',
+.run(
   ['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
   function (_location: angular.ILocationService, _rootScope: angular.IScope,
     _timeout: angular.ITimeoutService, _interval: angular.IIntervalService,
@@ -15,6 +15,7 @@ angular.module('gameServices', ['translate'])
   $timeout = _timeout;
   $interval = _interval;
   $interpolate = _interpolate;
+  console.log("Finished init of gameServices");
 }])
 .factory('$exceptionHandler', function () {
   function angularErrorHandler(exception: any, cause: any): void {
