@@ -11,14 +11,24 @@
       function updateUI(params) {
         $rootScope.lastUpdateUI = angular.toJson(params, true);
       }
+      function isMoveOk(params) {
+        $rootScope.lastIsMoveOk = angular.toJson(params, true);
+        return true;
+      }
       $rootScope.nextMove = '[{setTurn: {turnIndex: 0}}]';
       $rootScope.sendMessage = function () {
         gameService.makeMove(eval($rootScope.nextMove));
       };
+      $rootScope.playModes = ['passAndPlay', 'playAgainstTheComputer', 'onlyAIs', 'playWhite', 'playBlack', 'playViewer'];
+      $rootScope.playMode = $rootScope.playModes[0];
+      $rootScope.changePlayMode = function () {
+        stateService.setPlayMode($rootScope.playMode);
+        stateService.sendUpdateUi();
+      };
       gameService.setGame({
         minNumberOfPlayers: 2,
         maxNumberOfPlayers: 2,
-        isMoveOk: function () { return true; },
+        isMoveOk: isMoveOk,
         updateUI: updateUI
       });
     });
@@ -26,8 +36,15 @@
   <script crossorigin="anonymous" src="http://yoav-zibin.github.io/emulator/dist/turnBasedServices.3.js"></script>
 </head>
 <body ng-cloak>
+Choose play mode:  
+<select class="button"
+  ng-model="playMode" ng-change="changePlayMode()"
+  ng-options="playMode for playMode in playModes"></select><br>
 Last updateUI:<br>
 <textarea ng-model="lastUpdateUI" rows=7 cols=80 readonly>
+</textarea><br>
+Last isMoveOk:<br>
+<textarea ng-model="lastIsMoveOk" rows=7 cols=80 readonly>
 </textarea><br>
 Enter your move:<br>
 <textarea ng-model="nextMove" rows=3 cols=80>
