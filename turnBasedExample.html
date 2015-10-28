@@ -11,6 +11,9 @@
       function updateUI(params) {
         $rootScope.lastUpdateUI = angular.toJson(params, true);
       }
+      function isMoveOk(params) {
+        $rootScope.lastIsMoveOk = angular.toJson(params, true);
+      }
       $rootScope.nextMove = '[{setTurn: {turnIndex: 0}}]';
       $rootScope.sendMessage = function () {
         gameService.makeMove(eval($rootScope.nextMove));
@@ -18,7 +21,7 @@
       gameService.setGame({
         minNumberOfPlayers: 2,
         maxNumberOfPlayers: 2,
-        isMoveOk: function () { return true; },
+        isMoveOk: isMoveOk,
         updateUI: updateUI
       });
     });
@@ -28,6 +31,9 @@
 <body ng-cloak>
 Last updateUI:<br>
 <textarea ng-model="lastUpdateUI" rows=7 cols=80 readonly>
+</textarea><br>
+Last isMoveOk:<br>
+<textarea ng-model="lastIsMoveOk" rows=7 cols=80 readonly>
 </textarea><br>
 Enter your move:<br>
 <textarea ng-model="nextMove" rows=3 cols=80>
