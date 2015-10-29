@@ -3,7 +3,9 @@ var gameService;
     var isLocalTesting = window.parent === window ||
         window.location.search === "?test";
     var playMode = location.search === "?onlyAIs" ? "onlyAIs"
-        : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer" : "passAndPlay"; // Default play mode
+        : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer"
+            : location.search.indexOf("?playMode=") === 0 ? location.search.substr("?playMode=".length)
+                : "passAndPlay"; // Default play mode
     // We verify that you call makeMove at most once for every updateUI (and only when it's your turn)
     var lastUpdateUI = null;
     var game;

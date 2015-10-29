@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Tue Oct 27 21:12:22 EDT 2015";
+"use strict"; var emulatorServicesCompilationDate = "Thu Oct 29 07:51:19 EDT 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -460,7 +460,9 @@
     var isLocalTesting = window.parent === window ||
         window.location.search === "?test";
     var playMode = location.search === "?onlyAIs" ? "onlyAIs"
-        : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer" : "passAndPlay"; // Default play mode
+        : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer"
+            : location.search.indexOf("?playMode=") === 0 ? location.search.substr("?playMode=".length)
+                : "passAndPlay"; // Default play mode
     // We verify that you call makeMove at most once for every updateUI (and only when it's your turn)
     var lastUpdateUI = null;
     var game;
