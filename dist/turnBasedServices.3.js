@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Fri Nov 6 09:34:33 EST 2015";
+"use strict"; var emulatorServicesCompilationDate = "Fri Nov 6 17:31:11 EST 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {

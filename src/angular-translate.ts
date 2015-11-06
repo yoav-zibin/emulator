@@ -23,7 +23,8 @@ function createTranslateService(): TranslateService {
     }
     let translation = codeToL10N[translationId];
     if (!translation) {
-      throw new Error("Couldn't find translationId=" + translationId + " in language=" + language);
+      translation = "[" + translationId + "]";
+      log.error("Couldn't find translationId=" + translationId + " in language=" + language);
     }
     return $interpolate(translation)(interpolateParams || {});
   }
