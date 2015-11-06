@@ -2,7 +2,7 @@ var gameService;
 (function (gameService) {
     var isLocalTesting = window.parent === window ||
         window.location.search === "?test";
-    var playMode = location.search === "?onlyAIs" ? "onlyAIs"
+    gameService.playMode = location.search === "?onlyAIs" ? "onlyAIs"
         : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer"
             : location.search.indexOf("?playMode=") === 0 ? location.search.substr("?playMode=".length)
                 : "passAndPlay"; // Default play mode
@@ -41,8 +41,8 @@ var gameService;
         var playersInfo = [];
         var actualNumberOfPlayers = stateService.randomFromTo(game.minNumberOfPlayers, game.maxNumberOfPlayers + 1);
         for (var i = 0; i < actualNumberOfPlayers; i++) {
-            var playerId = playMode === "onlyAIs" ||
-                i !== 0 && playMode === "playAgainstTheComputer" ?
+            var playerId = gameService.playMode === "onlyAIs" ||
+                i !== 0 && gameService.playMode === "playAgainstTheComputer" ?
                 "" :
                 "" + (i + 42);
             playersInfo.push({ playerId: playerId, avatarImageUrl: null, displayName: null });
@@ -60,7 +60,7 @@ var gameService;
         if (isLocalTesting) {
             stateService.setGame({ updateUI: updateUI, isMoveOk: game.isMoveOk });
             stateService.initNewMatch();
-            stateService.setPlayMode(playMode);
+            stateService.setPlayMode(gameService.playMode);
             stateService.setPlayers(playersInfo);
             stateService.sendUpdateUi();
         }

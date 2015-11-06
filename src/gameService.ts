@@ -14,7 +14,7 @@ interface IGame {
 module gameService {
   let isLocalTesting = window.parent === window ||
       window.location.search === "?test";
-  let playMode = location.search === "?onlyAIs" ? "onlyAIs"
+  export let playMode = location.search === "?onlyAIs" ? "onlyAIs"
       : location.search === "?playAgainstTheComputer" ? "playAgainstTheComputer"
       : location.search.indexOf("?playMode=") === 0 ? location.search.substr("?playMode=".length)
       : "passAndPlay"; // Default play mode
