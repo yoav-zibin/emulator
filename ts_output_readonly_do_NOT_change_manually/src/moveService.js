@@ -1,11 +1,21 @@
 var moveService;
 (function (moveService) {
     var STATE_KEY = "state";
+    function convertOldState(state) {
+        //return state ? state[STATE_KEY] : null;
+        if (!state)
+            return null;
+        // TODO: delete (code for TicTacToe backward compatibility)
+        if (state[STATE_KEY] === undefined) {
+            return { delta: state.delta, board: state.board };
+        }
+        return state[STATE_KEY];
+    }
     function convertIsMoveOk(params) {
         return {
             turnIndexBeforeMove: params.turnIndexBeforeMove,
             numberOfPlayers: params.numberOfPlayers,
-            stateBeforeMove: params.stateBeforeMove ? params.stateBeforeMove[STATE_KEY] : null,
+            stateBeforeMove: convertOldState(params.stateBeforeMove),
             move: convertOldMove(params.move)
         };
     }
@@ -16,7 +26,7 @@ var moveService;
             playMode: params.playMode,
             turnIndexBeforeMove: params.turnIndexBeforeMove,
             numberOfPlayers: params.numberOfPlayers,
-            stateBeforeMove: params.stateBeforeMove ? params.stateBeforeMove[STATE_KEY] : null,
+            stateBeforeMove: convertOldState(params.stateBeforeMove),
             move: convertOldMove(params.move)
         };
     }

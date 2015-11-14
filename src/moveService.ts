@@ -22,11 +22,21 @@ interface NewGame {
 }
 module moveService {
   let STATE_KEY = "state";
+  function convertOldState(state: any): any {
+    //return state ? state[STATE_KEY] : null;
+    
+    if (!state) return null;
+    // TODO: delete (code for TicTacToe backward compatibility)
+    if (state[STATE_KEY] === undefined) {
+      return {delta: state.delta, board: state.board};
+    }
+    return state[STATE_KEY];
+  }
   function convertIsMoveOk(params: IIsMoveOk): IStateTransition {
     return {
       turnIndexBeforeMove: params.turnIndexBeforeMove,
       numberOfPlayers: params.numberOfPlayers,
-      stateBeforeMove: params.stateBeforeMove ? params.stateBeforeMove[STATE_KEY] : null,
+      stateBeforeMove: convertOldState(params.stateBeforeMove),
       move: convertOldMove(params.move)
     };
   }
@@ -38,7 +48,7 @@ module moveService {
       playMode: params.playMode,
       turnIndexBeforeMove: params.turnIndexBeforeMove,
       numberOfPlayers: params.numberOfPlayers,
-      stateBeforeMove: params.stateBeforeMove ? params.stateBeforeMove[STATE_KEY] : null,
+      stateBeforeMove: convertOldState(params.stateBeforeMove),
       move: convertOldMove(params.move)
     };
   }
