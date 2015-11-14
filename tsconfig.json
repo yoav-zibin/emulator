@@ -38,6 +38,7 @@
         "./src/gameService.ts",
         "./src/log.ts",
         "./src/messageService.ts",
+        "./src/moveService.ts",
         "./src/resizeGameAreaService.ts",
         "./src/resizeMapArea.ts",
         "./src/stateService.ts",

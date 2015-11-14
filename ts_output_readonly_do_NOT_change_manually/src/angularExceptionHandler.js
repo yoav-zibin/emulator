@@ -22,7 +22,7 @@ angular.module('gameServices', ['translate'])
             cause: cause,
             gameLogs: log.getLogs()
         };
-        console.error("Game had an exception:\n", errMsg);
+        console.error("Game had an exception:\n", exception, " Full error message with logs: ", errMsg);
         window.alert("Game had an unexpected error. If you know JavaScript, you can look at the console and try to debug it :)");
         // To make sure students don't get:
         // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.

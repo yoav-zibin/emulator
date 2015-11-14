@@ -21,6 +21,7 @@ module.exports = function(grunt) {
           'ts_output_readonly_do_NOT_change_manually/src/stateService.js',
           'ts_output_readonly_do_NOT_change_manually/src/messageService.js',
           'ts_output_readonly_do_NOT_change_manually/src/gameService.js',
+          'ts_output_readonly_do_NOT_change_manually/src/moveService.js',
           'ts_output_readonly_do_NOT_change_manually/src/resizeMapArea.js',
           'ts_output_readonly_do_NOT_change_manually/src/alphaBetaService.js',
           'ts_output_readonly_do_NOT_change_manually/src/resizeGameAreaService.js',

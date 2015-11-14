@@ -28,7 +28,6 @@ module gameService {
   }
 
   export function makeMove(move: IMove): void {
-    log.info(["Making move:", move]);
     if (!lastUpdateUI) {
       throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
     }

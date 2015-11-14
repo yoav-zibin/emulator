@@ -14,7 +14,6 @@ var gameService;
         game.updateUI(params);
     }
     function makeMove(move) {
-        log.info(["Making move:", move]);
         if (!lastUpdateUI) {
             throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
         }
