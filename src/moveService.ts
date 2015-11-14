@@ -24,10 +24,10 @@ module moveService {
   let STATE_KEY = "state";
   function convertOldState(state: any): any {
     //return state ? state[STATE_KEY] : null;
-    
+
     if (!state) return null;
     // TODO: delete (code for TicTacToe backward compatibility)
-    if (state[STATE_KEY] === undefined) {
+    if (state[STATE_KEY] === undefined && state.board) {
       return {delta: state.delta, board: state.board};
     }
     return state[STATE_KEY];
