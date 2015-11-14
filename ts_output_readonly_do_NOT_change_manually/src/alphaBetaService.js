@@ -25,6 +25,17 @@ var alphaBetaService;
     function alphaBetaDecision(startingState, playerIndex, getNextStates, getStateScoreForIndex0, 
         // If you want to see debugging output in the console, then surf to game.html?debug
         getDebugStateToString, alphaBetaLimits) {
+        var move = alphaBetaDecisionMayReturnNull(startingState, playerIndex, getNextStates, getStateScoreForIndex0, getDebugStateToString, alphaBetaLimits);
+        if (move) {
+            return move;
+        }
+        // We run out of time, but we have to return a non-null move (no matter what).
+        return getNextStates(startingState, playerIndex)[0];
+    }
+    alphaBetaService.alphaBetaDecision = alphaBetaDecision;
+    function alphaBetaDecisionMayReturnNull(startingState, playerIndex, getNextStates, getStateScoreForIndex0, 
+        // If you want to see debugging output in the console, then surf to game.html?debug
+        getDebugStateToString, alphaBetaLimits) {
         // Checking input
         if (!startingState || !getNextStates || !getStateScoreForIndex0) {
             throw new Error("startingState or getNextStates or getStateScoreForIndex0 is null/undefined");
@@ -90,7 +101,6 @@ var alphaBetaService;
             maxDepth++;
         }
     }
-    alphaBetaService.alphaBetaDecision = alphaBetaDecision;
     function isTimeout(alphaBetaLimits, startTime) {
         return alphaBetaLimits.millisecondsLimit &&
             new Date().getTime() - startTime > alphaBetaLimits.millisecondsLimit;

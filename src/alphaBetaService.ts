@@ -34,6 +34,28 @@ module alphaBetaService {
       // If you want to see debugging output in the console, then surf to game.html?debug
       getDebugStateToString: (move: IMove) => string,
       alphaBetaLimits: IAlphaBetaLimits): IMove {
+    let move = alphaBetaDecisionMayReturnNull(
+        startingState,
+        playerIndex,
+        getNextStates,
+        getStateScoreForIndex0,
+        getDebugStateToString,
+        alphaBetaLimits);
+    if (move) {
+      return move;
+    }
+    // We run out of time, but we have to return a non-null move (no matter what).
+    return getNextStates(startingState, playerIndex)[0];
+  }
+
+  function alphaBetaDecisionMayReturnNull(
+      startingState: IMove,
+      playerIndex: number,
+      getNextStates: (move: IMove, playerIndex: number) => IMove[],
+      getStateScoreForIndex0: (move: IMove, playerIndex: number) => number,
+      // If you want to see debugging output in the console, then surf to game.html?debug
+      getDebugStateToString: (move: IMove) => string,
+      alphaBetaLimits: IAlphaBetaLimits): IMove {
     // Checking input
     if (!startingState || !getNextStates || !getStateScoreForIndex0) {
       throw new Error("startingState or getNextStates or getStateScoreForIndex0 is null/undefined");
