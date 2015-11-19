@@ -334,9 +334,10 @@ module stateService {
   }
 
   function delayedSendUpdateUi(): void {
-    let moveForIndex = getMoveForPlayerIndex(turnIndex, lastMove);
-    let stateBeforeMove = getStateForPlayerIndex(turnIndex, lastState, lastVisibleTo);
-    let stateAfterMove = getStateForPlayerIndex(turnIndex, currentState, currentVisibleTo);
+    let yourPlayerIndex = getYourPlayerIndex();
+    let moveForIndex = getMoveForPlayerIndex(yourPlayerIndex, lastMove);
+    let stateBeforeMove = getStateForPlayerIndex(yourPlayerIndex, lastState, lastVisibleTo);
+    let stateAfterMove = getStateForPlayerIndex(yourPlayerIndex, currentState, currentVisibleTo);
     if (lastMove.length > 0 && game.isMoveOk(
       {
         move : moveForIndex,
@@ -358,7 +359,7 @@ module stateService {
         stateAfterMove : stateAfterMove,
         numberOfPlayers: playersInfo.length,
         playersInfo : playersInfo,
-        yourPlayerIndex : getYourPlayerIndex(),
+        yourPlayerIndex : yourPlayerIndex,
         playMode: playMode,
         moveNumber: moveNumber,
         randomSeed: randomSeed,
