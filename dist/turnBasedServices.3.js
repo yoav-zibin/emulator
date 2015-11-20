@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Thu Nov 19 13:59:44 EST 2015";
+"use strict"; var emulatorServicesCompilationDate = "Fri Nov 20 05:05:44 EST 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -1037,7 +1037,7 @@ angular.module('gameServices', ['translate'])
         $timeout = _timeout;
         $interval = _interval;
         $interpolate = _interpolate;
-        console.log("Finished init of gameServices");
+        log.alwaysLog("Finished init of gameServices module; emulatorServicesCompilationDate=", emulatorServicesCompilationDate);
     }])
     .factory('$exceptionHandler', function () {
     function angularErrorHandler(exception, cause) {

@@ -11,7 +11,7 @@ angular.module('gameServices', ['translate'])
         $timeout = _timeout;
         $interval = _interval;
         $interpolate = _interpolate;
-        console.log("Finished init of gameServices");
+        log.alwaysLog("Finished init of gameServices module; emulatorServicesCompilationDate=", emulatorServicesCompilationDate);
     }])
     .factory('$exceptionHandler', function () {
     function angularErrorHandler(exception, cause) {
