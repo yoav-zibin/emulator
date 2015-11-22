@@ -5,7 +5,7 @@ module.exports = function(grunt) {
   var clonedFiles = ["stateService", "log", "angular-translate"];
   // cmp src/stateService.ts ../multiplayer-games-web/ts/stateService.ts && ...
   var compareCommand = clonedFiles.map(function (file) { return file + ".ts"; })
-    .map(function (file) { return "cmp src/" + file + " ../multiplayer-games-web/ts/" + file; })
+    .map(function (file) { return "cmp ../emulator/src/" + file + " ../multiplayer-games-web/ts/" + file; })
     .join(" && ");
   console.log(compareCommand);
 
