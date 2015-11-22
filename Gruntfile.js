@@ -2,6 +2,13 @@ module.exports = function(grunt) {
 
   'use strict';
 
+  var clonedFiles = ["stateService", "log", "angular-translate"];
+  // cmp src/stateService.ts ../multiplayer-games-web/ts/stateService.ts && ...
+  var compareCommand = clonedFiles.map(function (file) { return file + ".ts"; })
+    .map(function (file) { return "cmp src/" + file + " ../multiplayer-games-web/ts/" + file; })
+    .join(" && ");
+  console.log(compareCommand);
+
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -43,6 +50,9 @@ module.exports = function(grunt) {
       }
     },
     shell: {
+      compareStateService: {
+        command: compareCommand,
+      },
       compilationDate: {
         command: 'echo \\"use strict\\"\\; var emulatorServicesCompilationDate = \\"`date`\\"\\; > dist/compilationDate.js'
       }
@@ -53,6 +63,7 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', [
+    'shell:compareStateService',
     'shell:compilationDate',
     'concat',
     'uglify'
