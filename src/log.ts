@@ -33,7 +33,7 @@ module log {
   }
 
   export function getLogs(): ILogEntry[] {
-    return alwaysLogs.concat(lastLogs);
+    return lastLogs.concat(alwaysLogs);
   }
 
   export function alwaysLog(... args: any[]):void {

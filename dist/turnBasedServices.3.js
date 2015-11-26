@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sun Nov 22 06:09:07 EST 2015";
+"use strict"; var emulatorServicesCompilationDate = "Thu Nov 26 12:23:12 EST 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -29,7 +29,7 @@
         lastLogs.push(getLogEntry(args, logLevel));
     }
     function getLogs() {
-        return alwaysLogs.concat(lastLogs);
+        return lastLogs.concat(alwaysLogs);
     }
     log_1.getLogs = getLogs;
     function alwaysLog() {
