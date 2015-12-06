@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Thu Nov 26 12:23:12 EST 2015";
+"use strict"; var emulatorServicesCompilationDate = "Sat Dec 5 19:30:46 EST 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -957,7 +957,6 @@ function createTranslateService() {
 var translate = createTranslateService();
 angular.module('translate', [])
     .filter('translate', ['$parse', function ($parse) {
-        'use strict';
         var translateFilter = function (translationId, interpolateParams) {
             if (!angular.isObject(interpolateParams)) {
                 interpolateParams = $parse(interpolateParams)(this);

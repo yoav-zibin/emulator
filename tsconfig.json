@@ -48,5 +48,8 @@
         "./typings/jquery/jquery.d.ts",
         "./typings/selenium-webdriver/selenium-webdriver.d.ts"
     ],
-    "exclude": []
+    "exclude": [],
+    "atom": {
+        "rewriteTsconfig": true
+    }
 }

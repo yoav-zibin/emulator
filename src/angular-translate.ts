@@ -42,8 +42,6 @@ let translate = createTranslateService();
 
 angular.module('translate', [])
 .filter('translate', ['$parse', function ($parse:angular.IParseService) {
-  'use strict';
-
   let translateFilter: any =  function (translationId: string, interpolateParams: StringDictionary|string): string {
     if (!angular.isObject(interpolateParams)) {
       interpolateParams = $parse(<string>interpolateParams)(this);
