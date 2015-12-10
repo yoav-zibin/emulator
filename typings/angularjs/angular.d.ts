@@ -238,7 +238,7 @@ declare module angular {
 
         fromJson(json: string): any;
         identity(arg?: any): any;
-        injector(modules?: any[], strictDi?: boolean): auto.IInjectorService;
+        injector(modules?: any[]): auto.IInjectorService;
         isArray(value: any): boolean;
         isDate(value: any): boolean;
         isDefined(value: any): boolean;
@@ -420,15 +420,6 @@ declare module angular {
         [name: string]: any;
 
         /**
-         * Converts an attribute name (e.g. dash/colon/underscore-delimited string, optionally prefixed with x- or data-) to its normalized, camelCase form.
-         *
-         * Also there is special case for Moz prefix starting with upper case letter.
-         *
-         * For further information check out the guide on @see https://docs.angularjs.org/guide/directive#matching-directives
-         */
-        $normalize(name: string): void;
-
-        /**
          * Adds the CSS class value specified by the classVal parameter to the
          * element. If animations are enabled then an animation will be triggered
          * for the class addition.
@@ -533,14 +524,11 @@ declare module angular {
     }
 
     interface IModelValidators {
-        /**
-         * viewValue is any because it can be an object that is called in the view like $viewValue.name:$viewValue.subName
-         */
-        [index: string]: (modelValue: any, viewValue: any) => boolean;
+        [index: string]: (modelValue: any, viewValue: string) => boolean;
     }
 
     interface IAsyncModelValidators {
-        [index: string]: (modelValue: any, viewValue: any) => IPromise<any>;
+        [index: string]: (modelValue: any, viewValue: string) => IPromise<any>;
     }
 
     interface IModelParser {
@@ -617,12 +605,12 @@ declare module angular {
         $on(name: string, listener: (event: IAngularEvent, ...args: any[]) => any): Function;
 
         $watch(watchExpression: string, listener?: string, objectEquality?: boolean): Function;
-        $watch<T>(watchExpression: string, listener?: (newValue: T, oldValue: T, scope: IScope) => any, objectEquality?: boolean): Function;
+        $watch(watchExpression: string, listener?: (newValue: any, oldValue: any, scope: IScope) => any, objectEquality?: boolean): Function;
         $watch(watchExpression: (scope: IScope) => any, listener?: string, objectEquality?: boolean): Function;
-        $watch<T>(watchExpression: (scope: IScope) => T, listener?: (newValue: T, oldValue: T, scope: IScope) => any, objectEquality?: boolean): Function;
+        $watch(watchExpression: (scope: IScope) => any, listener?: (newValue: any, oldValue: any, scope: IScope) => any, objectEquality?: boolean): Function;
 
-        $watchCollection<T>(watchExpression: string, listener: (newValue: T, oldValue: T, scope: IScope) => any): Function;
-        $watchCollection<T>(watchExpression: (scope: IScope) => T, listener: (newValue: T, oldValue: T, scope: IScope) => any): Function;
+        $watchCollection(watchExpression: string, listener: (newValue: any, oldValue: any, scope: IScope) => any): Function;
+        $watchCollection(watchExpression: (scope: IScope) => any, listener: (newValue: any, oldValue: any, scope: IScope) => any): Function;
 
         $watchGroup(watchExpressions: any[], listener: (newValue: any, oldValue: any, scope: IScope) => any): Function;
         $watchGroup(watchExpressions: { (scope: IScope): any }[], listener: (newValue: any, oldValue: any, scope: IScope) => any): Function;
@@ -713,7 +701,6 @@ declare module angular {
 
     ///////////////////////////////////////////////////////////////////////////
     // BrowserService
-    // TODO undocumented, so we need to get it from the source code
     ///////////////////////////////////////////////////////////////////////////
     interface IBrowserService {
         defer: angular.ITimeoutService;
@@ -862,7 +849,7 @@ declare module angular {
         warn: ILogCall;
     }
 
-    interface ILogProvider extends IServiceProvider {
+    interface ILogProvider {
         debugEnabled(): boolean;
         debugEnabled(enabled: boolean): ILogProvider;
     }
@@ -1045,10 +1032,10 @@ declare module angular {
     interface IPromise<T> {
         /**
          * Regardless of when the promise was or will be resolved or rejected, then calls one of the success or error callbacks asynchronously as soon as the result is available. The callbacks are called with a single argument: the result or rejection reason. Additionally, the notify callback may be called zero or more times to provide a progress indication, before the promise is resolved or rejected.
-         * The successCallBack may return IPromise<void> for when a $q.reject() needs to be returned
+         *
          * This method returns a new promise which is resolved or rejected via the return value of the successCallback, errorCallback. It also notifies via the return value of the notifyCallback method. The promise can not be resolved or rejected from the notifyCallback method.
          */
-        then<TResult>(successCallback: (promiseValue: T) => IHttpPromise<TResult>|IPromise<TResult>|TResult|IPromise<void>, errorCallback?: (reason: any) => any, notifyCallback?: (state: any) => any): IPromise<TResult>;
+        then<TResult>(successCallback: (promiseValue: T) => IHttpPromise<TResult>|IPromise<TResult>|TResult, errorCallback?: (reason: any) => any, notifyCallback?: (state: any) => any): IPromise<TResult>;
 
         /**
          * Shorthand for promise.then(null, errorCallback)
@@ -1428,11 +1415,6 @@ declare module angular {
     */
     interface IHttpProviderDefaults {
         cache?: boolean;
-        /**
-         * Transform function or an array of such functions. The transform function takes the http request body and
-         * headers and returns its transformed (typically serialized) version.
-         */
-        transformRequest?: ((data: any, headersGetter?: any) => any)|((data: any, headersGetter?: any) => any)[];
         xsrfCookieName?: string;
         xsrfHeaderName?: string;
         withCredentials?: boolean;
@@ -1639,7 +1621,6 @@ declare module angular {
     }
 
     interface IAugmentedJQuery extends JQuery {
-        // TODO: events, how to define?
         //$destroy
 
         find(selector: string): IAugmentedJQuery;
