@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sat Dec 5 19:30:46 EST 2015";
+"use strict"; var emulatorServicesCompilationDate = "Thu Dec 10 07:36:08 EST 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -483,15 +483,15 @@
         if (!move || !move.length) {
             throw new Error("Game called makeMove with an empty move=" + move);
         }
-        lastUpdateUI = null; // to make sure you don't call makeMove until you get the next updateUI.
         if (isLocalTesting) {
             $timeout(function () {
                 stateService.makeMove(move);
             }, 100);
         }
         else {
-            messageService.sendMessage({ makeMove: move });
+            messageService.sendMessage({ makeMove: move, lastUpdateUI: lastUpdateUI });
         }
+        lastUpdateUI = null; // to make sure you don't call makeMove until you get the next updateUI.
     }
     gameService.makeMove = makeMove;
     function getPlayers() {

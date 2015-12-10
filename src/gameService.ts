@@ -39,15 +39,14 @@ module gameService {
     if (!move || !move.length) {
       throw new Error("Game called makeMove with an empty move=" + move);
     }
-    lastUpdateUI = null; // to make sure you don't call makeMove until you get the next updateUI.
-
     if (isLocalTesting) {
       $timeout(function () {
         stateService.makeMove(move);
       }, 100);
     } else {
-      messageService.sendMessage({makeMove: move});
+      messageService.sendMessage({makeMove: move, lastUpdateUI: lastUpdateUI});
     }
+    lastUpdateUI = null; // to make sure you don't call makeMove until you get the next updateUI.
   }
 
   function getPlayers(): IPlayerInfo[] {
