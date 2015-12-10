@@ -10,7 +10,7 @@ var gameService;
     var lastUpdateUI = null;
     var game;
     function updateUI(params) {
-        lastUpdateUI = params;
+        lastUpdateUI = angular.copy(params);
         game.updateUI(params);
     }
     function makeMove(move) {
@@ -73,7 +73,6 @@ var gameService;
                     messageService.sendMessage({ isMoveOkResult: isMoveOkResult });
                 }
                 else if (message.updateUI) {
-                    lastUpdateUI = message.updateUI;
                     updateUI(message.updateUI);
                 }
                 else if (message.setLanguage) {

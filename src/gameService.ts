@@ -23,7 +23,7 @@ module gameService {
   let game: IGame;
 
   function updateUI(params: IUpdateUI) {
-    lastUpdateUI = params;
+    lastUpdateUI = angular.copy(params);
     game.updateUI(params);
   }
 
@@ -87,7 +87,6 @@ module gameService {
           }
           messageService.sendMessage({isMoveOkResult: isMoveOkResult});
         } else if (message.updateUI) {
-          lastUpdateUI = message.updateUI;
           updateUI(message.updateUI);
         } else if (message.setLanguage) {
           translate.setLanguage(message.setLanguage.language, message.setLanguage.codeToL10N);

@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Thu Dec 10 07:36:08 EST 2015";
+"use strict"; var emulatorServicesCompilationDate = "Thu Dec 10 13:36:36 EST 2015";
 ;var log;
 (function (log_1) {
     var ILogLevel = (function () {
@@ -468,7 +468,7 @@
     var lastUpdateUI = null;
     var game;
     function updateUI(params) {
-        lastUpdateUI = params;
+        lastUpdateUI = angular.copy(params);
         game.updateUI(params);
     }
     function makeMove(move) {
@@ -531,7 +531,6 @@
                     messageService.sendMessage({ isMoveOkResult: isMoveOkResult });
                 }
                 else if (message.updateUI) {
-                    lastUpdateUI = message.updateUI;
                     updateUI(message.updateUI);
                 }
                 else if (message.setLanguage) {
