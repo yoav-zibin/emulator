@@ -29,6 +29,7 @@ html, body {
   z-index: 1001;
 }
 .overlayModal {
+  background: rgba(0,0,0,0.5);
   text-align:center;
   z-index: 1000;
   position: absolute;
