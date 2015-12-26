@@ -20,10 +20,10 @@ html, body {
 
 /* Help screen uses a carousel and a modal dialog. */
 .carousel-indicators li {
-  background-color: black;
+  background-color: black !important;
 }
 .carousel-indicators .active {
-  background-color: green;
+  background-color: green !important;
 }
 .modal-dialog {
   z-index: 1001;
