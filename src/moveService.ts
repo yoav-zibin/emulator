@@ -25,14 +25,7 @@ interface NewGame {
 export module moveService {
   let STATE_KEY = "state";
   function convertOldState(state: any): any {
-    //return state ? state[STATE_KEY] : null;
-
-    if (!state) return null;
-    // TODO: delete (code for TicTacToe backward compatibility)
-    if (state[STATE_KEY] === undefined && state.board) {
-      return {delta: state.delta, board: state.board};
-    }
-    return state[STATE_KEY];
+    return state ? state[STATE_KEY] : null;
   }
   function convertIsMoveOk(params: IIsMoveOk): IStateTransition {
     return {
@@ -62,10 +55,6 @@ export module moveService {
         turnIndexAfterMove: 0,
         stateAfterMove: null,
       };
-    }
-    // TODO: delete (code for TicTacToe backward compatibility)
-    if (move.length === 3) {
-      move = [move[0], {set: {key: "state", value: {board: move[1].set.value, delta: move[2].set.value}}}];
     }
     if (move.length !== 2 || !(move[0].setTurn || move[0].endMatch) || !move[1].set) {
       throw new Error("Internal error: old move should be an array with 2 operations! old move=" +

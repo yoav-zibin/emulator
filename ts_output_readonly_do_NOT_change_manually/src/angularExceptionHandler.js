@@ -1,5 +1,16 @@
 var gamingPlatform;
 (function (gamingPlatform) {
+    // Copy everything on gamingPlatform to window,
+    // for backward compatability with games that don't use the gamingPlatform namespace.
+    function copyNamespaceToWindow() {
+        var w = window;
+        var g = gamingPlatform;
+        for (var key in g) {
+            w[key] = g[key];
+        }
+    }
+    copyNamespaceToWindow();
+    setTimeout(copyNamespaceToWindow, 0);
     angular.module('gameServices', ['translate'])
         .run(['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
         function (_location, _rootScope, _timeout, _interval, _interpolate) {
@@ -8,6 +19,7 @@ var gamingPlatform;
             gamingPlatform.$timeout = _timeout;
             gamingPlatform.$interval = _interval;
             gamingPlatform.$interpolate = _interpolate;
+            copyNamespaceToWindow();
             gamingPlatform.log.alwaysLog("Finished init of gameServices module; emulatorServicesCompilationDate=", emulatorServicesCompilationDate);
         }])
         .factory('$exceptionHandler', function () {

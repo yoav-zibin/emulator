@@ -1,5 +1,17 @@
 namespace gamingPlatform {
 
+// Copy everything on gamingPlatform to window,
+// for backward compatability with games that don't use the gamingPlatform namespace.
+function copyNamespaceToWindow() {
+  let w: any = window;
+  let g: any = gamingPlatform;
+  for (let key in g) {
+    w[key] = g[key];
+  }
+}
+copyNamespaceToWindow();
+setTimeout(copyNamespaceToWindow, 0);
+
 export let $rootScope: angular.IScope;
 export let $location: angular.ILocationService;
 export let $timeout: angular.ITimeoutService;
@@ -19,6 +31,7 @@ angular.module('gameServices', ['translate'])
   $timeout = _timeout;
   $interval = _interval;
   $interpolate = _interpolate;
+  copyNamespaceToWindow();
   log.alwaysLog("Finished init of gameServices module; emulatorServicesCompilationDate=", emulatorServicesCompilationDate);
 }])
 .factory('$exceptionHandler', function () {
