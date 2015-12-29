@@ -34,7 +34,6 @@
         "./src/alphaBetaService.ts",
         "./src/angular-translate.ts",
         "./src/angularExceptionHandler.ts",
-        "./src/copyNamespaceToWindow.ts",
         "./src/dragAndDropService.ts",
         "./src/emulator.ts",
         "./src/gameService.ts",
