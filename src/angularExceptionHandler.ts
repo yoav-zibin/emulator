@@ -1,8 +1,10 @@
-let $rootScope: angular.IScope;
-let $location: angular.ILocationService;
-let $timeout: angular.ITimeoutService;
-let $interval: angular.IIntervalService;
-let $interpolate: angular.IInterpolateService;
+namespace gamingPlatform {
+
+export let $rootScope: angular.IScope;
+export let $location: angular.ILocationService;
+export let $timeout: angular.ITimeoutService;
+export let $interval: angular.IIntervalService;
+export let $interpolate: angular.IInterpolateService;
 
 declare var emulatorServicesCompilationDate: string;
 
@@ -45,3 +47,5 @@ angular.module('gameServices', ['translate'])
 
   return angularErrorHandler;
 });
+
+}

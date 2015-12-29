@@ -1,11 +1,10 @@
+namespace gamingPlatform {
+
 // Defines translate service and filter for I18N.
-interface TranslateService {
+export interface TranslateService {
   (translationId: string, interpolateParams?: StringDictionary): string;
   getLanguage(): string;
   setLanguage(language: string, codeToL10N: StringDictionary): void;
-}
-interface StringDictionary {
-  [index: string]: string;
 }
 
 // This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
@@ -38,7 +37,7 @@ function createTranslateService(): TranslateService {
   return translateService;
 }
 
-let translate = createTranslateService();
+export let translate = createTranslateService();
 
 angular.module('translate', [])
 .filter('translate', ['$parse', function ($parse:angular.IParseService) {
@@ -51,3 +50,5 @@ angular.module('translate', [])
   translateFilter.$stateful = true;
   return translateFilter;
 }]);
+
+}

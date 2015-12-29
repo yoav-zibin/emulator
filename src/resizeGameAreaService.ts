@@ -1,4 +1,6 @@
-module resizeGameAreaService {
+namespace gamingPlatform {
+
+export module resizeGameAreaService {
   interface WindowSize {
     windowWidth: number;
     windowHeight: number;
@@ -73,4 +75,6 @@ module resizeGameAreaService {
   doc.addEventListener("onresize", rescale);
   doc.addEventListener("orientationchange", rescale);
   setInterval(rescale, 1000);
+}
+
 }

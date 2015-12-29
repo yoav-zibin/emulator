@@ -1,3 +1,5 @@
+namespace gamingPlatform {
+
 interface NewMove {
   endMatchScores?: number[];
   turnIndexAfterMove?: number;
@@ -20,7 +22,7 @@ interface NewGame {
   checkMoveOk(stateTransition: IStateTransition): void;
   updateUI(update: NewUpdateUI): void;
 }
-module moveService {
+export module moveService {
   let STATE_KEY = "state";
   function convertOldState(state: any): any {
     //return state ? state[STATE_KEY] : null;
@@ -113,4 +115,6 @@ module moveService {
     log.info("Making move:", move);
     gameService.makeMove(convertNewMove(move));
   }
+}
+
 }

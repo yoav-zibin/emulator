@@ -1,4 +1,6 @@
-module emulator {
+namespace gamingPlatform {
+
+export module emulator {
   export let playModes = ['passAndPlay', 'playAgainstTheComputer'];
   export let playMode = playModes[0];
   export let url: string = "http://yoav-zibin.github.io/TicTacToe/index.html";
@@ -74,3 +76,5 @@ angular.module('myApp', ['gameServices']).run(function ($sce: angular.ISCEServic
   $rootScope['emulator'] = emulator;
   emulator.$sce = $sce;
 });
+
+}

@@ -1,8 +1,10 @@
+namespace gamingPlatform {
+
 // You use dragAndDropService like this:
 // dragAndDropService.addDragListener(touchElementId, function handleDragEvent(type, clientX, clientY, event) {...});
 // touchElementId can be "gameArea" (or any other element id).
 // type is either: "touchstart", "touchmove", "touchend", "touchcancel", "touchleave"
-module dragAndDropService {
+export module dragAndDropService {
   export function addDragListener(touchElementId: string,
       handleDragEvent: (type: string, clientX: number, clientY: number, event: TouchEvent|MouseEvent) => void) {
     if (!touchElementId || !handleDragEvent) {
@@ -60,4 +62,6 @@ module dragAndDropService {
     gameArea.addEventListener("mousemove", mouseMoveHandler, true);
     gameArea.addEventListener("mouseup", mouseUpHandler, true);
   }
+}
+
 }

@@ -1,9 +1,11 @@
+namespace gamingPlatform {
+
 interface IAlphaBetaLimits {
   millisecondsLimit? : number;
   maxDepth? : number;
 }
 
-module alphaBetaService {
+export module alphaBetaService {
   /**
    * Does alpha-beta search, starting from startingState,
    * where the first move is done by playerIndex (playerIndex is either 0 or 1),
@@ -210,4 +212,6 @@ module alphaBetaService {
     }
     return {bestScore: bestScore, bestState: bestState};
   }
+}
+
 }

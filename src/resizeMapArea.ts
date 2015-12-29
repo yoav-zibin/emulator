@@ -1,10 +1,12 @@
+namespace gamingPlatform {
+
 interface ResizeMapAreaParams {
   imageId: string;
   mapId: string;
   originalWidth: number;
   originalHeight: number;
 }
-function resizeMapArea(params: ResizeMapAreaParams): void {
+export function resizeMapArea(params: ResizeMapAreaParams): void {
   let imageId = params.imageId;
   let mapId = params.mapId;
   let originalWidth = params.originalWidth;
@@ -40,4 +42,6 @@ function resizeMapArea(params: ResizeMapAreaParams): void {
   document.addEventListener("onresize", rescale);
   document.addEventListener("orientationchange", rescale);
   setInterval(rescale, 1000);
+}
+
 }

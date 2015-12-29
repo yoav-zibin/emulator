@@ -1,17 +1,21 @@
+namespace gamingPlatform {
 
-interface IPlayerInfo {
+export interface StringDictionary {
+  [index: string]: string;
+}
+export interface IPlayerInfo {
   avatarImageUrl: string;
   displayName: string;
   playerId: string;
 }
-interface IGame {
+export interface IGame {
   isMoveOk(move: IIsMoveOk): boolean;
   updateUI(update: IUpdateUI): void;
   minNumberOfPlayers: number;
   maxNumberOfPlayers: number;
 }
 
-module gameService {
+export module gameService {
   let isLocalTesting = window.parent === window ||
       window.location.search === "?test";
   export let playMode = location.search === "?onlyAIs" ? "onlyAIs"
@@ -117,4 +121,6 @@ module gameService {
       numberOfPlayers: playersInfo.length
     });
   }
+}
+
 }

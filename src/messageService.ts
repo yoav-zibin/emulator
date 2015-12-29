@@ -1,4 +1,6 @@
-module messageService {
+namespace gamingPlatform {
+
+export module messageService {
   let gameUrl = location.toString();
   export function sendMessage(message: any) {
     log.info("Game sent message", message);
@@ -18,4 +20,6 @@ module messageService {
       });
     }, false);
   };
+}
+
 }

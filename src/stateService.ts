@@ -1,3 +1,9 @@
+interface Math {
+  seedrandom(seed: string): void;
+  originalRandom(): number;
+}
+
+namespace gamingPlatform {
 interface ISet {
   key: string;
   value: any;
@@ -33,11 +39,11 @@ interface IOperation {
   setTurn?: ISetTurn;
   endMatch?: IEndMatch;
 }
-type IMove = IOperation[];
+export type IMove = IOperation[];
 interface IState {
   [index: string]: any;
 }
-interface IIsMoveOk {
+export interface IIsMoveOk {
   move: IMove;
   turnIndexBeforeMove : number;
   turnIndexAfterMove: number;
@@ -45,8 +51,8 @@ interface IIsMoveOk {
   stateAfterMove: IState;
   numberOfPlayers: number;
 }
-type PlayMode = string | number;
-interface IUpdateUI extends IIsMoveOk {
+export type PlayMode = string | number;
+export interface IUpdateUI extends IIsMoveOk {
   playersInfo: IPlayerInfo[];
   yourPlayerIndex: number;
   playMode: PlayMode;
@@ -54,13 +60,9 @@ interface IUpdateUI extends IIsMoveOk {
   randomSeed: string;
   endMatchScores?: number[];
 }
-interface IGameMethods {
+export interface IGameMethods {
   isMoveOk(move: IIsMoveOk): boolean;
   updateUI(update: IUpdateUI): void;
-}
-interface Math {
-  seedrandom(seed: string): void;
-  originalRandom(): number;
 }
 /*interface IStateService {
   setGame(game: IGameMethods): void;
@@ -70,7 +72,7 @@ interface Math {
 interface IVisibility {
   [index: string]: number[];
 }
-interface IMatchState {
+export interface IMatchState {
   turnIndexBeforeMove: number;
   turnIndex: number;
   endMatchScores?: number[];
@@ -83,7 +85,7 @@ interface IMatchState {
   currentVisibleTo: IVisibility;
 }
 
-module stateService {
+export module stateService {
   let game: IGameMethods;
   let currentState: IState;
   let lastState: IState;
@@ -333,11 +335,31 @@ module stateService {
     currentVisibleTo = data.currentVisibleTo;
   }
 
+  let lastSentUpdateUI: IUpdateUI = null; // to prevent sending the same updateUI twice.
+
   function delayedSendUpdateUi(): void {
     let yourPlayerIndex = getYourPlayerIndex();
     let moveForIndex = getMoveForPlayerIndex(yourPlayerIndex, lastMove);
     let stateBeforeMove = getStateForPlayerIndex(yourPlayerIndex, lastState, lastVisibleTo);
     let stateAfterMove = getStateForPlayerIndex(yourPlayerIndex, currentState, currentVisibleTo);
+
+    let nextUpdateUI = {
+      move : moveForIndex,
+      turnIndexBeforeMove : turnIndexBeforeMove,
+      turnIndexAfterMove : turnIndex,
+      stateBeforeMove : stateBeforeMove,
+      stateAfterMove : stateAfterMove,
+      numberOfPlayers: playersInfo.length,
+      playersInfo : playersInfo,
+      yourPlayerIndex : yourPlayerIndex,
+      playMode: playMode,
+      moveNumber: moveNumber,
+      randomSeed: randomSeed,
+      endMatchScores: endMatchScores
+    };
+    if (angular.equals(lastSentUpdateUI, nextUpdateUI)) return; // Not sending the same updateUI twice.
+    lastSentUpdateUI = nextUpdateUI;
+
     if (lastMove.length > 0 && game.isMoveOk(
       {
         move : moveForIndex,
@@ -350,21 +372,7 @@ module stateService {
       throwError("You declared a hacker for a legal move! move=" + moveForIndex);
     }
 
-    game.updateUI(
-      {
-        move : moveForIndex,
-        turnIndexBeforeMove : turnIndexBeforeMove,
-        turnIndexAfterMove : turnIndex,
-        stateBeforeMove : stateBeforeMove,
-        stateAfterMove : stateAfterMove,
-        numberOfPlayers: playersInfo.length,
-        playersInfo : playersInfo,
-        yourPlayerIndex : yourPlayerIndex,
-        playMode: playMode,
-        moveNumber: moveNumber,
-        randomSeed: randomSeed,
-        endMatchScores: endMatchScores
-      });
+    game.updateUI(nextUpdateUI);
   }
 
   export function sendUpdateUi(): void {
@@ -420,4 +428,5 @@ module stateService {
   export function getEndMatchScores(): number[] {
     return endMatchScores;
   }
+}
 }
