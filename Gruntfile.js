@@ -14,6 +14,9 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     ts: {
       default : {
+        options: {
+          fast: 'never' // disable the grunt-ts fast feature
+        },
         tsconfig: true
       }
     },
