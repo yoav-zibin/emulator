@@ -16,7 +16,7 @@ var gamingPlatform;
                 translation = "[" + translationId + "]";
                 gamingPlatform.log.error("Couldn't find translationId=" + translationId + " in language=" + language);
             }
-            return $interpolate(translation)(interpolateParams || {});
+            return gamingPlatform.$interpolate(translation)(interpolateParams || {});
         }
         var translateService;
         translateService = translate;
@@ -40,3 +40,4 @@ var gamingPlatform;
             return translateFilter;
         }]);
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=angular-translate.js.map

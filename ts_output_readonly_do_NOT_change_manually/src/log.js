@@ -85,3 +85,4 @@ var gamingPlatform;
         log_1.log = log;
     })(log = gamingPlatform.log || (gamingPlatform.log = {}));
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=log.js.map

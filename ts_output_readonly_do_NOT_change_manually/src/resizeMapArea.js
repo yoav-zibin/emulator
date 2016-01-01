@@ -39,3 +39,4 @@ var gamingPlatform;
     }
     gamingPlatform.resizeMapArea = resizeMapArea;
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=resizeMapArea.js.map

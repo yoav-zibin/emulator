@@ -19,7 +19,7 @@ module.exports = function(grunt) {
     },
     concat: {
       options: {
-        separator: ';',
+        separator: '\n;\n',
       },
       dist: {
         src: [
@@ -63,6 +63,7 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', [
+    'ts',
     'shell:compareStateService',
     'shell:compilationDate',
     'concat',

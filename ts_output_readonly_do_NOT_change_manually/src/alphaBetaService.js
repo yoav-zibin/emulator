@@ -168,3 +168,4 @@ var gamingPlatform;
         }
     })(alphaBetaService = gamingPlatform.alphaBetaService || (gamingPlatform.alphaBetaService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=alphaBetaService.js.map

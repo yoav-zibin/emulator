@@ -58,3 +58,4 @@ var gamingPlatform;
         dragAndDropService.addDragListener = addDragListener;
     })(dragAndDropService = gamingPlatform.dragAndDropService || (gamingPlatform.dragAndDropService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=dragAndDropService.js.map

@@ -1,5 +1,7 @@
-"use strict"; var emulatorServicesCompilationDate = "Tue Dec 29 07:41:07 EST 2015";
-;var gamingPlatform;
+"use strict"; var emulatorServicesCompilationDate = "Fri Jan 1 11:29:40 EST 2016";
+
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     var log;
     (function (log_1) {
@@ -86,7 +88,9 @@
         log_1.log = log;
     })(log = gamingPlatform.log || (gamingPlatform.log = {}));
 })(gamingPlatform || (gamingPlatform = {}));
-;var gamingPlatform;
+//# sourceMappingURL=log.js.map
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     var stateService;
     (function (stateService) {
@@ -164,8 +168,8 @@
         }
         function getMoveForPlayerIndex(playerIndex, move) {
             var moveForPlayer = [];
-            for (var _i = 0, move_1 = move; _i < move_1.length; _i++) {
-                var operation = move_1[_i];
+            for (var _i = 0; _i < move.length; _i++) {
+                var operation = move[_i];
                 if (!isNull(operation.set) &&
                     !isNull(operation.set.visibleToPlayerIndexes) &&
                     operation.set.visibleToPlayerIndexes.indexOf(playerIndex) === -1) {
@@ -189,8 +193,8 @@
             }
             var result = {};
             var keys = getKeys(gameState);
-            for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-                var key = keys_1[_i];
+            for (var _i = 0; _i < keys.length; _i++) {
+                var key = keys[_i];
                 var visibleToPlayerIndexes = visibleTo[key];
                 var value = null;
                 if (isNull(visibleToPlayerIndexes) || visibleToPlayerIndexes.indexOf(playerIndex) > -1) {
@@ -410,8 +414,8 @@
                 Math.seedrandom(randomSeed + moveNumber); // Math.random is used only in processApiOperation
             }
             setTurnOrEndMatchCount = 0;
-            for (var _i = 0, operations_1 = operations; _i < operations_1.length; _i++) {
-                var operation = operations_1[_i];
+            for (var _i = 0; _i < operations.length; _i++) {
+                var operation = operations[_i];
                 processApiOperation(operation);
             }
             // We must have either SetTurn or EndMatch
@@ -437,7 +441,9 @@
         stateService.getEndMatchScores = getEndMatchScores;
     })(stateService = gamingPlatform.stateService || (gamingPlatform.stateService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
-;var gamingPlatform;
+//# sourceMappingURL=stateService.js.map
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     var messageService;
     (function (messageService) {
@@ -466,7 +472,9 @@
         ;
     })(messageService = gamingPlatform.messageService || (gamingPlatform.messageService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
-;var gamingPlatform;
+//# sourceMappingURL=messageService.js.map
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     var gameService;
     (function (gameService) {
@@ -576,7 +584,9 @@
         gameService.setGame = setGame;
     })(gameService = gamingPlatform.gameService || (gamingPlatform.gameService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
-;var gamingPlatform;
+//# sourceMappingURL=gameService.js.map
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     var moveService;
     (function (moveService) {
@@ -660,7 +670,9 @@
         moveService.makeMove = makeMove;
     })(moveService = gamingPlatform.moveService || (gamingPlatform.moveService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
-;var gamingPlatform;
+//# sourceMappingURL=moveService.js.map
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     function resizeMapArea(params) {
         var imageId = params.imageId;
@@ -701,7 +713,9 @@
     }
     gamingPlatform.resizeMapArea = resizeMapArea;
 })(gamingPlatform || (gamingPlatform = {}));
-;var gamingPlatform;
+//# sourceMappingURL=resizeMapArea.js.map
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     var alphaBetaService;
     (function (alphaBetaService) {
@@ -871,7 +885,9 @@
         }
     })(alphaBetaService = gamingPlatform.alphaBetaService || (gamingPlatform.alphaBetaService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
-;var gamingPlatform;
+//# sourceMappingURL=alphaBetaService.js.map
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     var resizeGameAreaService;
     (function (resizeGameAreaService) {
@@ -941,7 +957,9 @@
         setInterval(rescale, 1000);
     })(resizeGameAreaService = gamingPlatform.resizeGameAreaService || (gamingPlatform.resizeGameAreaService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
-;var gamingPlatform;
+//# sourceMappingURL=resizeGameAreaService.js.map
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     // This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
     function createTranslateService() {
@@ -959,7 +977,7 @@
                 translation = "[" + translationId + "]";
                 gamingPlatform.log.error("Couldn't find translationId=" + translationId + " in language=" + language);
             }
-            return $interpolate(translation)(interpolateParams || {});
+            return gamingPlatform.$interpolate(translation)(interpolateParams || {});
         }
         var translateService;
         translateService = translate;
@@ -983,7 +1001,9 @@
             return translateFilter;
         }]);
 })(gamingPlatform || (gamingPlatform = {}));
-;var gamingPlatform;
+//# sourceMappingURL=angular-translate.js.map
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     // You use dragAndDropService like this:
     // dragAndDropService.addDragListener(touchElementId, function handleDragEvent(type, clientX, clientY, event) {...});
@@ -1043,7 +1063,9 @@
         dragAndDropService.addDragListener = addDragListener;
     })(dragAndDropService = gamingPlatform.dragAndDropService || (gamingPlatform.dragAndDropService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
-;var gamingPlatform;
+//# sourceMappingURL=dragAndDropService.js.map
+;
+var gamingPlatform;
 (function (gamingPlatform) {
     // Copy everything on gamingPlatform to window,
     // for backward compatability with games that don't use the gamingPlatform namespace.
@@ -1091,3 +1113,4 @@
         return angularErrorHandler;
     });
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=angularExceptionHandler.js.map

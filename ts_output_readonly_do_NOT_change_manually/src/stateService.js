@@ -76,8 +76,8 @@ var gamingPlatform;
         }
         function getMoveForPlayerIndex(playerIndex, move) {
             var moveForPlayer = [];
-            for (var _i = 0, move_1 = move; _i < move_1.length; _i++) {
-                var operation = move_1[_i];
+            for (var _i = 0; _i < move.length; _i++) {
+                var operation = move[_i];
                 if (!isNull(operation.set) &&
                     !isNull(operation.set.visibleToPlayerIndexes) &&
                     operation.set.visibleToPlayerIndexes.indexOf(playerIndex) === -1) {
@@ -101,8 +101,8 @@ var gamingPlatform;
             }
             var result = {};
             var keys = getKeys(gameState);
-            for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-                var key = keys_1[_i];
+            for (var _i = 0; _i < keys.length; _i++) {
+                var key = keys[_i];
                 var visibleToPlayerIndexes = visibleTo[key];
                 var value = null;
                 if (isNull(visibleToPlayerIndexes) || visibleToPlayerIndexes.indexOf(playerIndex) > -1) {
@@ -322,8 +322,8 @@ var gamingPlatform;
                 Math.seedrandom(randomSeed + moveNumber); // Math.random is used only in processApiOperation
             }
             setTurnOrEndMatchCount = 0;
-            for (var _i = 0, operations_1 = operations; _i < operations_1.length; _i++) {
-                var operation = operations_1[_i];
+            for (var _i = 0; _i < operations.length; _i++) {
+                var operation = operations[_i];
                 processApiOperation(operation);
             }
             // We must have either SetTurn or EndMatch
@@ -349,3 +349,4 @@ var gamingPlatform;
         stateService.getEndMatchScores = getEndMatchScores;
     })(stateService = gamingPlatform.stateService || (gamingPlatform.stateService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=stateService.js.map

@@ -108,3 +108,4 @@ var gamingPlatform;
         gameService.setGame = setGame;
     })(gameService = gamingPlatform.gameService || (gamingPlatform.gameService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=gameService.js.map

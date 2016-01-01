@@ -82,3 +82,4 @@ var gamingPlatform;
         moveService.makeMove = makeMove;
     })(moveService = gamingPlatform.moveService || (gamingPlatform.moveService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=moveService.js.map

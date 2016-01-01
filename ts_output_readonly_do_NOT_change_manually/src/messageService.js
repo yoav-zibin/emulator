@@ -27,3 +27,4 @@ var gamingPlatform;
         ;
     })(messageService = gamingPlatform.messageService || (gamingPlatform.messageService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=messageService.js.map

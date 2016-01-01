@@ -68,3 +68,4 @@ var gamingPlatform;
         setInterval(rescale, 1000);
     })(resizeGameAreaService = gamingPlatform.resizeGameAreaService || (gamingPlatform.resizeGameAreaService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=resizeGameAreaService.js.map

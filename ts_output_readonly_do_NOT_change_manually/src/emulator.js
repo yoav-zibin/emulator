@@ -72,3 +72,4 @@ var gamingPlatform;
         emulator.$sce = $sce;
     });
 })(gamingPlatform || (gamingPlatform = {}));
+//# sourceMappingURL=emulator.js.map
