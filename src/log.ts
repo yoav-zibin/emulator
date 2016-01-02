@@ -44,7 +44,7 @@ export module log {
   }
 
   export function info(... args: any[]):void {
-    storeLog(args, ILogLevel.INFO, console.info);
+    storeLog(args, ILogLevel.INFO, console.log); // Not console.info on purpose: info is considered a warning in protractor.
   }
 
   export function debug(... args: any[]):void {

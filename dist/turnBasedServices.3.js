@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Fri Jan 1 11:45:10 EST 2016";
+"use strict"; var emulatorServicesCompilationDate = "Sat Jan 2 08:11:08 EST 2016";
 
 ;
 var gamingPlatform;
@@ -51,7 +51,7 @@ var gamingPlatform;
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i - 0] = arguments[_i];
             }
-            storeLog(args, ILogLevel.INFO, console.info);
+            storeLog(args, ILogLevel.INFO, console.log); // Not console.info on purpose: info is considered a warning in protractor.
         }
         log_1.info = info;
         function debug() {

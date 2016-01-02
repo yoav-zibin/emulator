@@ -48,7 +48,7 @@ var gamingPlatform;
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i - 0] = arguments[_i];
             }
-            storeLog(args, ILogLevel.INFO, console.info);
+            storeLog(args, ILogLevel.INFO, console.log); // Not console.info on purpose: info is considered a warning in protractor.
         }
         log_1.info = info;
         function debug() {
