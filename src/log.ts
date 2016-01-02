@@ -40,7 +40,7 @@ export module log {
   }
 
   export function alwaysLog(... args: any[]):void {
-    alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS, console.info));
+    alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS, console.log));
   }
 
   export function info(... args: any[]):void {

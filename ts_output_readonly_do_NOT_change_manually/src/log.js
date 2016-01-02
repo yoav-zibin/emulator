@@ -40,7 +40,7 @@ var gamingPlatform;
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i - 0] = arguments[_i];
             }
-            alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS, console.info));
+            alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS, console.log));
         }
         log_1.alwaysLog = alwaysLog;
         function info() {

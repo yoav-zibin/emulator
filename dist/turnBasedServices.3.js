@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sat Jan 2 08:11:08 EST 2016";
+"use strict"; var emulatorServicesCompilationDate = "Sat Jan 2 08:14:34 EST 2016";
 
 ;
 var gamingPlatform;
@@ -43,7 +43,7 @@ var gamingPlatform;
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i - 0] = arguments[_i];
             }
-            alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS, console.info));
+            alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS, console.log));
         }
         log_1.alwaysLog = alwaysLog;
         function info() {
