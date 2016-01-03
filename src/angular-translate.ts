@@ -18,7 +18,7 @@ function createTranslateService(): TranslateService {
 
   function translate(translationId: string, interpolateParams: StringDictionary): string {
     if (!codeToL10N) {
-      throw new Error("You must call translate.setLanguagelang: string, codeToL10N: StringDictionary) before requesting translation of translationId=" + translationId);
+      throw new Error("You must call translate.setLanguage(lang: string, codeToL10N: StringDictionary) before requesting translation of translationId=" + translationId);
     }
     let translation = codeToL10N[translationId];
     if (!translation) {
@@ -38,6 +38,7 @@ function createTranslateService(): TranslateService {
 }
 
 export let translate = createTranslateService();
+export let defaultTranslateInterpolateParams: StringDictionary = {};
 
 angular.module('translate', [])
 .filter('translate', ['$parse', function ($parse:angular.IParseService) {
@@ -45,6 +46,7 @@ angular.module('translate', [])
     if (!angular.isObject(interpolateParams)) {
       interpolateParams = $parse(<string>interpolateParams)(this);
     }
+    if (!interpolateParams) interpolateParams = defaultTranslateInterpolateParams;
     return translate(translationId, <StringDictionary>interpolateParams);
   };
   translateFilter.$stateful = true;
