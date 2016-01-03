@@ -22,7 +22,7 @@ var gamingPlatform;
         log_1.getCurrentTime = getCurrentTime;
         function getLogEntry(args, logLevel, consoleFunc) {
             var millisecondsFromStart = getCurrentTime() - startTime;
-            consoleFunc.apply(console, ['secondsFromStart=', Math.round(millisecondsFromStart) / 1000].concat(args));
+            consoleFunc.apply(console, [['secondsFromStart=', Math.round(millisecondsFromStart) / 1000].concat(args)]);
             return { millisecondsFromStart: millisecondsFromStart, args: args, logLevel: logLevel };
         }
         function storeLog(args, logLevel, consoleFunc) {

@@ -24,7 +24,7 @@ export module log {
 
   function getLogEntry(args: any[], logLevel: string, consoleFunc: any): ILogEntry {
     let millisecondsFromStart = getCurrentTime() - startTime;
-    consoleFunc.apply(console, ['secondsFromStart=', Math.round(millisecondsFromStart)/1000].concat(args));
+    consoleFunc.apply(console, [['secondsFromStart=', Math.round(millisecondsFromStart)/1000].concat(args)]);
     return {millisecondsFromStart: millisecondsFromStart, args: args, logLevel: logLevel};
   }
 
