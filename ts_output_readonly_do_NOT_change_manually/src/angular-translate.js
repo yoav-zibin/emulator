@@ -7,6 +7,7 @@ var gamingPlatform;
         }
         var language;
         var codeToL10N;
+        var idToLanguageToL10n = null;
         function translate(translationId, interpolateParams) {
             if (!codeToL10N) {
                 throw new Error("You must call translate.setLanguage(lang: string, codeToL10N: StringDictionary) before requesting translation of translationId=" + translationId);
@@ -21,9 +22,20 @@ var gamingPlatform;
         var translateService;
         translateService = translate;
         translateService.getLanguage = function () { return language; };
+        translateService.setTranslations = function (_idToLanguageToL10n) {
+            idToLanguageToL10n = _idToLanguageToL10n;
+        };
         translateService.setLanguage = function (_language, _codeToL10N) {
             language = _language;
-            codeToL10N = _codeToL10N;
+            if (!idToLanguageToL10n) {
+                codeToL10N = _codeToL10N;
+            }
+            else {
+                codeToL10N = {};
+                for (var id in idToLanguageToL10n) {
+                    codeToL10N[id] = idToLanguageToL10n[id][language];
+                }
+            }
         };
         return translateService;
     }

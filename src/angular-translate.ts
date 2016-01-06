@@ -1,10 +1,15 @@
 namespace gamingPlatform {
 
+export interface StringToStringDictionary {
+  [index: string]: StringDictionary;
+}
+
 // Defines translate service and filter for I18N.
 export interface TranslateService {
   (translationId: string, interpolateParams?: StringDictionary): string;
   getLanguage(): string;
-  setLanguage(language: string, codeToL10N: StringDictionary): void;
+  setTranslations(idToLanguageToL10n: StringToStringDictionary): void;
+  setLanguage(language: string, codeToL10N?: StringDictionary): void;
 }
 
 // This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
@@ -15,6 +20,7 @@ function createTranslateService(): TranslateService {
 
   let language: string;
   let codeToL10N: StringDictionary;
+  let idToLanguageToL10n: StringToStringDictionary = null;
 
   function translate(translationId: string, interpolateParams: StringDictionary): string {
     if (!codeToL10N) {
@@ -30,9 +36,19 @@ function createTranslateService(): TranslateService {
   let translateService: TranslateService;
   translateService = <TranslateService>translate;
   translateService.getLanguage = function (): string { return language; };
+  translateService.setTranslations = function (_idToLanguageToL10n: StringToStringDictionary): void {
+    idToLanguageToL10n = _idToLanguageToL10n;
+  };
   translateService.setLanguage = function (_language: string, _codeToL10N: StringDictionary): void {
     language = _language;
-    codeToL10N = _codeToL10N;
+    if (!idToLanguageToL10n) {
+      codeToL10N = _codeToL10N;
+    } else {
+      codeToL10N = {};
+      for (let id in idToLanguageToL10n) {
+        codeToL10N[id] = idToLanguageToL10n[id][language];
+      }
+    }
   };
   return translateService;
 }
