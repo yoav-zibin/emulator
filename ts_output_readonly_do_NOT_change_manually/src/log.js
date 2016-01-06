@@ -12,7 +12,7 @@ var gamingPlatform;
             ILogLevel.WARN = 'WARN';
             ILogLevel.ERROR = 'ERROR';
             return ILogLevel;
-        }());
+        })();
         var alwaysLogs = [];
         var lastLogs = [];
         var startTime = getCurrentTime();

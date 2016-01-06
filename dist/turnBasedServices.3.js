@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sun Jan 3 12:24:41 EST 2016";
+"use strict"; var emulatorServicesCompilationDate = "Wed Jan 6 15:37:41 EST 2016";
 
 ;
 var gamingPlatform;
@@ -990,9 +990,10 @@ var gamingPlatform;
         }
         var language;
         var codeToL10N;
+        var idToLanguageToL10n = null;
         function translate(translationId, interpolateParams) {
             if (!codeToL10N) {
-                throw new Error("You must call translate.setLanguagelang: string, codeToL10N: StringDictionary) before requesting translation of translationId=" + translationId);
+                throw new Error("You must call translate.setLanguage(lang: string, codeToL10N: StringDictionary) before requesting translation of translationId=" + translationId);
             }
             var translation = codeToL10N[translationId];
             if (!translation) {
@@ -1004,19 +1005,33 @@ var gamingPlatform;
         var translateService;
         translateService = translate;
         translateService.getLanguage = function () { return language; };
+        translateService.setTranslations = function (_idToLanguageToL10n) {
+            idToLanguageToL10n = _idToLanguageToL10n;
+        };
         translateService.setLanguage = function (_language, _codeToL10N) {
             language = _language;
-            codeToL10N = _codeToL10N;
+            if (!idToLanguageToL10n) {
+                codeToL10N = _codeToL10N;
+            }
+            else {
+                codeToL10N = {};
+                for (var id in idToLanguageToL10n) {
+                    codeToL10N[id] = idToLanguageToL10n[id][language];
+                }
+            }
         };
         return translateService;
     }
     gamingPlatform.translate = createTranslateService();
+    gamingPlatform.defaultTranslateInterpolateParams = {};
     angular.module('translate', [])
         .filter('translate', ['$parse', function ($parse) {
             var translateFilter = function (translationId, interpolateParams) {
                 if (!angular.isObject(interpolateParams)) {
                     interpolateParams = $parse(interpolateParams)(this);
                 }
+                if (!interpolateParams)
+                    interpolateParams = gamingPlatform.defaultTranslateInterpolateParams;
                 return gamingPlatform.translate(translationId, interpolateParams);
             };
             translateFilter.$stateful = true;
