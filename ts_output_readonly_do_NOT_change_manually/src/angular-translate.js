@@ -3,7 +3,7 @@ var gamingPlatform;
     // This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
     function createTranslateService() {
         if (!angular) {
-            throw new Error('You must first include angular: <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>');
+            throw new Error('You must first include angular: <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>');
         }
         var language;
         var codeToL10N;
