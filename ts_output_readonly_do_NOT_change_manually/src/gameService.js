@@ -28,9 +28,11 @@ var gamingPlatform;
                 throw new Error("Game called makeMove with an empty move=" + move);
             }
             if (isLocalTesting) {
+                // I'm using $timeout so it will be more like production (where we use postMessage),
+                // so the updateUI response is not sent immediately).
                 gamingPlatform.$timeout(function () {
                     gamingPlatform.stateService.makeMove(move);
-                }, 100);
+                }, 10);
             }
             else {
                 gamingPlatform.messageService.sendMessage({ makeMove: move, lastUpdateUI: lastUpdateUI });

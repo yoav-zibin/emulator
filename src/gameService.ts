@@ -44,9 +44,11 @@ export module gameService {
       throw new Error("Game called makeMove with an empty move=" + move);
     }
     if (isLocalTesting) {
+      // I'm using $timeout so it will be more like production (where we use postMessage),
+      // so the updateUI response is not sent immediately).
       $timeout(function () {
         stateService.makeMove(move);
-      }, 100);
+      }, 10);
     } else {
       messageService.sendMessage({makeMove: move, lastUpdateUI: lastUpdateUI});
     }
