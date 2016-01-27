@@ -8,7 +8,6 @@
   "devDependencies": {
     "autoprefixer": "*",
     "cssnano": "*",
-    "elementor": "*",
     "grunt": "*",
     "grunt-cli": "*",
     "grunt-contrib-concat": "*",
