@@ -2,20 +2,18 @@ var gamingPlatform;
 (function (gamingPlatform) {
     // This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
     function createTranslateService() {
-        if (!angular) {
-            throw new Error('You must first include angular: <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>');
-        }
         var language;
-        var codeToL10N;
+        // codeToL10N is deprecated (I keep it for older games that used the platform for i18n)
+        // New games should use setTranslations (which sets idToLanguageToL10n).
+        var codeToL10N = null;
         var idToLanguageToL10n = null;
-        function translate(translationId, interpolateParams) {
-            if (!codeToL10N) {
-                throw new Error("You must call translate.setLanguage(lang: string, codeToL10N: StringDictionary) before requesting translation of translationId=" + translationId);
-            }
-            var translation = codeToL10N[translationId];
+        function translate(translationId, interpolateParams, languageCode) {
+            if (!languageCode)
+                languageCode = language;
+            var translation = idToLanguageToL10n ? idToLanguageToL10n[translationId][languageCode] : codeToL10N[translationId];
             if (!translation) {
                 translation = "[" + translationId + "]";
-                gamingPlatform.log.error("Couldn't find translationId=" + translationId + " in language=" + language);
+                gamingPlatform.log.error("Couldn't find translationId=" + translationId + " in language=" + languageCode);
             }
             return gamingPlatform.$interpolate(translation)(interpolateParams || {});
         }
@@ -27,15 +25,7 @@ var gamingPlatform;
         };
         translateService.setLanguage = function (_language, _codeToL10N) {
             language = _language;
-            if (!idToLanguageToL10n) {
-                codeToL10N = _codeToL10N;
-            }
-            else {
-                codeToL10N = {};
-                for (var id in idToLanguageToL10n) {
-                    codeToL10N[id] = idToLanguageToL10n[id][language];
-                }
-            }
+            codeToL10N = _codeToL10N;
         };
         return translateService;
     }

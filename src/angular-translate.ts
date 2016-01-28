@@ -6,7 +6,7 @@ export interface StringToStringDictionary {
 
 // Defines translate service and filter for I18N.
 export interface TranslateService {
-  (translationId: string, interpolateParams?: StringDictionary): string;
+  (translationId: string, interpolateParams?: StringDictionary, languageCode?: string): string;
   getLanguage(): string;
   setTranslations(idToLanguageToL10n: StringToStringDictionary): void;
   setLanguage(language: string, codeToL10N?: StringDictionary): void;
@@ -14,22 +14,18 @@ export interface TranslateService {
 
 // This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
 function createTranslateService(): TranslateService {
-  if (!angular) {
-    throw new Error('You must first include angular: <script crossorigin="anonymous" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>');
-  }
-
   let language: string;
-  let codeToL10N: StringDictionary;
+  // codeToL10N is deprecated (I keep it for older games that used the platform for i18n)
+  // New games should use setTranslations (which sets idToLanguageToL10n).
+  let codeToL10N: StringDictionary = null;
   let idToLanguageToL10n: StringToStringDictionary = null;
 
-  function translate(translationId: string, interpolateParams: StringDictionary): string {
-    if (!codeToL10N) {
-      throw new Error("You must call translate.setLanguage(lang: string, codeToL10N: StringDictionary) before requesting translation of translationId=" + translationId);
-    }
-    let translation = codeToL10N[translationId];
+  function translate(translationId: string, interpolateParams: StringDictionary, languageCode?: string): string {
+    if (!languageCode) languageCode = language;
+    let translation = idToLanguageToL10n ? idToLanguageToL10n[translationId][languageCode] : codeToL10N[translationId];
     if (!translation) {
       translation = "[" + translationId + "]";
-      log.error("Couldn't find translationId=" + translationId + " in language=" + language);
+      log.error("Couldn't find translationId=" + translationId + " in language=" + languageCode);
     }
     return $interpolate(translation)(interpolateParams || {});
   }
@@ -39,16 +35,9 @@ function createTranslateService(): TranslateService {
   translateService.setTranslations = function (_idToLanguageToL10n: StringToStringDictionary): void {
     idToLanguageToL10n = _idToLanguageToL10n;
   };
-  translateService.setLanguage = function (_language: string, _codeToL10N: StringDictionary): void {
+  translateService.setLanguage = function (_language: string, _codeToL10N?: StringDictionary): void {
     language = _language;
-    if (!idToLanguageToL10n) {
-      codeToL10N = _codeToL10N;
-    } else {
-      codeToL10N = {};
-      for (let id in idToLanguageToL10n) {
-        codeToL10N[id] = idToLanguageToL10n[id][language];
-      }
-    }
+    codeToL10N = _codeToL10N;
   };
   return translateService;
 }
