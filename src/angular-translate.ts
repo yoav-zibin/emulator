@@ -22,7 +22,14 @@ function createTranslateService(): TranslateService {
 
   function translate(translationId: string, interpolateParams: StringDictionary, languageCode?: string): string {
     if (!languageCode) languageCode = language;
-    let translation = idToLanguageToL10n ? idToLanguageToL10n[translationId][languageCode] : codeToL10N[translationId];
+    let translation: string = null;
+    if (idToLanguageToL10n && idToLanguageToL10n[translationId]) {
+      let languageToL10n = idToLanguageToL10n[translationId];
+      translation = languageToL10n[languageCode];
+      if (!translation) translation = languageToL10n['en']; 
+    } else {
+      translation = codeToL10N[translationId];
+    }
     if (!translation) {
       translation = "[" + translationId + "]";
       log.error("Couldn't find translationId=" + translationId + " in language=" + languageCode);

@@ -10,7 +10,16 @@ var gamingPlatform;
         function translate(translationId, interpolateParams, languageCode) {
             if (!languageCode)
                 languageCode = language;
-            var translation = idToLanguageToL10n ? idToLanguageToL10n[translationId][languageCode] : codeToL10N[translationId];
+            var translation = null;
+            if (idToLanguageToL10n && idToLanguageToL10n[translationId]) {
+                var languageToL10n = idToLanguageToL10n[translationId];
+                translation = languageToL10n[languageCode];
+                if (!translation)
+                    translation = languageToL10n['en'];
+            }
+            else {
+                translation = codeToL10N[translationId];
+            }
             if (!translation) {
                 translation = "[" + translationId + "]";
                 gamingPlatform.log.error("Couldn't find translationId=" + translationId + " in language=" + languageCode);
