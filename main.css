@@ -18,6 +18,10 @@ html, body {
   touch-callout: none;
 }
 
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
 /* Help screen uses a carousel and a modal dialog. */
 .carousel-indicators li {
   background-color: black !important;
