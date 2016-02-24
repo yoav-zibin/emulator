@@ -69,14 +69,18 @@ export module moveService {
 
   function convertNewMove(move: NewMove): IMove {
     // Do some checks: turnIndexAfterMove is -1 iff endMatchScores is not null.
-    let isOver = move.turnIndexAfterMove === -1;
-    if (isOver !== (move.endMatchScores !== null)) {
-      // Match ongoing
-      throw new Error("Illegal move: turnIndexAfterMove can be -1 iff endMatchScores is not null. Move=" +
+    let noTurnIndexAfterMove = move.turnIndexAfterMove === -1;
+    let hasEndMatchScores = !!move.endMatchScores;
+    if (noTurnIndexAfterMove && !hasEndMatchScores) {
+      throw new Error("Illegal move: turnIndexAfterMove was -1 but you forgot to set endMatchScores. Move=" +
+          angular.toJson(move, true));
+    }
+    if (hasEndMatchScores && !noTurnIndexAfterMove) {
+      throw new Error("Illegal move: you set endMatchScores but you didn't set turnIndexAfterMove to -1. Move=" +
           angular.toJson(move, true));
     }
     return [
-      isOver ? {endMatch: {endMatchScores: move.endMatchScores}} : {setTurn: {turnIndex: move.turnIndexAfterMove}},
+      hasEndMatchScores ? {endMatch: {endMatchScores: move.endMatchScores}} : {setTurn: {turnIndex: move.turnIndexAfterMove}},
       {set: {key: STATE_KEY, value: move.stateAfterMove}}
     ];
   }

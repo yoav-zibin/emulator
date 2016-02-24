@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sun Jan 31 10:16:55 EST 2016";
+"use strict"; var emulatorServicesCompilationDate = "Wed Feb 24 18:04:06 EST 2016";
 
 ;
 var gamingPlatform;
@@ -642,14 +642,18 @@ var gamingPlatform;
         }
         function convertNewMove(move) {
             // Do some checks: turnIndexAfterMove is -1 iff endMatchScores is not null.
-            var isOver = move.turnIndexAfterMove === -1;
-            if (isOver !== (move.endMatchScores !== null)) {
-                // Match ongoing
-                throw new Error("Illegal move: turnIndexAfterMove can be -1 iff endMatchScores is not null. Move=" +
+            var noTurnIndexAfterMove = move.turnIndexAfterMove === -1;
+            var hasEndMatchScores = !!move.endMatchScores;
+            if (noTurnIndexAfterMove && !hasEndMatchScores) {
+                throw new Error("Illegal move: turnIndexAfterMove was -1 but you forgot to set endMatchScores. Move=" +
+                    angular.toJson(move, true));
+            }
+            if (hasEndMatchScores && !noTurnIndexAfterMove) {
+                throw new Error("Illegal move: you set endMatchScores but you didn't set turnIndexAfterMove to -1. Move=" +
                     angular.toJson(move, true));
             }
             return [
-                isOver ? { endMatch: { endMatchScores: move.endMatchScores } } : { setTurn: { turnIndex: move.turnIndexAfterMove } },
+                hasEndMatchScores ? { endMatch: { endMatchScores: move.endMatchScores } } : { setTurn: { turnIndex: move.turnIndexAfterMove } },
                 { set: { key: STATE_KEY, value: move.stateAfterMove } }
             ];
         }
