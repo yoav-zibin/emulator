@@ -6,12 +6,15 @@ export module resizeGameAreaService {
     windowHeight: number;
   }
   let widthToHeight: number = null;
+  let dimensionsChanged: (gameAreaWidth: number, gameAreaHeight: number)=>void = null;
   let oldSizes: WindowSize = null;
   let doc = window.document;
   let gameArea: HTMLElement;
 
-  export function setWidthToHeight(_widthToHeight: number): void {
+  export function setWidthToHeight(_widthToHeight: number,
+      _dimensionsChanged?: (gameAreaWidth: number, gameAreaHeight: number)=>void): void {
     widthToHeight = _widthToHeight;
+    dimensionsChanged = _dimensionsChanged;
     gameArea = doc.getElementById('gameArea');
     if (!gameArea) {
       throw new Error("You forgot to add to your <body> this div: <div id='gameArea'>...</div>");
@@ -70,6 +73,7 @@ export module resizeGameAreaService {
     gameArea.style.position = "absolute";
     gameArea.style.left = ((originalWindowWidth - windowWidth)/2) + 'px';
     gameArea.style.top = ((originalWindowHeight - windowHeight)/2) + 'px';
+    if (dimensionsChanged) dimensionsChanged(windowWidth, windowHeight);
   }
 
   doc.addEventListener("onresize", rescale);

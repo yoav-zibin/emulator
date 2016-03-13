@@ -3,11 +3,13 @@ var gamingPlatform;
     var resizeGameAreaService;
     (function (resizeGameAreaService) {
         var widthToHeight = null;
+        var dimensionsChanged = null;
         var oldSizes = null;
         var doc = window.document;
         var gameArea;
-        function setWidthToHeight(_widthToHeight) {
+        function setWidthToHeight(_widthToHeight, _dimensionsChanged) {
             widthToHeight = _widthToHeight;
+            dimensionsChanged = _dimensionsChanged;
             gameArea = doc.getElementById('gameArea');
             if (!gameArea) {
                 throw new Error("You forgot to add to your <body> this div: <div id='gameArea'>...</div>");
@@ -62,6 +64,8 @@ var gamingPlatform;
             gameArea.style.position = "absolute";
             gameArea.style.left = ((originalWindowWidth - windowWidth) / 2) + 'px';
             gameArea.style.top = ((originalWindowHeight - windowHeight) / 2) + 'px';
+            if (dimensionsChanged)
+                dimensionsChanged(windowWidth, windowHeight);
         }
         doc.addEventListener("onresize", rescale);
         doc.addEventListener("orientationchange", rescale);
