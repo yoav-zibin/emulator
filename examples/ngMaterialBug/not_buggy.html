@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="whateverNameApp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+  
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-route.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+
+
+  <script>
+  // THE CHANGE is here: I removed the dependency on 'ngMaterial' :
+  angular.module('whateverNameApp', [])
+      .run(function ($rootScope, $timeout) {
+        $rootScope.showRed = true; 
+        $rootScope.hideRed = function () {
+          console.log('hideRed');
+          $rootScope.showRed = false;
+        };
+        
+        $rootScope.showBlue = true; 
+        $rootScope.hideBlue = function () {
+          console.log('hideBlue');
+          $timeout( function () {
+            $rootScope.showBlue = false;  
+          }, 0);
+        };
+      });
+  </script>
+</head>
+<body>
+  <iframe id="game_iframe" style="width: 500px; height: 500px;" src="http://yoav-zibin.github.io/emulator/examples/ngMaterialBug/click_handler.html" seamless="seamless"></iframe>
+  
+  <div ng-click="hideRed();" ng-if="showRed" style="position: fixed; left: 20px; top: 30px; background-color: red; width: 100px; height: 100px"></div>
+  <div ng-click="hideBlue();" ng-if="showBlue" style="position: fixed; left: 200px; top: 30px; background-color: blue; width: 100px; height: 100px"></div>
+</body>
+</html>
