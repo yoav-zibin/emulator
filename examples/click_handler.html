@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+<body>
+  
+  <div id="greendiv" 
+    style="background-color: green; width: 100px; height: 100px">
+  </div>
+  <script>
+  document.getElementById('greendiv').addEventListener('click', function (event) {
+    console.info("greendiv clicked: ", event);
+  }, false);
+  </script>
+</body>
+</html>
