@@ -22,7 +22,13 @@ var gamingPlatform;
                 turnIndexBeforeMove: params.turnIndexBeforeMove,
                 numberOfPlayers: params.numberOfPlayers,
                 stateBeforeMove: convertOldState(params.stateBeforeMove),
-                move: convertOldMove(params.move)
+                // Not using convertOldMove, because one of the players might have
+                // dismissed the match, so turnIndexAfterMove might be -1 (even though the move sets to another player index)
+                move: {
+                    endMatchScores: params.endMatchScores,
+                    turnIndexAfterMove: params.turnIndexAfterMove,
+                    stateAfterMove: convertOldState(params.stateAfterMove),
+                },
             };
         }
         function convertOldMove(move) {
