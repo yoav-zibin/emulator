@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Tue Apr 12 14:19:49 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Tue Apr 12 19:08:24 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -943,37 +943,39 @@ var gamingPlatform;
                     return; // nothing changed, so no need to change the transformations.
                 }
             }
-            oldSizes = {
-                windowWidth: windowWidth,
-                windowHeight: windowHeight
-            };
-            if (windowWidth === 0 || windowHeight === 0) {
-                gamingPlatform.log.info("Window width/height is 0 so hiding gameArea div.");
-                gameArea.style.display = "none";
-                return;
-            }
-            gameArea.style.display = "block";
-            var newWidthToHeight = windowWidth / windowHeight;
-            if (newWidthToHeight > widthToHeight) {
-                windowWidth = round2(windowHeight * widthToHeight);
-            }
-            else {
-                windowHeight = round2(windowWidth / widthToHeight);
-            }
-            gamingPlatform.log.info("Window size is " + oldSizes.windowWidth + "x" + oldSizes.windowHeight +
-                " so setting gameArea size to " + windowWidth + "x" + windowHeight +
-                " because widthToHeight=" + widthToHeight);
-            // Take 5% margin (so the game won't touch the end of the screen)
-            var keepMargin = 0.95;
-            windowWidth *= keepMargin;
-            windowHeight *= keepMargin;
-            gameArea.style.width = windowWidth + 'px';
-            gameArea.style.height = windowHeight + 'px';
-            gameArea.style.position = "absolute";
-            gameArea.style.left = ((originalWindowWidth - windowWidth) / 2) + 'px';
-            gameArea.style.top = ((originalWindowHeight - windowHeight) / 2) + 'px';
-            if (dimensionsChanged)
-                dimensionsChanged(windowWidth, windowHeight);
+            gamingPlatform.$rootScope.$apply(function () {
+                oldSizes = {
+                    windowWidth: windowWidth,
+                    windowHeight: windowHeight
+                };
+                if (windowWidth === 0 || windowHeight === 0) {
+                    gamingPlatform.log.info("Window width/height is 0 so hiding gameArea div.");
+                    gameArea.style.display = "none";
+                    return;
+                }
+                gameArea.style.display = "block";
+                var newWidthToHeight = windowWidth / windowHeight;
+                if (newWidthToHeight > widthToHeight) {
+                    windowWidth = round2(windowHeight * widthToHeight);
+                }
+                else {
+                    windowHeight = round2(windowWidth / widthToHeight);
+                }
+                gamingPlatform.log.info("Window size is " + oldSizes.windowWidth + "x" + oldSizes.windowHeight +
+                    " so setting gameArea size to " + windowWidth + "x" + windowHeight +
+                    " because widthToHeight=" + widthToHeight);
+                // Take 5% margin (so the game won't touch the end of the screen)
+                var keepMargin = 0.95;
+                windowWidth *= keepMargin;
+                windowHeight *= keepMargin;
+                gameArea.style.width = windowWidth + 'px';
+                gameArea.style.height = windowHeight + 'px';
+                gameArea.style.position = "absolute";
+                gameArea.style.left = ((originalWindowWidth - windowWidth) / 2) + 'px';
+                gameArea.style.top = ((originalWindowHeight - windowHeight) / 2) + 'px';
+                if (dimensionsChanged)
+                    dimensionsChanged(windowWidth, windowHeight);
+            });
         }
         doc.addEventListener("onresize", rescale);
         doc.addEventListener("orientationchange", rescale);
