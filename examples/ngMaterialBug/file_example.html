@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="whateverNameApp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+
+  <script>
+  angular.module('whateverNameApp', [])
+      .run(function ($rootScope) {
+        $rootScope.setShowFile = function () {
+          $rootScope.showFile = true;
+        } 
+      });
+  </script>
+</head>
+<body>
+  <label>
+    <input ng-if = "showFile" type="file">
+    <button ng-if = "!showFile" type="button" ng-click="setShowFile()">Show file</button>
+  </label>
+</body>
+</html>
