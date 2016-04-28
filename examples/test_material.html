@@ -1,0 +1,69 @@
+<html lang="en" >
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  
+  <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc4/angular-material.min.css">
+  
+</head>
+<body ng-app="BlankApp" ng-cloak>
+  <div ng-controller="AppCtrl" layout="column" style="height:600px" ng-cloak>
+    <md-toolbar md-scroll-shrink ng-if="true" ng-controller="TitleController">
+      <div class="md-toolbar-tools">
+        <h3>
+          <span>{{title}}</span>
+        </h3>
+      </div>
+    </md-toolbar>
+    <md-content flex>
+      <md-list>
+        <md-list-item class="md-3-line" ng-repeat="item in todos">
+          <img ng-src="{{item.face}}" alt="{{item.who}}" class="md-avatar">
+          <div class="md-list-item-text">
+            <h3>{{item.what}}</h3>
+            <h4>{{item.who}}</h4>
+            <p>
+              {{item.notes}}
+            </p>
+          </div>
+          <md-divider inset></md-divider>
+        </md-list-item>
+      </md-list>
+    </md-content>
+  </div>
+  
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+  
+  <!-- Your application bootstrap  -->
+  <script type="text/javascript">    
+    /**
+     * You must include the dependency on 'ngMaterial' 
+     */
+  var app = angular.module('BlankApp', ['ngMaterial']);
+  app.controller('TitleController', function($scope) {
+    $scope.title = 'My App Title';
+  });
+  app.controller('AppCtrl', function($scope) {
+    var imagePath = 'http://graph.facebook.com/10152824135331125/picture?square=square';
+    $scope.todos = [];
+    for (var i = 0; i < 40; i++) {
+      $scope.todos.push({
+        face: imagePath,
+        what: "Brunch this weekend?",
+        who: "Min Li Chan",
+        notes: "I'll be in your neighborhood doing errands."
+      });
+    }
+  });
+  </script>
+  
+</body>
+</html>
+
