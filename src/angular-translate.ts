@@ -27,7 +27,7 @@ function createTranslateService(): TranslateService {
       let languageToL10n = idToLanguageToL10n[translationId];
       translation = languageToL10n[languageCode];
       if (!translation) translation = languageToL10n['en']; 
-    } else {
+    } else if (codeToL10N) {
       translation = codeToL10N[translationId];
     }
     if (!translation) {

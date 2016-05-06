@@ -17,7 +17,7 @@ var gamingPlatform;
                 if (!translation)
                     translation = languageToL10n['en'];
             }
-            else {
+            else if (codeToL10N) {
                 translation = codeToL10N[translationId];
             }
             if (!translation) {
