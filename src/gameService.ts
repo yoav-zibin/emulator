@@ -11,6 +11,7 @@ export interface IPlayerInfo {
 export interface IGame {
   isMoveOk(move: IIsMoveOk): boolean;
   updateUI(update: IUpdateUI): void;
+  gotMessageFromPlatform(message: any): void;
   minNumberOfPlayers: number;
   maxNumberOfPlayers: number;
 }
@@ -102,6 +103,13 @@ export module gameService {
           setTimeout(function () {
             messageService.sendMessage({setLanguageResult: true});
           })
+        } else if (message.passMessageToGame) {
+          let msgFromPlatform = message.passMessageToGame;
+          let w: any = window;
+          if (msgFromPlatform.SHOW_GAME_INSTRUCTIONS && w.game) {
+            w.game.isHelpModalShown = !w.game.isHelpModalShown;
+          }
+          if (game.gotMessageFromPlatform) game.gotMessageFromPlatform(msgFromPlatform);
         }
       });
       messageService.sendMessage({gameReady : {}});

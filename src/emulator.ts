@@ -45,7 +45,8 @@ export module emulator {
       minNumberOfPlayers: minPlayersNum,
       maxNumberOfPlayers: maxPlayersNum,
       isMoveOk: isMoveOk,
-      updateUI: updateUI
+      updateUI: updateUI,
+      gotMessageFromPlatform: null,
     });
     window.addEventListener("message", function (event) {
       let message = event.data;

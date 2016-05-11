@@ -40,7 +40,8 @@ var gamingPlatform;
                 minNumberOfPlayers: emulator.minPlayersNum,
                 maxNumberOfPlayers: emulator.maxPlayersNum,
                 isMoveOk: isMoveOk,
-                updateUI: updateUI
+                updateUI: updateUI,
+                gotMessageFromPlatform: null,
             });
             window.addEventListener("message", function (event) {
                 var message = event.data;

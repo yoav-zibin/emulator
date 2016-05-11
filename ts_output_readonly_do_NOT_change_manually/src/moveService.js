@@ -81,6 +81,7 @@ var gamingPlatform;
                     gamingPlatform.log.info("Calling game.updateUI:", newParams);
                     game.updateUI(newParams);
                 },
+                gotMessageFromPlatform: game.gotMessageFromPlatform,
             };
             gamingPlatform.gameService.setGame(oldGame);
         }

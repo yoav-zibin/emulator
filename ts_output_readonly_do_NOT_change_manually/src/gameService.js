@@ -88,6 +88,15 @@ var gamingPlatform;
                             gamingPlatform.messageService.sendMessage({ setLanguageResult: true });
                         });
                     }
+                    else if (message.passMessageToGame) {
+                        var msgFromPlatform = message.passMessageToGame;
+                        var w = window;
+                        if (msgFromPlatform.SHOW_GAME_INSTRUCTIONS && w.game) {
+                            w.game.isHelpModalShown = !w.game.isHelpModalShown;
+                        }
+                        if (game.gotMessageFromPlatform)
+                            game.gotMessageFromPlatform(msgFromPlatform);
+                    }
                 });
                 gamingPlatform.messageService.sendMessage({ gameReady: {} });
             }

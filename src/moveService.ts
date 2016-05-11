@@ -21,6 +21,7 @@ interface NewGame {
   maxNumberOfPlayers: number;
   checkMoveOk(stateTransition: IStateTransition): void;
   updateUI(update: NewUpdateUI): void;
+  gotMessageFromPlatform(message: any): void;
 }
 export module moveService {
   let STATE_KEY = "state";
@@ -106,6 +107,7 @@ export module moveService {
         log.info("Calling game.updateUI:", newParams);
         game.updateUI(newParams);
       },
+      gotMessageFromPlatform: game.gotMessageFromPlatform,
     };
     gameService.setGame(oldGame);
   }
