@@ -72,6 +72,7 @@ export module gameService {
   }
 
   let didCallSetGame = false;
+  let w: any = window;
   export function setGame(_game: IGame) {
     game = _game;
     if (didCallSetGame) {
@@ -80,6 +81,9 @@ export module gameService {
     didCallSetGame = true;
     let playersInfo = getPlayers();
     if (isLocalTesting) {
+      if (w.game) {
+        w.game.isHelpModalShown = true;
+      }
       stateService.setGame({updateUI: updateUI, isMoveOk: game.isMoveOk});
       stateService.initNewMatch();
       stateService.setPlayMode(playMode);
@@ -105,7 +109,6 @@ export module gameService {
           })
         } else if (message.passMessageToGame) {
           let msgFromPlatform = message.passMessageToGame;
-          let w: any = window;
           if (msgFromPlatform.SHOW_GAME_INSTRUCTIONS && w.game) {
             w.game.isHelpModalShown = !w.game.isHelpModalShown;
           }
