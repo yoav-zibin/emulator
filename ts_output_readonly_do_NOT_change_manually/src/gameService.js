@@ -53,6 +53,7 @@ var gamingPlatform;
             return playersInfo;
         }
         var didCallSetGame = false;
+        var w = window;
         function setGame(_game) {
             game = _game;
             if (didCallSetGame) {
@@ -61,6 +62,9 @@ var gamingPlatform;
             didCallSetGame = true;
             var playersInfo = getPlayers();
             if (isLocalTesting) {
+                if (w.game) {
+                    w.game.isHelpModalShown = true;
+                }
                 gamingPlatform.stateService.setGame({ updateUI: updateUI, isMoveOk: game.isMoveOk });
                 gamingPlatform.stateService.initNewMatch();
                 gamingPlatform.stateService.setPlayMode(gameService.playMode);
@@ -90,7 +94,6 @@ var gamingPlatform;
                     }
                     else if (message.passMessageToGame) {
                         var msgFromPlatform = message.passMessageToGame;
-                        var w = window;
                         if (msgFromPlatform.SHOW_GAME_INSTRUCTIONS && w.game) {
                             w.game.isHelpModalShown = !w.game.isHelpModalShown;
                         }
