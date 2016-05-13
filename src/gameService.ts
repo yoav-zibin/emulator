@@ -27,7 +27,7 @@ export module gameService {
   let lastUpdateUI: IUpdateUI = null;
   let game: IGame;
 
-  function updateUI(params: IUpdateUI) {
+  export function updateUI(params: IUpdateUI) {
     lastUpdateUI = angular.copy(params);
     game.updateUI(params);
   }
