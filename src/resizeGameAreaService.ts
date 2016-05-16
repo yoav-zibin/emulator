@@ -48,10 +48,8 @@ export module resizeGameAreaService {
       return;
     }
     gameArea.style.display = "block";
+    
     $rootScope.$apply(function () {
-      if (oldSizes === null) {
-        gameService.maybeSendGameReady();
-      }
       oldSizes = {
           windowWidth: windowWidth,
           windowHeight: windowHeight

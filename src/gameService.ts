@@ -71,16 +71,6 @@ export module gameService {
     return playersInfo;
   }
 
-  export let shouldSendGameReady = false;
-  export function maybeSendGameReady() {
-    let w = window;
-    let isGameIframeHidden = w.innerWidth === 0 || w.innerHeight === 0;
-    log.info("maybeSendGameReady: shouldSendGameReady=", shouldSendGameReady, " isGameIframeHidden=" , isGameIframeHidden);
-    if (!shouldSendGameReady || isGameIframeHidden) return;
-    shouldSendGameReady = false;
-    messageService.sendMessage({gameReady : {}});
-  }
-  
   let didCallSetGame = false;
   let w: any = window;
   export function setGame(_game: IGame) {
@@ -135,8 +125,7 @@ export module gameService {
           if (game.gotMessageFromPlatform) game.gotMessageFromPlatform(msgFromPlatform);
         }
       });
-      shouldSendGameReady = true;
-      maybeSendGameReady();
+      messageService.sendMessage({gameReady : {}});
     }
 
     // Show an empty board to a viewer (so you can't perform moves).

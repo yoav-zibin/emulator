@@ -43,9 +43,6 @@ var gamingPlatform;
             }
             gameArea.style.display = "block";
             gamingPlatform.$rootScope.$apply(function () {
-                if (oldSizes === null) {
-                    gamingPlatform.gameService.maybeSendGameReady();
-                }
                 oldSizes = {
                     windowWidth: windowWidth,
                     windowHeight: windowHeight
