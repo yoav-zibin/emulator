@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Mon May 16 16:52:21 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Mon May 16 17:35:49 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -939,6 +939,7 @@ var gamingPlatform;
         var doc = window.document;
         var gameArea;
         function setWidthToHeight(_widthToHeight, _dimensionsChanged) {
+            gamingPlatform.log.info("setWidthToHeight to ", _widthToHeight);
             widthToHeight = _widthToHeight;
             dimensionsChanged = _dimensionsChanged;
             gameArea = doc.getElementById('gameArea');
@@ -1002,7 +1003,10 @@ var gamingPlatform;
         }
         doc.addEventListener("onresize", rescale);
         doc.addEventListener("orientationchange", rescale);
-        setInterval(rescale, 1000);
+        // on iOS there was a bug, if you clicked on a ycheckers notification (when app was killed)
+        // then you would miss the animation (because width&height are initially 0, so it took a second to be shown).
+        // So I changed it from 1 second, to 0.1 sec.
+        setInterval(rescale, 100);
     })(resizeGameAreaService = gamingPlatform.resizeGameAreaService || (gamingPlatform.resizeGameAreaService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
 //# sourceMappingURL=resizeGameAreaService.js.map
