@@ -53,6 +53,17 @@ var gamingPlatform;
             }
             return playersInfo;
         }
+        gameService.shouldSendGameReady = false;
+        function maybeSendGameReady() {
+            var w = window;
+            var isGameIframeHidden = w.innerWidth === 0 || w.innerHeight === 0;
+            gamingPlatform.log.info("maybeSendGameReady: shouldSendGameReady=", gameService.shouldSendGameReady, " isGameIframeHidden=", isGameIframeHidden);
+            if (!gameService.shouldSendGameReady || isGameIframeHidden)
+                return;
+            gameService.shouldSendGameReady = false;
+            gamingPlatform.messageService.sendMessage({ gameReady: {} });
+        }
+        gameService.maybeSendGameReady = maybeSendGameReady;
         var didCallSetGame = false;
         var w = window;
         function setGame(_game) {
@@ -111,7 +122,8 @@ var gamingPlatform;
                             game.gotMessageFromPlatform(msgFromPlatform);
                     }
                 });
-                gamingPlatform.messageService.sendMessage({ gameReady: {} });
+                gameService.shouldSendGameReady = true;
+                maybeSendGameReady();
             }
             // Show an empty board to a viewer (so you can't perform moves).
             gamingPlatform.log.info("Passing a 'fake' updateUI message in order to show an empty board to a viewer (so you can NOT perform moves)");

@@ -36,17 +36,20 @@ var gamingPlatform;
                     return; // nothing changed, so no need to change the transformations.
                 }
             }
+            if (windowWidth === 0 || windowHeight === 0) {
+                gamingPlatform.log.info("Window width/height is 0 so hiding gameArea div.");
+                gameArea.style.display = "none";
+                return;
+            }
+            gameArea.style.display = "block";
             gamingPlatform.$rootScope.$apply(function () {
+                if (oldSizes === null) {
+                    gamingPlatform.gameService.maybeSendGameReady();
+                }
                 oldSizes = {
                     windowWidth: windowWidth,
                     windowHeight: windowHeight
                 };
-                if (windowWidth === 0 || windowHeight === 0) {
-                    gamingPlatform.log.info("Window width/height is 0 so hiding gameArea div.");
-                    gameArea.style.display = "none";
-                    return;
-                }
-                gameArea.style.display = "block";
                 var newWidthToHeight = windowWidth / windowHeight;
                 if (newWidthToHeight > widthToHeight) {
                     windowWidth = round2(windowHeight * widthToHeight);

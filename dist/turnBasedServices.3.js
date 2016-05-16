@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Mon May 16 17:35:49 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Mon May 16 18:07:59 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -536,6 +536,17 @@ var gamingPlatform;
             }
             return playersInfo;
         }
+        gameService.shouldSendGameReady = false;
+        function maybeSendGameReady() {
+            var w = window;
+            var isGameIframeHidden = w.innerWidth === 0 || w.innerHeight === 0;
+            gamingPlatform.log.info("maybeSendGameReady: shouldSendGameReady=", gameService.shouldSendGameReady, " isGameIframeHidden=", isGameIframeHidden);
+            if (!gameService.shouldSendGameReady || isGameIframeHidden)
+                return;
+            gameService.shouldSendGameReady = false;
+            gamingPlatform.messageService.sendMessage({ gameReady: {} });
+        }
+        gameService.maybeSendGameReady = maybeSendGameReady;
         var didCallSetGame = false;
         var w = window;
         function setGame(_game) {
@@ -594,7 +605,8 @@ var gamingPlatform;
                             game.gotMessageFromPlatform(msgFromPlatform);
                     }
                 });
-                gamingPlatform.messageService.sendMessage({ gameReady: {} });
+                gameService.shouldSendGameReady = true;
+                maybeSendGameReady();
             }
             // Show an empty board to a viewer (so you can't perform moves).
             gamingPlatform.log.info("Passing a 'fake' updateUI message in order to show an empty board to a viewer (so you can NOT perform moves)");
@@ -967,17 +979,20 @@ var gamingPlatform;
                     return; // nothing changed, so no need to change the transformations.
                 }
             }
+            if (windowWidth === 0 || windowHeight === 0) {
+                gamingPlatform.log.info("Window width/height is 0 so hiding gameArea div.");
+                gameArea.style.display = "none";
+                return;
+            }
+            gameArea.style.display = "block";
             gamingPlatform.$rootScope.$apply(function () {
+                if (oldSizes === null) {
+                    gamingPlatform.gameService.maybeSendGameReady();
+                }
                 oldSizes = {
                     windowWidth: windowWidth,
                     windowHeight: windowHeight
                 };
-                if (windowWidth === 0 || windowHeight === 0) {
-                    gamingPlatform.log.info("Window width/height is 0 so hiding gameArea div.");
-                    gameArea.style.display = "none";
-                    return;
-                }
-                gameArea.style.display = "block";
                 var newWidthToHeight = windowWidth / windowHeight;
                 if (newWidthToHeight > widthToHeight) {
                     windowWidth = round2(windowHeight * widthToHeight);
