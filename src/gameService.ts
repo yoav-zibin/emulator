@@ -125,6 +125,8 @@ export module gameService {
           if (game.gotMessageFromPlatform) game.gotMessageFromPlatform(msgFromPlatform);
         }
       });
+      // I wanted to delay sending gameReady until window.innerWidth and height are not 0,
+      // but they will stay 0 (on ios) until we send gameReady (because platform will hide the iframe)
       messageService.sendMessage({gameReady : {}});
     }
 

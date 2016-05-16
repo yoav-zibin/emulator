@@ -17,6 +17,14 @@ var gamingPlatform;
             }
             oldSizes = null;
             rescale();
+            // on iOS there was a bug, if you clicked on a ycheckers notification (when app was killed)
+            // then you would miss the animation (because width&height are initially 0, so it took a second to be shown).
+            // So I added these timeouts.
+            // we usually call setWidthToHeight and gameService.setGame (which sends gameReady) together,
+            // so the iframe will be visilble very soon...
+            setTimeout(rescale, 10);
+            setTimeout(rescale, 100);
+            setTimeout(rescale, 500);
         }
         resizeGameAreaService.setWidthToHeight = setWidthToHeight;
         function round2(num) {
@@ -72,10 +80,7 @@ var gamingPlatform;
         }
         doc.addEventListener("onresize", rescale);
         doc.addEventListener("orientationchange", rescale);
-        // on iOS there was a bug, if you clicked on a ycheckers notification (when app was killed)
-        // then you would miss the animation (because width&height are initially 0, so it took a second to be shown).
-        // So I changed it from 1 second, to 0.1 sec.
-        setInterval(rescale, 100);
+        setInterval(rescale, 1000);
     })(resizeGameAreaService = gamingPlatform.resizeGameAreaService || (gamingPlatform.resizeGameAreaService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
 //# sourceMappingURL=resizeGameAreaService.js.map

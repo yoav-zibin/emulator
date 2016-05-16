@@ -111,6 +111,8 @@ var gamingPlatform;
                             game.gotMessageFromPlatform(msgFromPlatform);
                     }
                 });
+                // I wanted to delay sending gameReady until window.innerWidth and height are not 0,
+                // but they will stay 0 (on ios) until we send gameReady (because platform will hide the iframe)
                 gamingPlatform.messageService.sendMessage({ gameReady: {} });
             }
             // Show an empty board to a viewer (so you can't perform moves).
