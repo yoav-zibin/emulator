@@ -107,6 +107,16 @@ export module gameService {
           setTimeout(function () {
             messageService.sendMessage({setLanguageResult: true});
           })
+          
+        } else if (message.getGameLogs) {
+          // To make sure students don't get:
+          // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
+          // I serialize to string and back.
+          let plainPojoLogs = angular.fromJson(angular.toJson(log.getLogs()));
+          setTimeout(function () {
+            messageService.sendMessage({getGameLogsResult: plainPojoLogs});
+          });
+          
         } else if (message.passMessageToGame) {
           let msgFromPlatform = message.passMessageToGame;
           if (msgFromPlatform.SHOW_GAME_INSTRUCTIONS && w.game) {

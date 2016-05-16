@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Wed May 11 09:30:27 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Mon May 16 16:52:21 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -498,6 +498,7 @@ var gamingPlatform;
             lastUpdateUI = angular.copy(params);
             game.updateUI(params);
         }
+        gameService.updateUI = updateUI;
         function makeMove(move) {
             if (!lastUpdateUI) {
                 throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
@@ -573,6 +574,15 @@ var gamingPlatform;
                         // Using setTimeout to give time for angular to refresh it's UI (the default was in English)
                         setTimeout(function () {
                             gamingPlatform.messageService.sendMessage({ setLanguageResult: true });
+                        });
+                    }
+                    else if (message.getGameLogs) {
+                        // To make sure students don't get:
+                        // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
+                        // I serialize to string and back.
+                        var plainPojoLogs = angular.fromJson(angular.toJson(gamingPlatform.log.getLogs()));
+                        setTimeout(function () {
+                            gamingPlatform.messageService.sendMessage({ getGameLogsResult: plainPojoLogs });
                         });
                     }
                     else if (message.passMessageToGame) {
