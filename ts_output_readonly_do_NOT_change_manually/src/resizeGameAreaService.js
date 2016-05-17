@@ -24,7 +24,6 @@ var gamingPlatform;
             // so the iframe will be visilble very soon...
             setTimeout(rescale, 10);
             setTimeout(rescale, 100);
-            setTimeout(rescale, 500);
         }
         resizeGameAreaService.setWidthToHeight = setWidthToHeight;
         function round2(num) {
@@ -76,11 +75,14 @@ var gamingPlatform;
                 gameArea.style.top = ((originalWindowHeight - windowHeight) / 2) + 'px';
                 if (dimensionsChanged)
                     dimensionsChanged(windowWidth, windowHeight);
+                setTimeout(rescale, 10); // sometimes it takes a tiny bit for innerWidth&height to update.
             });
         }
         doc.addEventListener("onresize", rescale);
         doc.addEventListener("orientationchange", rescale);
-        setInterval(rescale, 1000);
+        if (window.matchMedia)
+            window.matchMedia('(orientation: portrait)').addListener(rescale);
+        setInterval(rescale, 300);
     })(resizeGameAreaService = gamingPlatform.resizeGameAreaService || (gamingPlatform.resizeGameAreaService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
 //# sourceMappingURL=resizeGameAreaService.js.map

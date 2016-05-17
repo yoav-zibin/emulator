@@ -30,7 +30,6 @@ export module resizeGameAreaService {
     // so the iframe will be visilble very soon...
     setTimeout(rescale, 10); 
     setTimeout(rescale, 100);
-    setTimeout(rescale, 500);
   }
 
   function round2(num: number): number {
@@ -85,12 +84,14 @@ export module resizeGameAreaService {
       gameArea.style.left = ((originalWindowWidth - windowWidth)/2) + 'px';
       gameArea.style.top = ((originalWindowHeight - windowHeight)/2) + 'px';
       if (dimensionsChanged) dimensionsChanged(windowWidth, windowHeight);
+      setTimeout(rescale, 10); // sometimes it takes a tiny bit for innerWidth&height to update.
     });
   }
 
   doc.addEventListener("onresize", rescale);
   doc.addEventListener("orientationchange", rescale);
-  setInterval(rescale, 1000);
+  if (window.matchMedia) window.matchMedia('(orientation: portrait)').addListener(rescale);
+  setInterval(rescale, 300);
 }
 
 }
