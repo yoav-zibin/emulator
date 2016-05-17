@@ -50,6 +50,10 @@ export module resizeGameAreaService {
         return; // nothing changed, so no need to change the transformations.
       }
     }
+    oldSizes = {
+        windowWidth: windowWidth,
+        windowHeight: windowHeight
+    };
     if (windowWidth === 0 || windowHeight === 0) {
       log.info("Window width/height is 0 so hiding gameArea div.");
       gameArea.style.display = "none";
@@ -58,11 +62,6 @@ export module resizeGameAreaService {
     gameArea.style.display = "block";
     
     $rootScope.$apply(function () {
-      oldSizes = {
-          windowWidth: windowWidth,
-          windowHeight: windowHeight
-      };
-
       let newWidthToHeight = windowWidth / windowHeight;
 
       if (newWidthToHeight > widthToHeight) {

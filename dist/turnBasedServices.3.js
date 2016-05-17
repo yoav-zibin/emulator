@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Tue May 17 18:29:26 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Tue May 17 18:39:37 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -976,6 +976,10 @@ var gamingPlatform;
                     return; // nothing changed, so no need to change the transformations.
                 }
             }
+            oldSizes = {
+                windowWidth: windowWidth,
+                windowHeight: windowHeight
+            };
             if (windowWidth === 0 || windowHeight === 0) {
                 gamingPlatform.log.info("Window width/height is 0 so hiding gameArea div.");
                 gameArea.style.display = "none";
@@ -983,10 +987,6 @@ var gamingPlatform;
             }
             gameArea.style.display = "block";
             gamingPlatform.$rootScope.$apply(function () {
-                oldSizes = {
-                    windowWidth: windowWidth,
-                    windowHeight: windowHeight
-                };
                 var newWidthToHeight = windowWidth / windowHeight;
                 if (newWidthToHeight > widthToHeight) {
                     windowWidth = round2(windowHeight * widthToHeight);
