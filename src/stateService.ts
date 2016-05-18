@@ -322,17 +322,24 @@ export module stateService {
     };
   }
 
+  // endMatchScores can be null or undefined (and in the first move in auto-match, it's first null and then undefined, 
+  // so we used to send the same updateUI twice).
+  // Now, if anything is undefined, then I set it to null.
+  function getNullIfUndefined(obj: any) {
+    return obj === undefined ? null : obj;
+  }
+  
   export function setMatchState(data: IMatchState): void {
-    turnIndexBeforeMove = data.turnIndexBeforeMove;
-    turnIndex = data.turnIndex;
-    endMatchScores = data.endMatchScores;
+    turnIndexBeforeMove = getNullIfUndefined(data.turnIndexBeforeMove);
+    turnIndex = getNullIfUndefined(data.turnIndex);
+    endMatchScores = getNullIfUndefined(data.endMatchScores);
     moveNumber = data.moveNumber ? data.moveNumber : 0;
-    randomSeed = data.randomSeed;
-    lastMove = data.lastMove;
-    lastState = data.lastState;
-    currentState = data.currentState;
-    lastVisibleTo = data.lastVisibleTo;
-    currentVisibleTo = data.currentVisibleTo;
+    randomSeed = getNullIfUndefined(data.randomSeed);
+    lastMove = getNullIfUndefined(data.lastMove);
+    lastState = getNullIfUndefined(data.lastState);
+    currentState = getNullIfUndefined(data.currentState);
+    lastVisibleTo = getNullIfUndefined(data.lastVisibleTo);
+    currentVisibleTo = getNullIfUndefined(data.currentVisibleTo);
   }
 
   let lastSentUpdateUI: IUpdateUI = null; // to prevent sending the same updateUI twice.
@@ -357,7 +364,9 @@ export module stateService {
       randomSeed: randomSeed,
       endMatchScores: endMatchScores
     };
-    if (angular.equals(lastSentUpdateUI, nextUpdateUI)) return; // Not sending the same updateUI twice.
+    
+    // Not sending the same updateUI twice.
+    if (angular.equals(lastSentUpdateUI, nextUpdateUI)) return; 
     lastSentUpdateUI = nextUpdateUI;
 
     if (lastMove.length > 0 && game.isMoveOk(
@@ -386,6 +395,9 @@ export module stateService {
   export function makeMove(operations: IMove): void {
     if (!game) {
       throwError("You must call setGame before any other method.");
+    }
+    if (!operations) {
+      throwError("operations must be an array");
     }
     // Making sure only turnIndex can make the move
     if (turnIndex === -1) {
