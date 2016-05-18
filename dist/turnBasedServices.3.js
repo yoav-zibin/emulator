@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Tue May 17 18:39:37 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Wed May 18 10:59:41 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -343,17 +343,23 @@ var gamingPlatform;
             };
         }
         stateService.getMatchState = getMatchState;
+        // endMatchScores can be null or undefined (and in the first move in auto-match, it's first null and then undefined, 
+        // so we used to send the same updateUI twice).
+        // Now, if anything is undefined, then I set it to null.
+        function getNullIfUndefined(obj) {
+            return obj === undefined ? null : obj;
+        }
         function setMatchState(data) {
-            turnIndexBeforeMove = data.turnIndexBeforeMove;
-            turnIndex = data.turnIndex;
-            endMatchScores = data.endMatchScores;
+            turnIndexBeforeMove = getNullIfUndefined(data.turnIndexBeforeMove);
+            turnIndex = getNullIfUndefined(data.turnIndex);
+            endMatchScores = getNullIfUndefined(data.endMatchScores);
             moveNumber = data.moveNumber ? data.moveNumber : 0;
-            randomSeed = data.randomSeed;
-            lastMove = data.lastMove;
-            lastState = data.lastState;
-            currentState = data.currentState;
-            lastVisibleTo = data.lastVisibleTo;
-            currentVisibleTo = data.currentVisibleTo;
+            randomSeed = getNullIfUndefined(data.randomSeed);
+            lastMove = getNullIfUndefined(data.lastMove);
+            lastState = getNullIfUndefined(data.lastState);
+            currentState = getNullIfUndefined(data.currentState);
+            lastVisibleTo = getNullIfUndefined(data.lastVisibleTo);
+            currentVisibleTo = getNullIfUndefined(data.currentVisibleTo);
         }
         stateService.setMatchState = setMatchState;
         var lastSentUpdateUI = null; // to prevent sending the same updateUI twice.
@@ -376,8 +382,9 @@ var gamingPlatform;
                 randomSeed: randomSeed,
                 endMatchScores: endMatchScores
             };
+            // Not sending the same updateUI twice.
             if (angular.equals(lastSentUpdateUI, nextUpdateUI))
-                return; // Not sending the same updateUI twice.
+                return;
             lastSentUpdateUI = nextUpdateUI;
             if (lastMove.length > 0 && game.isMoveOk({
                 move: moveForIndex,
@@ -403,6 +410,9 @@ var gamingPlatform;
         function makeMove(operations) {
             if (!game) {
                 throwError("You must call setGame before any other method.");
+            }
+            if (!operations) {
+                throwError("operations must be an array");
             }
             // Making sure only turnIndex can make the move
             if (turnIndex === -1) {
