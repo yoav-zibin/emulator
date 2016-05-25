@@ -21,6 +21,29 @@ export let $interpolate: angular.IInterpolateService;
 declare var emulatorServicesCompilationDate: string;
 
 angular.module('gameServices', ['translate'])
+.config(['$provide', function($provide: any) {
+  // angular-material has a ton of
+  // Error: [$rootScope:inprog] http://errors.angularjs.org/1.5.5/$rootScope/inprog?p0=%24digest
+  // see: https://github.com/angular/material/issues/8245
+  // And I even got it once in yCheckers:
+  // Error: [$rootScope:inprog] $digest already in progress http://errors.angularjs.org/1.5.5/$rootScope/inprog?p0=%24digest
+  $provide.decorator('$rootScope', [
+    '$delegate', function($delegate: any) {
+      $delegate.unsafeOldApply = $delegate.$apply;
+      $delegate.$apply = function(fn: any) {
+        var phase = $delegate.$$phase;
+        if (phase === "$apply" || phase === "$digest") {
+          if (fn && typeof fn === 'function') {
+            fn();
+          }
+        } else {
+          $delegate.unsafeOldApply(fn);
+        }
+      };
+      return $delegate;
+    }
+  ]);
+}])
 .run(
   ['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
   function (_location: angular.ILocationService, _rootScope: angular.IScope,
