@@ -24,10 +24,6 @@ textarea, input {
   -ms-user-select: text !important;
   user-select: text !important;
 }
-/* on Firefox mobile, long press on an image opens the save/copy image dialog. http://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android */
-img {
-  pointer-events: none;
-}
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
