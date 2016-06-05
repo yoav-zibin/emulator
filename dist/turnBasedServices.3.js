@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Wed May 25 10:57:45 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Sun Jun 5 11:11:18 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -1163,6 +1163,12 @@ var gamingPlatform;
     }
     copyNamespaceToWindow();
     setTimeout(copyNamespaceToWindow, 0);
+    // Preventing context menu on long taps: http://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android
+    window.oncontextmenu = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+    };
     angular.module('gameServices', ['translate'])
         .config(['$provide', function ($provide) {
             // angular-material has a ton of

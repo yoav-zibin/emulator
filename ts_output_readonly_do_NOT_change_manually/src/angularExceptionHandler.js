@@ -11,6 +11,12 @@ var gamingPlatform;
     }
     copyNamespaceToWindow();
     setTimeout(copyNamespaceToWindow, 0);
+    // Preventing context menu on long taps: http://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android
+    window.oncontextmenu = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+    };
     angular.module('gameServices', ['translate'])
         .config(['$provide', function ($provide) {
             // angular-material has a ton of

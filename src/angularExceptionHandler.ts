@@ -12,6 +12,13 @@ function copyNamespaceToWindow() {
 copyNamespaceToWindow();
 setTimeout(copyNamespaceToWindow, 0);
 
+// Preventing context menu on long taps: http://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android
+window.oncontextmenu = function(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  return false;
+};
+
 export let $rootScope: angular.IScope;
 export let $location: angular.ILocationService;
 export let $timeout: angular.ITimeoutService;
