@@ -24,6 +24,10 @@ textarea, input {
   -ms-user-select: text !important;
   user-select: text !important;
 }
+/* on Firefox mobile, long press on an image opens the save/copy image dialog. */
+img {
+  pointer-events: none;
+}
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
