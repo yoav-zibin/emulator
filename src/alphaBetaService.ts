@@ -68,6 +68,11 @@ export module alphaBetaService {
     if (!alphaBetaLimits.millisecondsLimit && !alphaBetaLimits.maxDepth) {
       throw new Error("alphaBetaLimits must have either millisecondsLimit or maxDepth");
     }
+    
+    if (alphaBetaLimits.millisecondsLimit) {
+      // 400 milliseconds is the max time (otherwise the app feels unresponsive).
+      alphaBetaLimits.millisecondsLimit = Math.min(400, alphaBetaLimits.millisecondsLimit);
+    }
 
     let startTime = new Date().getTime(); // used for the time limit
     if (alphaBetaLimits.maxDepth) {

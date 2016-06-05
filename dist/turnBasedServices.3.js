@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sun Jun 5 11:27:08 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Sun Jun 5 14:56:00 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -818,6 +818,10 @@ var gamingPlatform;
             }
             if (!alphaBetaLimits.millisecondsLimit && !alphaBetaLimits.maxDepth) {
                 throw new Error("alphaBetaLimits must have either millisecondsLimit or maxDepth");
+            }
+            if (alphaBetaLimits.millisecondsLimit) {
+                // 400 milliseconds is the max time (otherwise the app feels unresponsive).
+                alphaBetaLimits.millisecondsLimit = Math.min(400, alphaBetaLimits.millisecondsLimit);
             }
             var startTime = new Date().getTime(); // used for the time limit
             if (alphaBetaLimits.maxDepth) {

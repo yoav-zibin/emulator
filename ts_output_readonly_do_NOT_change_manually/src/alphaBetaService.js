@@ -48,6 +48,10 @@ var gamingPlatform;
             if (!alphaBetaLimits.millisecondsLimit && !alphaBetaLimits.maxDepth) {
                 throw new Error("alphaBetaLimits must have either millisecondsLimit or maxDepth");
             }
+            if (alphaBetaLimits.millisecondsLimit) {
+                // 400 milliseconds is the max time (otherwise the app feels unresponsive).
+                alphaBetaLimits.millisecondsLimit = Math.min(400, alphaBetaLimits.millisecondsLimit);
+            }
             var startTime = new Date().getTime(); // used for the time limit
             if (alphaBetaLimits.maxDepth) {
                 return getScoreForIndex0(startingState, playerIndex, getNextStates, getStateScoreForIndex0, getDebugStateToString, alphaBetaLimits, startTime, 0, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY).bestState;
