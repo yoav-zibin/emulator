@@ -1,6 +1,6 @@
 // The files we want to cache
 var urlsToCache = [
-  'index.html',
+  '/emulator/examples/service_worker/index.html',
 ];
 var CACHE_NAME = 'my-site-cache-v1';
 
@@ -18,7 +18,7 @@ self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
-        console.log('Fetch response=', response);
+        console.log('Fetch response=', response, ' event=', event, ' request=', event.request);
         // Cache hit - return response
         if (response) {
           return response;
