@@ -2,7 +2,7 @@
 var urlsToCache = [
   '/emulator/examples/service_worker/index.html',
 ];
-var CACHE_NAME = 'my-site-cache-v1';
+var CACHE_NAME = 'cache-v1';
 
 self.addEventListener('install', function(event) {
   // Perform install steps
@@ -18,8 +18,9 @@ self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.match(event.request)
       .then(function(response) {
-        // Cache hit - return response
         if (response) {
+          // Cache hit - return response
+          console.log('Cache hit for: ', event.request);
           return response;
         }
         //return fetch(event.request);
