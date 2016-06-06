@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+if ('serviceWorker' in navigator) {
+  console.log('Calling serviceWorker.register');
+  navigator.serviceWorker.register('sw.js').then(function(registration) {
+    // Registration was successful
+    console.log('ServiceWorker registration successful with scope: ',    registration.scope, 'registration=', registration);
+  }).catch(function(err) {
+    // registration failed :(
+    console.log('ServiceWorker registration failed: ', err);
+  });
+}
+</script>
+</head>
+<body>
+  Service worker test (look at console output).
+</body>
+</html>
