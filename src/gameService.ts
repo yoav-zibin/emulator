@@ -118,16 +118,15 @@ export module gameService {
             messageService.sendMessage({getGameLogsResult: plainPojoLogs});
           });
           
+        } else if (message.getStateForOgImage) {
+          messageService.sendMessage({sendStateForOgImage : game.getStateForOgImage()});
+          
         } else if (message.passMessageToGame) {
           let msgFromPlatform = message.passMessageToGame;
           if (msgFromPlatform.SHOW_GAME_INSTRUCTIONS && w.game) {
             w.game.isHelpModalShown = !w.game.isHelpModalShown;
           }
           if (game.gotMessageFromPlatform) game.gotMessageFromPlatform(msgFromPlatform);
-          console.log("msgFromPlatform.getStateForOgImage=", msgFromPlatform.getStateForOgImage, game.getStateForOgImage); // TODO: delete
-          if (msgFromPlatform.getStateForOgImage && game.getStateForOgImage) {
-            messageService.sendMessage({sendStateForOgImage : game.getStateForOgImage()});
-          }
         }
       });
       // I wanted to delay sending gameReady until window.innerWidth and height are not 0,

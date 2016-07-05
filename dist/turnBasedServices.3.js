@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Tue Jul 5 18:19:53 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Tue Jul 5 18:29:07 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -595,6 +595,9 @@ var gamingPlatform;
                             gamingPlatform.messageService.sendMessage({ getGameLogsResult: plainPojoLogs });
                         });
                     }
+                    else if (message.getStateForOgImage) {
+                        gamingPlatform.messageService.sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
+                    }
                     else if (message.passMessageToGame) {
                         var msgFromPlatform = message.passMessageToGame;
                         if (msgFromPlatform.SHOW_GAME_INSTRUCTIONS && w.game) {
@@ -602,10 +605,6 @@ var gamingPlatform;
                         }
                         if (game.gotMessageFromPlatform)
                             game.gotMessageFromPlatform(msgFromPlatform);
-                        console.log("msgFromPlatform.getStateForOgImage=", msgFromPlatform.getStateForOgImage, game.getStateForOgImage); // TODO: delete
-                        if (msgFromPlatform.getStateForOgImage && game.getStateForOgImage) {
-                            gamingPlatform.messageService.sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
-                        }
                     }
                 });
                 // I wanted to delay sending gameReady until window.innerWidth and height are not 0,
