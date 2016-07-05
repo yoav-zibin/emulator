@@ -82,6 +82,7 @@ var gamingPlatform;
                     game.updateUI(newParams);
                 },
                 gotMessageFromPlatform: game.gotMessageFromPlatform,
+                getStateForOgImage: game.getStateForOgImage,
             };
             gamingPlatform.gameService.setGame(oldGame);
         }

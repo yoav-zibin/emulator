@@ -109,6 +109,9 @@ var gamingPlatform;
                         }
                         if (game.gotMessageFromPlatform)
                             game.gotMessageFromPlatform(msgFromPlatform);
+                        if (msgFromPlatform.getStateForOgImage && game.getStateForOgImage) {
+                            gamingPlatform.messageService.sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
+                        }
                     }
                 });
                 // I wanted to delay sending gameReady until window.innerWidth and height are not 0,

@@ -22,6 +22,7 @@ interface NewGame {
   checkMoveOk(stateTransition: IStateTransition): void;
   updateUI(update: NewUpdateUI): void;
   gotMessageFromPlatform(message: any): void;
+  getStateForOgImage(): string;
 }
 export module moveService {
   let STATE_KEY = "state";
@@ -108,6 +109,7 @@ export module moveService {
         game.updateUI(newParams);
       },
       gotMessageFromPlatform: game.gotMessageFromPlatform,
+      getStateForOgImage: game.getStateForOgImage,
     };
     gameService.setGame(oldGame);
   }

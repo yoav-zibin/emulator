@@ -47,6 +47,7 @@ export module emulator {
       isMoveOk: isMoveOk,
       updateUI: updateUI,
       gotMessageFromPlatform: null,
+      getStateForOgImage: null,
     });
     window.addEventListener("message", function (event) {
       let message = event.data;

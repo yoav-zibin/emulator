@@ -42,6 +42,7 @@ var gamingPlatform;
                 isMoveOk: isMoveOk,
                 updateUI: updateUI,
                 gotMessageFromPlatform: null,
+                getStateForOgImage: null,
             });
             window.addEventListener("message", function (event) {
                 var message = event.data;

@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Sun Jun 5 14:56:00 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Tue Jul 5 18:08:24 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -602,6 +602,9 @@ var gamingPlatform;
                         }
                         if (game.gotMessageFromPlatform)
                             game.gotMessageFromPlatform(msgFromPlatform);
+                        if (msgFromPlatform.getStateForOgImage && game.getStateForOgImage) {
+                            gamingPlatform.messageService.sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
+                        }
                     }
                 });
                 // I wanted to delay sending gameReady until window.innerWidth and height are not 0,
@@ -713,6 +716,7 @@ var gamingPlatform;
                     game.updateUI(newParams);
                 },
                 gotMessageFromPlatform: game.gotMessageFromPlatform,
+                getStateForOgImage: game.getStateForOgImage,
             };
             gamingPlatform.gameService.setGame(oldGame);
         }

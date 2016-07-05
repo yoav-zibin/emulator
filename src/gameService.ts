@@ -12,6 +12,7 @@ export interface IGame {
   isMoveOk(move: IIsMoveOk): boolean;
   updateUI(update: IUpdateUI): void;
   gotMessageFromPlatform(message: any): void;
+  getStateForOgImage(): string;
   minNumberOfPlayers: number;
   maxNumberOfPlayers: number;
 }
@@ -123,6 +124,9 @@ export module gameService {
             w.game.isHelpModalShown = !w.game.isHelpModalShown;
           }
           if (game.gotMessageFromPlatform) game.gotMessageFromPlatform(msgFromPlatform);
+          if (msgFromPlatform.getStateForOgImage && game.getStateForOgImage) {
+            messageService.sendMessage({sendStateForOgImage : game.getStateForOgImage()});
+          }
         }
       });
       // I wanted to delay sending gameReady until window.innerWidth and height are not 0,
