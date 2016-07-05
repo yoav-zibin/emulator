@@ -124,6 +124,7 @@ export module gameService {
             w.game.isHelpModalShown = !w.game.isHelpModalShown;
           }
           if (game.gotMessageFromPlatform) game.gotMessageFromPlatform(msgFromPlatform);
+          console.log("msgFromPlatform.getStateForOgImage=", msgFromPlatform.getStateForOgImage, game.getStateForOgImage); // TODO: delete
           if (msgFromPlatform.getStateForOgImage && game.getStateForOgImage) {
             messageService.sendMessage({sendStateForOgImage : game.getStateForOgImage()});
           }

@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Tue Jul 5 18:08:24 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Tue Jul 5 18:19:53 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -602,6 +602,7 @@ var gamingPlatform;
                         }
                         if (game.gotMessageFromPlatform)
                             game.gotMessageFromPlatform(msgFromPlatform);
+                        console.log("msgFromPlatform.getStateForOgImage=", msgFromPlatform.getStateForOgImage, game.getStateForOgImage); // TODO: delete
                         if (msgFromPlatform.getStateForOgImage && game.getStateForOgImage) {
                             gamingPlatform.messageService.sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
                         }

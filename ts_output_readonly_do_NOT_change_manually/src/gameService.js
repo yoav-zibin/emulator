@@ -109,6 +109,7 @@ var gamingPlatform;
                         }
                         if (game.gotMessageFromPlatform)
                             game.gotMessageFromPlatform(msgFromPlatform);
+                        console.log("msgFromPlatform.getStateForOgImage=", msgFromPlatform.getStateForOgImage, game.getStateForOgImage); // TODO: delete
                         if (msgFromPlatform.getStateForOgImage && game.getStateForOgImage) {
                             gamingPlatform.messageService.sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
                         }
