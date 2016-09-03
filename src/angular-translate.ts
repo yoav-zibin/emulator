@@ -34,7 +34,11 @@ function createTranslateService(): TranslateService {
       translation = "[" + translationId + "]";
       log.error("Couldn't find translationId=" + translationId + " in language=" + languageCode);
     }
-    return $interpolate(translation)(interpolateParams || {});
+    let result = $interpolate(translation)(interpolateParams || {});
+    if (result.indexOf('{{') !== -1) {
+      log.error("You forgot to pass a translation parameter (interpolateParams) for translationId=" + translationId + " in language=" + languageCode + " which resulted in '" + result + "' (note that you forgot to pass some {{XXX}})");
+    } 
+    return result;
   }
   let translateService: TranslateService;
   translateService = <TranslateService>translate;
