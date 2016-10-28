@@ -24,7 +24,11 @@ var gamingPlatform;
                 translation = "[" + translationId + "]";
                 gamingPlatform.log.error("Couldn't find translationId=" + translationId + " in language=" + languageCode);
             }
-            return gamingPlatform.$interpolate(translation)(interpolateParams || {});
+            var result = gamingPlatform.$interpolate(translation)(interpolateParams || {});
+            if (result.indexOf('{{') !== -1) {
+                gamingPlatform.log.error("You forgot to pass a translation parameter (interpolateParams) for translationId=" + translationId + " in language=" + languageCode + " which resulted in '" + result + "' (note that you forgot to pass some {{XXX}})");
+            }
+            return result;
         }
         var translateService;
         translateService = translate;

@@ -424,6 +424,9 @@ export module stateService {
     if (setTurnOrEndMatchCount !== 1) {
       throwError("We must have either SetTurn or EndMatch, but not both: setTurnOrEndMatchCount=" + setTurnOrEndMatchCount);
     }
+    if (turnIndex == turnIndexBeforeMove) {
+      throwError("turnIndex must be different from turnIndexBeforeMove, but both are equal to " + turnIndex); 
+    }
     if (!(turnIndex >= -1 && turnIndex < playersInfo.length)) {
       throwError("turnIndex must be between -1 and " + playersInfo.length + ", but it was " + turnIndex + ".");
     }

@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Tue Jul 5 18:29:07 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Fri Oct 28 09:10:07 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -438,6 +438,9 @@ var gamingPlatform;
             // We must have either SetTurn or EndMatch
             if (setTurnOrEndMatchCount !== 1) {
                 throwError("We must have either SetTurn or EndMatch, but not both: setTurnOrEndMatchCount=" + setTurnOrEndMatchCount);
+            }
+            if (turnIndex == turnIndexBeforeMove) {
+                throwError("turnIndex must be different from turnIndexBeforeMove, but both are equal to " + turnIndex);
             }
             if (!(turnIndex >= -1 && turnIndex < playersInfo.length)) {
                 throwError("turnIndex must be between -1 and " + playersInfo.length + ", but it was " + turnIndex + ".");
@@ -1064,7 +1067,11 @@ var gamingPlatform;
                 translation = "[" + translationId + "]";
                 gamingPlatform.log.error("Couldn't find translationId=" + translationId + " in language=" + languageCode);
             }
-            return gamingPlatform.$interpolate(translation)(interpolateParams || {});
+            var result = gamingPlatform.$interpolate(translation)(interpolateParams || {});
+            if (result.indexOf('{{') !== -1) {
+                gamingPlatform.log.error("You forgot to pass a translation parameter (interpolateParams) for translationId=" + translationId + " in language=" + languageCode + " which resulted in '" + result + "' (note that you forgot to pass some {{XXX}})");
+            }
+            return result;
         }
         var translateService;
         translateService = translate;
