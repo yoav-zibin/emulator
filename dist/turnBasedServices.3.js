@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Fri Oct 28 09:10:07 EDT 2016";
+"use strict"; var emulatorServicesCompilationDate = "Fri Oct 28 09:42:21 EDT 2016";
 
 ;
 var gamingPlatform;
@@ -439,7 +439,8 @@ var gamingPlatform;
             if (setTurnOrEndMatchCount !== 1) {
                 throwError("We must have either SetTurn or EndMatch, but not both: setTurnOrEndMatchCount=" + setTurnOrEndMatchCount);
             }
-            if (turnIndex == turnIndexBeforeMove) {
+            if (moveNumber > 1 &&
+                turnIndex == turnIndexBeforeMove) {
                 throwError("turnIndex must be different from turnIndexBeforeMove, but both are equal to " + turnIndex);
             }
             if (!(turnIndex >= -1 && turnIndex < playersInfo.length)) {
