@@ -48,6 +48,7 @@ export module emulator {
       updateUI: updateUI,
       gotMessageFromPlatform: null,
       getStateForOgImage: null,
+      communityUI: null,
     });
     window.addEventListener("message", function (event) {
       let message = event.data;

@@ -49,7 +49,7 @@ var gamingPlatform;
                 stateAfterMove: move[1].set.value,
             };
         }
-        function convertNewMove(move) {
+        function checkMove(move) {
             // Do some checks: turnIndexAfterMove is -1 iff endMatchScores is not null.
             var noTurnIndexAfterMove = move.turnIndexAfterMove === -1;
             var hasEndMatchScores = !!move.endMatchScores;
@@ -61,8 +61,12 @@ var gamingPlatform;
                 throw new Error("Illegal move: you set endMatchScores but you didn't set turnIndexAfterMove to -1. Move=" +
                     angular.toJson(move, true));
             }
+        }
+        moveService.checkMove = checkMove;
+        function convertNewMove(move) {
+            checkMove(move);
             return [
-                hasEndMatchScores ? { endMatch: { endMatchScores: move.endMatchScores } } : { setTurn: { turnIndex: move.turnIndexAfterMove } },
+                move.endMatchScores ? { endMatch: { endMatchScores: move.endMatchScores } } : { setTurn: { turnIndex: move.turnIndexAfterMove } },
                 { set: { key: STATE_KEY, value: move.stateAfterMove } }
             ];
         }
@@ -81,6 +85,7 @@ var gamingPlatform;
                     gamingPlatform.log.info("Calling game.updateUI:", newParams);
                     game.updateUI(newParams);
                 },
+                communityUI: game.communityUI,
                 gotMessageFromPlatform: game.gotMessageFromPlatform,
                 getStateForOgImage: game.getStateForOgImage,
             };
@@ -92,6 +97,11 @@ var gamingPlatform;
             gamingPlatform.gameService.makeMove(convertNewMove(move));
         }
         moveService.makeMove = makeMove;
+        function communityMove(proposal, move) {
+            gamingPlatform.log.info("Making communityMove: proposal=", proposal, " move=", move);
+            gamingPlatform.gameService.communityMove(proposal, move);
+        }
+        moveService.communityMove = communityMove;
     })(moveService = gamingPlatform.moveService || (gamingPlatform.moveService = {}));
 })(gamingPlatform || (gamingPlatform = {}));
 //# sourceMappingURL=moveService.js.map

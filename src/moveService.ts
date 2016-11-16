@@ -1,26 +1,16 @@
 namespace gamingPlatform {
 
-interface NewMove {
-  endMatchScores?: number[];
-  turnIndexAfterMove?: number;
-  stateAfterMove: any;
-}
-interface IStateTransition {
-  turnIndexBeforeMove : number;
-  stateBeforeMove: any;
-  numberOfPlayers: number;
-  move: NewMove;
-}
-interface NewUpdateUI extends IStateTransition {
+interface NewUpdateUI extends ICommonUI {
   playersInfo: IPlayerInfo[];
-  yourPlayerIndex: number;
   playMode: PlayMode;
 }
+
 interface NewGame {
   minNumberOfPlayers: number;
   maxNumberOfPlayers: number;
   checkMoveOk(stateTransition: IStateTransition): void;
   updateUI(update: NewUpdateUI): void;
+  communityUI(communityUI: ICommunityUI): void;
   gotMessageFromPlatform(message: any): void;
   getStateForOgImage(): string;
 }
@@ -75,7 +65,7 @@ export module moveService {
     };
   }
 
-  function convertNewMove(move: NewMove): IMove {
+  export function checkMove(move: NewMove): void {
     // Do some checks: turnIndexAfterMove is -1 iff endMatchScores is not null.
     let noTurnIndexAfterMove = move.turnIndexAfterMove === -1;
     let hasEndMatchScores = !!move.endMatchScores;
@@ -87,8 +77,11 @@ export module moveService {
       throw new Error("Illegal move: you set endMatchScores but you didn't set turnIndexAfterMove to -1. Move=" +
           angular.toJson(move, true));
     }
+  }
+  function convertNewMove(move: NewMove): IMove {
+    checkMove(move);
     return [
-      hasEndMatchScores ? {endMatch: {endMatchScores: move.endMatchScores}} : {setTurn: {turnIndex: move.turnIndexAfterMove}},
+      move.endMatchScores ? {endMatch: {endMatchScores: move.endMatchScores}} : {setTurn: {turnIndex: move.turnIndexAfterMove}},
       {set: {key: STATE_KEY, value: move.stateAfterMove}}
     ];
   }
@@ -108,6 +101,7 @@ export module moveService {
         log.info("Calling game.updateUI:", newParams);
         game.updateUI(newParams);
       },
+      communityUI: game.communityUI,
       gotMessageFromPlatform: game.gotMessageFromPlatform,
       getStateForOgImage: game.getStateForOgImage,
     };
@@ -117,6 +111,11 @@ export module moveService {
   export function makeMove(move: NewMove): void {
     log.info("Making move:", move);
     gameService.makeMove(convertNewMove(move));
+  }
+
+  export function communityMove(proposal: IProposal, move: NewMove): void {
+    log.info("Making communityMove: proposal=", proposal, " move=", move);
+    gameService.communityMove(proposal, move);
   }
 }
 

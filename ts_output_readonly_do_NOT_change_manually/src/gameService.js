@@ -4,6 +4,7 @@ var gamingPlatform;
     (function (gameService) {
         var isLocalTesting = window.parent === window ||
             window.location.search === "?test";
+        var isLocalTestCommunity = location.search.indexOf("community") !== -1;
         gameService.playMode = location.search.indexOf("onlyAIs") !== -1 ? "onlyAIs"
             : location.search.indexOf("playAgainstTheComputer") !== -1 ? "playAgainstTheComputer"
                 : location.search.indexOf("?playMode=") === 0 ? location.search.substr("?playMode=".length)
@@ -11,6 +12,53 @@ var gamingPlatform;
         // We verify that you call makeMove at most once for every updateUI (and only when it's your turn)
         var lastUpdateUI = null;
         var game;
+        var lastCommunityUI = null;
+        function communityUI(communityUI) {
+            lastCommunityUI = angular.copy(communityUI);
+            game.communityUI(communityUI);
+        }
+        gameService.communityUI = communityUI;
+        function communityMove(proposal, move) {
+            if (!lastCommunityUI) {
+                throw new Error("Don't call communityMove before getting communityUI.");
+            }
+            if (move) {
+                gamingPlatform.moveService.checkMove(move);
+            }
+            var wasYourTurn = lastCommunityUI.move.turnIndexAfterMove >= 0 &&
+                lastCommunityUI.yourPlayerIndex === lastCommunityUI.move.turnIndexAfterMove; // it's my turn
+            if (!wasYourTurn) {
+                throw new Error("Called communityMove when it wasn't your turn: yourPlayerIndex=" + lastCommunityUI.yourPlayerIndex + " turnIndexAfterMove=" + lastCommunityUI.move.turnIndexAfterMove);
+            }
+            var oldProposal = lastCommunityUI.playerIdToProposal[lastCommunityUI.yourPlayerInfo.playerId];
+            if (oldProposal) {
+                throw new Error("Called communityMove when yourPlayerId already made a proposal, see: " + angular.toJson(oldProposal, true));
+            }
+            if (isLocalTesting) {
+                // I'm using $timeout so it will be more like production (where we use postMessage),
+                // so the communityUI response is not sent immediately).
+                var nextCommunityUI = lastCommunityUI;
+                if (move) {
+                    nextCommunityUI.turnIndexBeforeMove = nextCommunityUI.move.turnIndexAfterMove;
+                    nextCommunityUI.stateBeforeMove = nextCommunityUI.move.stateAfterMove;
+                    nextCommunityUI.playerIdToProposal = {};
+                    nextCommunityUI.yourPlayerIndex = move.turnIndexAfterMove;
+                    nextCommunityUI.move = move;
+                }
+                else {
+                    nextCommunityUI.playerIdToProposal[nextCommunityUI.yourPlayerInfo.playerId] = proposal;
+                }
+                nextCommunityUI.yourPlayerInfo.playerId = 'playerId' + Math.random();
+                gamingPlatform.$timeout(function () {
+                    communityUI(nextCommunityUI);
+                }, 10);
+            }
+            else {
+                gamingPlatform.messageService.sendMessage({ communityMove: { proposal: proposal, move: move, lastCommunityUI: lastCommunityUI } });
+            }
+            lastCommunityUI = null;
+        }
+        gameService.communityMove = communityMove;
         function updateUI(params) {
             lastUpdateUI = angular.copy(params);
             game.updateUI(params);
@@ -41,9 +89,13 @@ var gamingPlatform;
             lastUpdateUI = null; // to make sure you don't call makeMove until you get the next updateUI.
         }
         gameService.makeMove = makeMove;
+        function getNumberOfPlayers() {
+            return gamingPlatform.stateService.randomFromTo(game.minNumberOfPlayers, game.maxNumberOfPlayers + 1);
+            ;
+        }
         function getPlayers() {
             var playersInfo = [];
-            var actualNumberOfPlayers = gamingPlatform.stateService.randomFromTo(game.minNumberOfPlayers, game.maxNumberOfPlayers + 1);
+            var actualNumberOfPlayers = getNumberOfPlayers();
             for (var i = 0; i < actualNumberOfPlayers; i++) {
                 var playerId = gameService.playMode === "onlyAIs" ||
                     i !== 0 && gameService.playMode === "playAgainstTheComputer" ?
@@ -66,11 +118,32 @@ var gamingPlatform;
                 if (w.game) {
                     w.game.isHelpModalShown = true;
                 }
-                gamingPlatform.stateService.setGame({ updateUI: updateUI, isMoveOk: game.isMoveOk });
-                gamingPlatform.stateService.initNewMatch();
-                gamingPlatform.stateService.setPlayMode(gameService.playMode);
-                gamingPlatform.stateService.setPlayers(playersInfo);
-                gamingPlatform.stateService.sendUpdateUi();
+                if (isLocalTestCommunity) {
+                    gamingPlatform.$timeout(function () { return communityUI({
+                        yourPlayerIndex: 0,
+                        yourPlayerInfo: {
+                            avatarImageUrl: "",
+                            displayName: "",
+                            playerId: "playerId" + Math.random(),
+                        },
+                        playerIdToProposal: {},
+                        numberOfPlayers: getNumberOfPlayers(),
+                        stateBeforeMove: null,
+                        turnIndexBeforeMove: 0,
+                        move: {
+                            endMatchScores: null,
+                            turnIndexAfterMove: 0,
+                            stateAfterMove: null,
+                        }
+                    }); }, 200);
+                }
+                else {
+                    gamingPlatform.stateService.setGame({ updateUI: updateUI, isMoveOk: game.isMoveOk });
+                    gamingPlatform.stateService.initNewMatch();
+                    gamingPlatform.stateService.setPlayMode(gameService.playMode);
+                    gamingPlatform.stateService.setPlayers(playersInfo);
+                    gamingPlatform.stateService.sendUpdateUi();
+                }
             }
             else {
                 gamingPlatform.messageService.addMessageListener(function (message) {

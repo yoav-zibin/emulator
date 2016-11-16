@@ -8,9 +8,44 @@ export interface IPlayerInfo {
   displayName: string;
   playerId: string;
 }
+
+export interface ICommonUI extends IStateTransition {
+  // -2 is a viewer; otherwise it's the player index (0/1).
+  yourPlayerIndex: number;
+}
+// Proposals are used in community games: each player may submit a proposal, and the game will eventual selected
+// the winning proposal and convert it to a move.
+export interface ICommunityUI extends ICommonUI {
+  // You need to know your playerId to make sure you only make one proposal,
+  // i.e., if (playerIdToProposal[yourPlayerId]) then you can't make another proposal.
+  yourPlayerInfo: IPlayerInfo;
+  // Mapping playerId to his proposal.
+  playerIdToProposal: IProposals; 
+}
+export interface IProposal {
+  playerInfo: IPlayerInfo; // the player making the proposal.
+  chatDescription: string; // string representation of the proposal that will be shown in the community game chat.
+  data: any; // IProposalData must be defined by the game.
+}
+export interface IProposals {
+  [playerId: string]: IProposal;
+}
+export interface NewMove {
+  endMatchScores?: number[];
+  turnIndexAfterMove?: number;
+  stateAfterMove: any;
+}
+export interface IStateTransition {
+  turnIndexBeforeMove : number;
+  stateBeforeMove: any;
+  numberOfPlayers: number;
+  move: NewMove;
+}
+
 export interface IGame {
   isMoveOk(move: IIsMoveOk): boolean;
   updateUI(update: IUpdateUI): void;
+  communityUI(communityUI: ICommunityUI): void;
   gotMessageFromPlatform(message: any): void;
   getStateForOgImage(): string;
   minNumberOfPlayers: number;
@@ -20,6 +55,7 @@ export interface IGame {
 export module gameService {
   let isLocalTesting = window.parent === window ||
       window.location.search === "?test";
+  let isLocalTestCommunity = location.search.indexOf("community") !== -1;
   export let playMode = location.search.indexOf("onlyAIs") !== -1 ? "onlyAIs"
       : location.search.indexOf("playAgainstTheComputer") !== -1 ? "playAgainstTheComputer"
       : location.search.indexOf("?playMode=") === 0 ? location.search.substr("?playMode=".length)
@@ -27,6 +63,51 @@ export module gameService {
   // We verify that you call makeMove at most once for every updateUI (and only when it's your turn)
   let lastUpdateUI: IUpdateUI = null;
   let game: IGame;
+
+
+  let lastCommunityUI: ICommunityUI = null;
+  export function communityUI(communityUI: ICommunityUI) {
+    lastCommunityUI = angular.copy(communityUI);
+    game.communityUI(communityUI);
+  }
+  export function communityMove(proposal: IProposal, move: NewMove): void {
+    if (!lastCommunityUI) {
+      throw new Error("Don't call communityMove before getting communityUI.");
+    }
+    if (move) {
+      moveService.checkMove(move);
+    }
+    let wasYourTurn = lastCommunityUI.move.turnIndexAfterMove >= 0 && // game is ongoing
+        lastCommunityUI.yourPlayerIndex === lastCommunityUI.move.turnIndexAfterMove; // it's my turn
+    if (!wasYourTurn) {
+      throw new Error("Called communityMove when it wasn't your turn: yourPlayerIndex=" + lastCommunityUI.yourPlayerIndex + " turnIndexAfterMove=" + lastCommunityUI.move.turnIndexAfterMove);
+    }
+    let oldProposal = lastCommunityUI.playerIdToProposal[lastCommunityUI.yourPlayerInfo.playerId]; 
+    if (oldProposal) {
+      throw new Error("Called communityMove when yourPlayerId already made a proposal, see: " + angular.toJson(oldProposal, true));  
+    }
+    if (isLocalTesting) {
+      // I'm using $timeout so it will be more like production (where we use postMessage),
+      // so the communityUI response is not sent immediately).
+      let nextCommunityUI = lastCommunityUI;
+      if (move) {
+        nextCommunityUI.turnIndexBeforeMove = nextCommunityUI.move.turnIndexAfterMove;
+        nextCommunityUI.stateBeforeMove = nextCommunityUI.move.stateAfterMove;
+        nextCommunityUI.playerIdToProposal = {};
+        nextCommunityUI.yourPlayerIndex = move.turnIndexAfterMove;
+        nextCommunityUI.move = move;
+      } else {
+        nextCommunityUI.playerIdToProposal[nextCommunityUI.yourPlayerInfo.playerId] = proposal;
+      }
+      nextCommunityUI.yourPlayerInfo.playerId = 'playerId' + Math.random();
+      $timeout(function () {
+        communityUI(nextCommunityUI);
+      }, 10);
+    } else {
+      messageService.sendMessage({communityMove: {proposal: proposal, move: move, lastCommunityUI: lastCommunityUI}});
+    }
+    lastCommunityUI = null;
+  }
 
   export function updateUI(params: IUpdateUI) {
     lastUpdateUI = angular.copy(params);
@@ -57,10 +138,12 @@ export module gameService {
     lastUpdateUI = null; // to make sure you don't call makeMove until you get the next updateUI.
   }
 
+  function getNumberOfPlayers() {
+    return stateService.randomFromTo(game.minNumberOfPlayers, game.maxNumberOfPlayers + 1);;
+  }
   function getPlayers(): IPlayerInfo[] {
     let playersInfo: IPlayerInfo[] = [];
-    let actualNumberOfPlayers =
-        stateService.randomFromTo(game.minNumberOfPlayers, game.maxNumberOfPlayers + 1);
+    let actualNumberOfPlayers = getNumberOfPlayers();
     for (let i = 0; i < actualNumberOfPlayers; i++) {
       let playerId =
         playMode === "onlyAIs" ||
@@ -85,11 +168,31 @@ export module gameService {
       if (w.game) {
         w.game.isHelpModalShown = true;
       }
-      stateService.setGame({updateUI: updateUI, isMoveOk: game.isMoveOk});
-      stateService.initNewMatch();
-      stateService.setPlayMode(playMode);
-      stateService.setPlayers(playersInfo);
-      stateService.sendUpdateUi();
+      if (isLocalTestCommunity) {
+        $timeout( ()=>communityUI({
+          yourPlayerIndex: 0,
+          yourPlayerInfo: {
+            avatarImageUrl: "",
+            displayName: "",
+            playerId: "playerId" + Math.random(),
+          },
+          playerIdToProposal: {},
+          numberOfPlayers: getNumberOfPlayers(),
+          stateBeforeMove: null,
+          turnIndexBeforeMove: 0,
+          move: {
+            endMatchScores: null,
+            turnIndexAfterMove: 0,
+            stateAfterMove: null, 
+          }
+        }), 200);
+      } else {
+        stateService.setGame({updateUI: updateUI, isMoveOk: game.isMoveOk});
+        stateService.initNewMatch();
+        stateService.setPlayMode(playMode);
+        stateService.setPlayers(playersInfo);
+        stateService.sendUpdateUi();
+      }
     } else {
       messageService.addMessageListener(function (message) {
         if (message.isMoveOk) {

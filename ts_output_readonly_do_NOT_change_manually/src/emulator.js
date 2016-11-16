@@ -43,6 +43,7 @@ var gamingPlatform;
                 updateUI: updateUI,
                 gotMessageFromPlatform: null,
                 getStateForOgImage: null,
+                communityUI: null,
             });
             window.addEventListener("message", function (event) {
                 var message = event.data;
