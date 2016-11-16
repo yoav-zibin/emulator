@@ -201,6 +201,8 @@ export module gameService {
             isMoveOkResult = {result: isMoveOkResult, isMoveOk: message.isMoveOk};
           }
           messageService.sendMessage({isMoveOkResult: isMoveOkResult});
+        } else if (message.communityUI) {
+          communityUI(message.communityUI);
         } else if (message.updateUI) {
           updateUI(message.updateUI);
         } else if (message.setLanguage) {

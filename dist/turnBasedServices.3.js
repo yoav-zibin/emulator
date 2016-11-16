@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Wed Nov 16 09:05:38 EST 2016";
+"use strict"; var emulatorServicesCompilationDate = "Wed Nov 16 17:43:17 EST 2016";
 
 ;
 var gamingPlatform;
@@ -650,6 +650,9 @@ var gamingPlatform;
                             isMoveOkResult = { result: isMoveOkResult, isMoveOk: message.isMoveOk };
                         }
                         gamingPlatform.messageService.sendMessage({ isMoveOkResult: isMoveOkResult });
+                    }
+                    else if (message.communityUI) {
+                        communityUI(message.communityUI);
                     }
                     else if (message.updateUI) {
                         updateUI(message.updateUI);

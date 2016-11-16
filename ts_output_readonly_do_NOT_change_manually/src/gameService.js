@@ -154,6 +154,9 @@ var gamingPlatform;
                         }
                         gamingPlatform.messageService.sendMessage({ isMoveOkResult: isMoveOkResult });
                     }
+                    else if (message.communityUI) {
+                        communityUI(message.communityUI);
+                    }
                     else if (message.updateUI) {
                         updateUI(message.updateUI);
                     }
