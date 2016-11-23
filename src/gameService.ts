@@ -58,6 +58,7 @@ export module gameService {
   let isLocalTestCommunity = location.search.indexOf("community") !== -1;
   export let playMode = location.search.indexOf("onlyAIs") !== -1 ? "onlyAIs"
       : location.search.indexOf("playAgainstTheComputer") !== -1 ? "playAgainstTheComputer"
+      : location.search.indexOf("multiplayer") !== -1 ? "multiplayer"
       : location.search.indexOf("?playMode=") === 0 ? location.search.substr("?playMode=".length)
       : "passAndPlay"; // Default play mode
   // We verify that you call makeMove at most once for every updateUI (and only when it's your turn)

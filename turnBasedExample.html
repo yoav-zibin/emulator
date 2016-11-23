@@ -19,7 +19,7 @@
       $rootScope.sendMessage = function () {
         gameService.makeMove(eval($rootScope.nextMove));
       };
-      $rootScope.playModes = ['passAndPlay', 'playAgainstTheComputer', 'onlyAIs', 'playWhite', 'playBlack', 'playViewer'];
+      $rootScope.playModes = ['passAndPlay', 'multiplayer', 'playAgainstTheComputer', 'community', 'onlyAIs', 'playWhite', 'playBlack', 'playViewer'];
       $rootScope.playMode = $rootScope.playModes[0];
       $rootScope.changePlayMode = function () {
         stateService.setPlayMode($rootScope.playMode);

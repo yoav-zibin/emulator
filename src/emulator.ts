@@ -1,7 +1,7 @@
 namespace gamingPlatform {
 
 export module emulator {
-  export let playModes = ['passAndPlay', 'playAgainstTheComputer'];
+  export let playModes = ['passAndPlay', 'multiplayer', 'playAgainstTheComputer', 'community'];
   export let playMode = playModes[0];
   export let url: string = "http://yoav-zibin.github.io/TicTacToe/index.html";
   export let minPlayersNum: number = 2;

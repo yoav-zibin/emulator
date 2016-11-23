@@ -303,6 +303,7 @@ export module stateService {
           playMode === "playBlack" ? 1 :
           playMode === "playViewer" ? -2 : // viewer is -2 (because -1 for turnIndexAfterMove means the game ended)
           playMode === "playAgainstTheComputer" || playMode === "onlyAIs" ||
+              playMode === "multiplayer" ||
               playMode === "passAndPlay" ? turnIndex :
           Number(playMode);
   }
@@ -359,7 +360,7 @@ export module stateService {
       numberOfPlayers: playersInfo.length,
       playersInfo : playersInfo,
       yourPlayerIndex : yourPlayerIndex,
-      playMode: playMode,
+      playMode: playMode === "multiplayer" ? yourPlayerIndex : playMode,
       moveNumber: moveNumber,
       randomSeed: randomSeed,
       endMatchScores: endMatchScores

@@ -226,6 +226,7 @@ var gamingPlatform;
                 playMode === "playBlack" ? 1 :
                     playMode === "playViewer" ? -2 :
                         playMode === "playAgainstTheComputer" || playMode === "onlyAIs" ||
+                            playMode === "multiplayer" ||
                             playMode === "passAndPlay" ? turnIndex :
                             Number(playMode);
         }
@@ -278,7 +279,7 @@ var gamingPlatform;
                 numberOfPlayers: playersInfo.length,
                 playersInfo: playersInfo,
                 yourPlayerIndex: yourPlayerIndex,
-                playMode: playMode,
+                playMode: playMode === "multiplayer" ? yourPlayerIndex : playMode,
                 moveNumber: moveNumber,
                 randomSeed: randomSeed,
                 endMatchScores: endMatchScores

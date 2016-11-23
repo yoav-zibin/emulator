@@ -2,7 +2,7 @@ var gamingPlatform;
 (function (gamingPlatform) {
     var emulator;
     (function (emulator) {
-        emulator.playModes = ['passAndPlay', 'playAgainstTheComputer'];
+        emulator.playModes = ['passAndPlay', 'multiplayer', 'playAgainstTheComputer', 'community'];
         emulator.playMode = emulator.playModes[0];
         emulator.url = "http://yoav-zibin.github.io/TicTacToe/index.html";
         emulator.minPlayersNum = 2;
