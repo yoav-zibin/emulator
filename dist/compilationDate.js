@@ -1,1 +1,1 @@
-"use strict"; var emulatorServicesCompilationDate = "Wed Nov 23 10:03:05 EST 2016";
+"use strict"; var emulatorServicesCompilationDate = "Fri Dec 16 10:56:07 EST 2016";

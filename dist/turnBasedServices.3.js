@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Wed Nov 23 10:03:05 EST 2016";
+"use strict"; var emulatorServicesCompilationDate = "Fri Dec 16 10:56:07 EST 2016";
 
 ;
 var gamingPlatform;
@@ -20,7 +20,7 @@ var gamingPlatform;
         var lastLogs = [];
         var startTime = getCurrentTime();
         function getCurrentTime() {
-            return window.performance ? window.performance.now() : new Date().getTime();
+            return new Date().getTime();
         }
         log_1.getCurrentTime = getCurrentTime;
         function getLogEntry(args, logLevel, consoleFunc) {
@@ -30,7 +30,7 @@ var gamingPlatform;
             // https://developer.mozilla.org/en-US/docs/Web/API/Console/log
             // However, the output looks better on chrome if I pass a string as the first argument,
             // and I hope then it doesn't break anything anywhere else...
-            var secondsFromStart = Math.round(millisecondsFromStart) / 1000;
+            var secondsFromStart = millisecondsFromStart / 1000;
             var consoleArgs = ['', secondsFromStart, ' seconds:'].concat(args);
             consoleFunc.apply(console, consoleArgs);
             return { millisecondsFromStart: millisecondsFromStart, args: args, logLevel: logLevel };

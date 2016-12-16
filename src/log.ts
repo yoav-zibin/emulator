@@ -19,7 +19,7 @@ export module log {
   let startTime: number = getCurrentTime();
 
   export function getCurrentTime(): number {
-    return window.performance ? window.performance.now() : new Date().getTime();
+    return new Date().getTime();
   }
 
   function getLogEntry(args: any[], logLevel: string, consoleFunc: any): ILogEntry {
@@ -29,7 +29,7 @@ export module log {
     // https://developer.mozilla.org/en-US/docs/Web/API/Console/log
     // However, the output looks better on chrome if I pass a string as the first argument,
     // and I hope then it doesn't break anything anywhere else...
-    let secondsFromStart = Math.round(millisecondsFromStart)/1000;
+    let secondsFromStart = millisecondsFromStart/1000;
     let consoleArgs = ['', secondsFromStart, ' seconds:'].concat(args);
     consoleFunc.apply(console, consoleArgs);
     return {millisecondsFromStart: millisecondsFromStart, args: args, logLevel: logLevel};
