@@ -69,5 +69,9 @@ export module log {
   export function log(... args: any[]):void {
     storeLog(args, ILogLevel.LOG, console.log);
   }
+
+  window.addEventListener("error", function (e: any) {
+    error("Had an error! Message=", e.error ? e.error.message : '', " stacktrace=", e.error ? e.error.stack : '');
+  });
 }
 }
