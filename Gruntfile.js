@@ -2,8 +2,8 @@ module.exports = function(grunt) {
 
   'use strict';
 
-  var clonedFiles = ["stateService", "log", "angular-translate"];
-  // cmp src/stateService.ts ../multiplayer-games-web/ts/stateService.ts && ...
+  var clonedFiles = ["log", "angular-translate"];
+  // cmp src/log.ts ../multiplayer-games-web/ts/log.ts && ...
   var compareCommand = clonedFiles.map(function (file) { return file + ".ts"; })
     .map(function (file) { return "cmp ../emulator/src/" + file + " ../multiplayer-games-web/ts/" + file; })
     .join(" && ");
@@ -28,29 +28,30 @@ module.exports = function(grunt) {
         src: [
           'dist/compilationDate.js',
           'ts_output_readonly_do_NOT_change_manually/src/log.js',
-          'ts_output_readonly_do_NOT_change_manually/src/stateService.js',
           'ts_output_readonly_do_NOT_change_manually/src/messageService.js',
           'ts_output_readonly_do_NOT_change_manually/src/gameService.js',
-          'ts_output_readonly_do_NOT_change_manually/src/moveService.js',
-          'ts_output_readonly_do_NOT_change_manually/src/resizeMapArea.js',
           'ts_output_readonly_do_NOT_change_manually/src/alphaBetaService.js',
           'ts_output_readonly_do_NOT_change_manually/src/resizeGameAreaService.js',
           'ts_output_readonly_do_NOT_change_manually/src/angular-translate.js',
           'ts_output_readonly_do_NOT_change_manually/src/dragAndDropService.js',
           'ts_output_readonly_do_NOT_change_manually/src/angularExceptionHandler.js',
         ],
-        dest: 'dist/turnBasedServices.3.js',
+        dest: 'dist/turnBasedServices.4.js',
       },
     },
-    uglify: {
-      options: {
-        sourceMap: true,
+    copy: {
+      friendlygo: {
+        src: 'dist/turnBasedServices.4.js',
+        dest: '../friendlygo/lib/turnBasedServices.4.js',
       },
-      my_target: {
-        files: {
-          'dist/turnBasedServices.3.min.js': ['dist/turnBasedServices.3.js'],
-        }
-      }
+      tictactoe: {
+        src: 'dist/turnBasedServices.4.js',
+        dest: '../tictactoe/lib/turnBasedServices.4.js',
+      },
+      friendlygo: {
+        src: 'dist/turnBasedServices.4.js',
+        dest: '../friendlygo/lib/turnBasedServices.4.js',
+      },
     },
     shell: {
       compareStateService: {
@@ -70,6 +71,6 @@ module.exports = function(grunt) {
     'shell:compareStateService',
     'shell:compilationDate',
     'concat',
-    'uglify'
+    "copy:copyTurnBasedServices",
   ]);
 };

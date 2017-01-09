@@ -3,9 +3,6 @@ var gamingPlatform;
     // This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
     function createTranslateService() {
         var language;
-        // codeToL10N is deprecated (I keep it for older games that used the platform for i18n)
-        // New games should use setTranslations (which sets idToLanguageToL10n).
-        var codeToL10N = null;
         var idToLanguageToL10n = null;
         function translate(translationId, interpolateParams, languageCode) {
             if (!languageCode)
@@ -16,9 +13,6 @@ var gamingPlatform;
                 translation = languageToL10n[languageCode];
                 if (!translation)
                     translation = languageToL10n['en'];
-            }
-            else if (codeToL10N) {
-                translation = codeToL10N[translationId];
             }
             if (!translation) {
                 translation = "[" + translationId + "]";
@@ -36,9 +30,8 @@ var gamingPlatform;
         translateService.setTranslations = function (_idToLanguageToL10n) {
             idToLanguageToL10n = _idToLanguageToL10n;
         };
-        translateService.setLanguage = function (_language, _codeToL10N) {
+        translateService.setLanguage = function (_language) {
             language = _language;
-            codeToL10N = _codeToL10N;
         };
         return translateService;
     }

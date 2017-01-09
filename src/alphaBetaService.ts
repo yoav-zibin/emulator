@@ -219,4 +219,6 @@ export module alphaBetaService {
   }
 }
 
+let typeCheck_alphaBetaService: IAlphaBetaService = alphaBetaService;
+
 }

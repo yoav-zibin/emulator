@@ -1,151 +1,349 @@
 namespace gamingPlatform {
 
-export interface StringDictionary {
-  [index: string]: string;
+// IState&IProposalData should be defined by the game, e.g., TicTacToe defines it as:
+// interface IState { board: Board; delta: BoardDelta; }
+type IState = any;
+type IProposalData = any;
+
+export interface IMove {
+  // When the match ends: turnIndex  is-1 and endMatchScores is an array of scores.
+  // When the match is ongoing: turnIndex is a valid index and endMatchScores to null.
+  endMatchScores: number[];
+  turnIndex: number;
+  // The state after making the move
+  state: IState;
 }
-export interface IPlayerInfo {
+interface IPlayerInfo {
   avatarImageUrl: string;
   displayName: string;
   playerId: string;
 }
-
-export interface ICommonUI extends IStateTransition {
+interface ICommonUI extends IMove {
+  numberOfPlayers: number;
   // -2 is a viewer; otherwise it's the player index (0/1).
   yourPlayerIndex: number;
 }
+
 // Proposals are used in community games: each player may submit a proposal, and the game will eventual selected
 // the winning proposal and convert it to a move.
-export interface ICommunityUI extends ICommonUI {
+interface ICommunityUI extends ICommonUI {
   // You need to know your playerId to make sure you only make one proposal,
   // i.e., if (playerIdToProposal[yourPlayerId]) then you can't make another proposal.
-  yourPlayerInfo: IPlayerInfo;
+  yourPlayerInfo: IPlayerInfo; 
   // Mapping playerId to his proposal.
   playerIdToProposal: IProposals; 
 }
-export interface IProposal {
+interface IProposal {
   playerInfo: IPlayerInfo; // the player making the proposal.
   chatDescription: string; // string representation of the proposal that will be shown in the community game chat.
-  data: any; // IProposalData must be defined by the game.
+  data: IProposalData; // IProposalData must be defined by the game.
 }
-export interface IProposals {
+interface IProposals {
   [playerId: string]: IProposal;
 }
-export interface NewMove {
-  endMatchScores?: number[];
-  turnIndexAfterMove?: number;
-  stateAfterMove: any;
+declare type PlayMode = string | number; // 'passAndPlay', 'playAgainstTheComputer', or a number (0/1).
+interface IUpdateUI extends ICommonUI {
+  playersInfo: IPlayerInfo[];
+  playMode: PlayMode; 
 }
-export interface IStateTransition {
-  turnIndexBeforeMove : number;
-  stateBeforeMove: any;
-  numberOfPlayers: number;
-  move: NewMove;
-}
-
-export interface IGame {
-  isMoveOk(move: IIsMoveOk): boolean;
+interface IGame {
   updateUI(update: IUpdateUI): void;
   communityUI(communityUI: ICommunityUI): void;
-  gotMessageFromPlatform(message: any): void;
   getStateForOgImage(): string;
-  minNumberOfPlayers: number;
-  maxNumberOfPlayers: number;
+}
+interface IGameService {
+  setGame(game: IGame): void;
+  makeMove(move: IMove): void;
+
+  // For community games. move may be null.
+  // I recommend that a proposal will be selected when it's chosen by 3 players.
+  // When a proposal is selected, that proposal will be converted to a move
+  // (and then move will be non-null).
+  // Do not allow making a community move if a player already submitted his proposal, i.e.,
+  // you can submit at most one proposal.
+  communityMove(proposal: IProposal, move: IMove): void;
+}
+
+export interface IAlphaBetaLimits {
+  millisecondsLimit? : number;
+  maxDepth? : number;
+}
+export interface IAlphaBetaService {
+  alphaBetaDecision(
+    move: IMove,
+    playerIndex: number,
+    getNextStates: (state: IMove, playerIndex: number) => IMove[],
+    getStateScoreForIndex0: (move: IMove, playerIndex: number) => number,
+    // If you want to see debugging output in the console, then surf to index.html?debug
+    getDebugStateToString: (move: IMove) => string,
+    alphaBetaLimits: IAlphaBetaLimits): IMove;
+}
+
+export interface StringDictionary {
+  [index: string]: string;
+}
+export interface ITranslateService {
+  (translationId: string, interpolateParams?: StringDictionary): string;
+  getLanguage(): string;
+  setTranslations(idToLanguageToL10n: StringToStringDictionary): void;
+  setLanguage(language: string): void;
+}
+
+export interface IResizeGameAreaService {
+  setWidthToHeight(widthToHeightRatio: number,
+    dimensionsChanged?: (gameAreaWidth: number, gameAreaHeight: number)=>void): void;
+}
+
+export interface ILog {
+  info(... args: any[]):void;
+  debug(... args: any[]):void;
+  warn(... args: any[]):void;
+  error(... args: any[]):void;
+  log(... args: any[]):void;
+  alwaysLog(... args: any[]):void;
+}
+
+export interface IDragAndDropService {
+  addDragListener(touchElementId: string,
+      handleDragEvent: (type: string, clientX: number, clientY: number, event: TouchEvent|MouseEvent) => void): void;
+}
+
+interface IMessageToGame {
+  communityUI?: ICommunityUI;
+  updateUI?: IUpdateUI;
+  setLanguage?: {language: string};
+  getGameLogs?: boolean;
+  getStateForOgImage?: boolean;
+}
+interface IMessageToPlatform {
+  gameReady?: string;
+  move?: IMove;
+  proposal?: IProposal;
+  lastMessage?: IMessageToGame;
+  getGameLogsResult?: any;
+  sendStateForOgImage?: string;
+}
+
+interface SavedState {
+  name: string;
+  history: IMove[];
+  playerIdToProposal: IProposals;
+}
+interface Language {
+  name: string;
+  code: string;
+}
+interface StringIndexer {
+   [name: string]: string;
 }
 
 export module gameService {
-  let isLocalTesting = window.parent === window ||
-      window.location.search === "?test";
-  let isLocalTestCommunity = location.search.indexOf("community") !== -1;
-  export let playMode = location.search.indexOf("onlyAIs") !== -1 ? "onlyAIs"
-      : location.search.indexOf("playAgainstTheComputer") !== -1 ? "playAgainstTheComputer"
-      : location.search.indexOf("multiplayer") !== -1 ? "multiplayer"
-      : location.search.indexOf("?playMode=") === 0 ? location.search.substr("?playMode=".length)
-      : "passAndPlay"; // Default play mode
-  // We verify that you call makeMove at most once for every updateUI (and only when it's your turn)
-  let lastUpdateUI: IUpdateUI = null;
+  let isLocalTesting = window.parent === window;
+
+  // UI for local testing
+  const playersInCommunity = 5;
+  export let playModes = ["passAndPlay", "playAgainstTheComputer", "onlyAIs", "multiplayer", "community"];
+  export let playMode = "passAndPlay";
+  export let supportedLanguages: Language[] = 
+      [{name:"English", code: "en"}, // English
+      {name:"עברית", code: "iw"}, // Hebrew
+      {name:"português", code: "pt"}, // Portuguese
+      {name:"中文", code: "zh"}, // Chinese
+      {name:"ελληνικά", code: "el"}, // Greek
+      {name:"French", code: "fr"}, // French
+      {name:"हिन्दी", code: "hi"}, // Hindi
+      {name:"español", code: "es"}, // Spanish
+      ];
+  export let currentLanguage: Language = supportedLanguages[0];
+  export let languageCode = "en";
+  export let ogImageMaker = "https://dotted-guru-139914.appspot.com/";
+  export let numberOfPlayers = 2;
+  export let iframeRows = 1;
+  export let iframeCols = 1;
+  export let locationTrustedStr: any = null;
   let game: IGame;
+  let playersInfo: IPlayerInfo[];
+  export let history: IMove[] = [];
+  export let historyIndex = 0;
+  let playerIdToProposal: IProposals = null;
+  export let savedStates: SavedState[] = [];
+  export let selectedSavedStateToLoad: SavedState = null;
 
+  // test ogImage, getLogs, etc
+  let testingHtml = `
+    <div style="position:absolute; width:100%; height:10%; overflow: scroll;">
+      <select
+        ng-options="playMode for playMode in gameService.playModes track by playMode"
+        ng-model="gameService.playMode"
+        ng-change="gameService.reloadIframes()"></select>
+      <button ng-click="gameService.startNewMatch()">Start new match</button>
+      <select ng-change="gameService.historyIndexChanged()" ng-model="gameService.historyIndex" ng-options="index for index in gameService.getIntegersTill(gameService.history.length)">
+        <option value="">-- current move --</option>
+      </select>
+      <select ng-change="gameService.currentLanguageChanged()" ng-model="gameService.currentLanguage" ng-options="language.name for language in gameService.supportedLanguages">
+        <option value="">-- current game language --</option>
+      </select>
+      <button ng-click="gameService.saveState()">Save match</button>
+      <select ng-change="gameService.loadMatch()" ng-model="gameService.selectedSavedStateToLoad" ng-options="savedState.name for savedState in gameService.savedStates">
+        <option value="">-- load match --</option>
+      </select>
+      <input ng-model="gameService.ogImageMaker">
+      <button ng-click="gameService.getOgImageState()">Open AppEngine image</button>
+    </div>
+    <div style="position:absolute; width:100%; height:90%; top: 10%;">
+      <div ng-repeat="row in gameService.getIntegersTill(gameService.iframeRows)"
+          style="position:absolute; top:{{row * 100 / gameService.iframeRows}}%; left:0; width:100%; height:{{100 / gameService.iframeRows}}%;">
+        <div ng-repeat="col in gameService.getIntegersTill(gameService.iframeCols)"
+            style="position:absolute; top:0; left:{{col * 100 / gameService.iframeCols}}%; width:{{100 / gameService.iframeCols}}%; height:100%;">
+          <iframe id="game_iframe_{{col + row*gameService.iframeCols}}"
+            ng-src="{{gameService.locationTrustedStr}}"
+            seamless="seamless" style="position:absolute; width:100%; height:100%;">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  `;
 
-  let lastCommunityUI: ICommunityUI = null;
-  export function communityUI(communityUI: ICommunityUI) {
-    lastCommunityUI = angular.copy(communityUI);
-    game.communityUI(communityUI);
+  let cacheIntegersTill: number[][] = [];
+  export function getIntegersTill(number: any): number[] {
+    if (cacheIntegersTill[number]) return cacheIntegersTill[number]; 
+    let res: number[] = [];
+    for (let i = 0; i < number; i++) {
+      res.push(i);
+    }
+    cacheIntegersTill[number] = res;
+    return res;
   }
-  export function communityMove(proposal: IProposal, move: NewMove): void {
+
+  export function clearState() {
+    let state:IMove = {
+      turnIndex: 0,
+      endMatchScores: null,
+      state: null,
+    };
+    history = [state];
+    historyIndex = 0;
+    playerIdToProposal = {};
+  }
+  export function historyIndexChanged() {
+    // angular makes historyIndex a string!
+    historyIndex = Number(historyIndex);
+    playerIdToProposal = {};
+    reloadIframes();
+  }
+  export function startNewMatch() {
+    clearState();
+    reloadIframes();
+  }
+
+  function sendSetLanguage(id: number) {
+    passMessage({setLanguage: {language: currentLanguage.code}}, id);
+  }
+  export function currentLanguageChanged() {
+    for (let r = 0; r < iframeRows; r++) {
+      for (let c = 0; c < iframeCols; c++) {
+        let id = c + r*iframeCols;
+        sendSetLanguage(id);
+      }
+    }
+  }
+
+  export function saveState() {
+    let defaultStateName = "Saved state " + savedStates.length;
+    var stateName = prompt("Please enter the state name", defaultStateName);
+    if (!stateName) stateName = defaultStateName;
+    savedStates.push({name: stateName, playerIdToProposal: playerIdToProposal, history: history});
+    localStorage.setItem("savedStates", angular.toJson(savedStates, true));
+  }
+  export function loadMatch() {
+    if (!selectedSavedStateToLoad) return;
+    history = angular.copy(selectedSavedStateToLoad.history);
+    historyIndex = history.length - 1;
+    playerIdToProposal = angular.copy(selectedSavedStateToLoad.playerIdToProposal);
+    selectedSavedStateToLoad = null;
+    reloadIframes();
+  }
+  function loadSavedStates() {
+    let savedStatesJson = localStorage.getItem("savedStates");
+    if (savedStatesJson) savedStates = angular.fromJson(savedStatesJson);
+  }
+
+  export function getOgImageState() {
+    passMessage({getStateForOgImage: true}, 0);
+  }
+
+  export function reloadIframes() {
+    log.log("reloadIframes: playMode=", playMode);
+    setPlayersInfo();
+    // Setting to 0 to force the game to send gameReady and then it will get the correct changeUI.
+    iframeRows = 0;
+    iframeCols = 0;
+    $timeout(()=>{
+      if (playMode == "community") {
+        iframeRows = numberOfPlayers;
+        iframeCols = playersInCommunity;
+      } else if (playMode == "multiplayer") {
+        iframeRows = 1;
+        iframeCols = numberOfPlayers + 1;
+      } else {
+        iframeRows = 1;
+        iframeCols = 1;
+      }
+    });
+  }
+
+  export function checkMove(move: IMove): void {
+    if (!move) {
+      throw new Error("Game called makeMove with a null move=" + move);
+    }
+    // Do some checks: turnIndexAfterMove is -1 iff endMatchScores is not null.
+    let noTurnIndexAfterMove = move.turnIndex === -1;
+    let hasEndMatchScores = !!move.endMatchScores;
+    if (noTurnIndexAfterMove && !hasEndMatchScores) {
+      throw new Error("Illegal move: turnIndexAfterMove was -1 but you forgot to set endMatchScores. Move=" +
+          angular.toJson(move, true));
+    }
+    if (hasEndMatchScores && !noTurnIndexAfterMove) {
+      throw new Error("Illegal move: you set endMatchScores but you didn't set turnIndexAfterMove to -1. Move=" +
+          angular.toJson(move, true));
+    }
+  }
+  function checkMakeMove(lastUpdateUI: IUpdateUI, move: IMove): void {
+    if (!lastUpdateUI) {
+      throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
+    }
+    let wasYourTurn = lastUpdateUI.turnIndex >= 0 && // game is ongoing
+        lastUpdateUI.yourPlayerIndex === lastUpdateUI.turnIndex; // it's my turn
+    if (!wasYourTurn) {
+      throw new Error("Game called makeMove when it wasn't your turn: yourPlayerIndex=" + lastUpdateUI.yourPlayerIndex + " turnIndexAfterMove=" + lastUpdateUI.turnIndex);
+    }
+    checkMove(move);
+  }
+  function checkCommunityMove(lastCommunityUI: ICommunityUI, proposal: IProposal, move: IMove): void {
     if (!lastCommunityUI) {
       throw new Error("Don't call communityMove before getting communityUI.");
     }
     if (move) {
-      moveService.checkMove(move);
+      checkMove(move);
     }
-    let wasYourTurn = lastCommunityUI.move.turnIndexAfterMove >= 0 && // game is ongoing
-        lastCommunityUI.yourPlayerIndex === lastCommunityUI.move.turnIndexAfterMove; // it's my turn
+    let wasYourTurn = lastCommunityUI.turnIndex >= 0 && // game is ongoing
+        lastCommunityUI.yourPlayerIndex === lastCommunityUI.turnIndex; // it's my turn
     if (!wasYourTurn) {
-      throw new Error("Called communityMove when it wasn't your turn: yourPlayerIndex=" + lastCommunityUI.yourPlayerIndex + " turnIndexAfterMove=" + lastCommunityUI.move.turnIndexAfterMove);
+      throw new Error("Called communityMove when it wasn't your turn: yourPlayerIndex=" + lastCommunityUI.yourPlayerIndex + " turnIndexAfterMove=" + lastCommunityUI.turnIndex);
     }
     let oldProposal = lastCommunityUI.playerIdToProposal[lastCommunityUI.yourPlayerInfo.playerId]; 
     if (oldProposal) {
       throw new Error("Called communityMove when yourPlayerId already made a proposal, see: " + angular.toJson(oldProposal, true));  
     }
-    if (isLocalTesting) {
-      // I'm using $timeout so it will be more like production (where we use postMessage),
-      // so the communityUI response is not sent immediately).
-      let nextCommunityUI = lastCommunityUI;
-      if (move) {
-        nextCommunityUI.turnIndexBeforeMove = nextCommunityUI.move.turnIndexAfterMove;
-        nextCommunityUI.stateBeforeMove = nextCommunityUI.move.stateAfterMove;
-        nextCommunityUI.playerIdToProposal = {};
-        nextCommunityUI.yourPlayerIndex = move.turnIndexAfterMove;
-        nextCommunityUI.move = move;
-      } else {
-        nextCommunityUI.playerIdToProposal[nextCommunityUI.yourPlayerInfo.playerId] = proposal;
-      }
-      nextCommunityUI.yourPlayerInfo.playerId = 'playerId' + Math.random();
-      $timeout(function () {
-        communityUI(nextCommunityUI);
-      }, 10);
-    } else {
-      messageService.sendMessage({communityMove: {proposal: proposal, move: move, lastCommunityUI: lastCommunityUI}});
-    }
-    lastCommunityUI = null;
   }
 
-  export function updateUI(params: IUpdateUI) {
-    lastUpdateUI = angular.copy(params);
-    game.updateUI(params);
+  function sendMessage(msg: IMessageToPlatform) {
+    messageService.sendMessage(msg);
   }
 
-  export function makeMove(move: IMove): void {
-    if (!lastUpdateUI) {
-      throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
-    }
-    let wasYourTurn = lastUpdateUI.turnIndexAfterMove >= 0 && // game is ongoing
-        lastUpdateUI.yourPlayerIndex === lastUpdateUI.turnIndexAfterMove; // it's my turn
-    if (!wasYourTurn) {
-      throw new Error("Game called makeMove when it wasn't your turn: yourPlayerIndex=" + lastUpdateUI.yourPlayerIndex + " turnIndexAfterMove=" + lastUpdateUI.turnIndexAfterMove);
-    }
-    if (!move || !move.length) {
-      throw new Error("Game called makeMove with an empty move=" + move);
-    }
-    if (isLocalTesting) {
-      // I'm using $timeout so it will be more like production (where we use postMessage),
-      // so the updateUI response is not sent immediately).
-      $timeout(function () {
-        stateService.makeMove(move);
-      }, 10);
-    } else {
-      messageService.sendMessage({makeMove: move, lastUpdateUI: lastUpdateUI});
-    }
-    lastUpdateUI = null; // to make sure you don't call makeMove until you get the next updateUI.
-  }
-
-  function getNumberOfPlayers() {
-    return stateService.randomFromTo(game.minNumberOfPlayers, game.maxNumberOfPlayers + 1);;
-  }
-  function getPlayers(): IPlayerInfo[] {
-    let playersInfo: IPlayerInfo[] = [];
-    let actualNumberOfPlayers = getNumberOfPlayers();
-    for (let i = 0; i < actualNumberOfPlayers; i++) {
+  function setPlayersInfo() {
+    playersInfo = [];
+    for (let i = 0; i < numberOfPlayers; i++) {
       let playerId =
         playMode === "onlyAIs" ||
           i !== 0 && playMode === "playAgainstTheComputer" ?
@@ -153,109 +351,244 @@ export module gameService {
           "" + (i + 42);
       playersInfo.push({playerId : playerId, avatarImageUrl: null, displayName: null});
     }
-    return playersInfo;
+  }
+
+  function passMessage(msg: IMessageToGame, toIndex: number): void {
+    let iframe = <HTMLIFrameElement> window.document.getElementById("game_iframe_" + toIndex);
+    iframe.contentWindow.postMessage(msg, "*");
+  }
+  function getIndexOfSource(src: Window) {
+    let i = 0;
+    while (true) {
+      let iframe = <HTMLIFrameElement> window.document.getElementById("game_iframe_" + i);
+      if (!iframe) {
+        console.error("Can't find src=", src);
+        return -1;
+      }
+      if (iframe.contentWindow === src) return i;
+      i++;
+    }
+  }
+
+  function overrideInnerHtml() {
+    log.info("Overriding body's html");
+    locationTrustedStr = $sce.trustAsResourceUrl(location.toString());
+    let el = angular.element(testingHtml);
+    window.document.body.innerHTML = '';
+    angular.element(window.document.body).append($compile(el)($rootScope));
+    window.addEventListener("message", (event)=>{
+      $rootScope.$apply(()=>gotMessageFromGame(event));
+    });
+  }
+  function getState():IMove {
+    return history[historyIndex];
+  }
+  function getPlayerIndex(id: number): number {
+    if (playMode == "community") {
+      // id = col + row*gameService.iframeCols;
+      // iframeCols = playersInCommunity
+      return Math.floor(id / iframeCols);
+    } 
+    if (playMode == "multiplayer") {
+      return id == numberOfPlayers ? -2 : id; // -2 is viewer
+    } 
+    return getState().turnIndex;
+  }
+  function getChangeUI(id: number):IMessageToGame {
+    let index = getPlayerIndex(id);
+    
+    let state = getState();
+    if (playMode == "community") {
+      let communityUI: ICommunityUI = {
+        yourPlayerIndex: index,
+        yourPlayerInfo: {
+          avatarImageUrl: "",
+          displayName: "",
+          playerId: "playerId" + id,
+        },
+        playerIdToProposal: playerIdToProposal,
+        numberOfPlayers: numberOfPlayers,
+        state: state.state,
+        turnIndex: state.turnIndex,
+        endMatchScores: state.endMatchScores,
+      };
+      return {communityUI: communityUI};
+    }
+    let updateUI: IUpdateUI = {
+      yourPlayerIndex: index,
+      playersInfo: playersInfo,
+      numberOfPlayers: numberOfPlayers,
+      state: state.state,
+      turnIndex: state.turnIndex,
+      endMatchScores: state.endMatchScores,
+      playMode: playMode == "multiplayer" ? index : playMode,
+    };
+    return {updateUI: updateUI};
+  }
+
+  function sendChangeUI(id: number) {
+    passMessage(getChangeUI(id), id);
+  }
+
+  function getQueryString(params: StringIndexer): string {
+    let res: string[] = [];
+    for (let key in params) {
+      let value = params[key];
+      res.push(encodeURIComponent(key) + "=" + encodeURIComponent(value));
+    }
+    return res.join("&");
+  }
+  function getImageMakerUrl(stateStr: string) {
+    let params: StringIndexer = {};
+    params["fbId0"] = "10153589934097337";
+    params["fbId1"] = "10153693068502449";
+    let state = getState();
+    if (state.endMatchScores) {
+      params["winner"] = state.endMatchScores[0] > state.endMatchScores[1] ? '0' : '1';;
+    }
+    params["myIndex"] = '0';
+    params["state"] = stateStr;
+    return ogImageMaker + "?" + getQueryString(params);
+  }
+  function gotMessageFromGame(event: MessageEvent) {
+    let source = event.source;
+    let id = getIndexOfSource(source);
+    if (id == -1) return;
+    let index = getPlayerIndex(id);
+    let message: IMessageToPlatform = event.data;
+    log.info("Platform got message", message);
+    if (message.gameReady) {
+      sendSetLanguage(id);
+      sendChangeUI(id);
+    } else if (message.sendStateForOgImage) {
+      let imageMakerUrl = getImageMakerUrl(message.sendStateForOgImage);
+      log.info(imageMakerUrl);
+      window.open(imageMakerUrl, "_blank");
+    } else {
+      // Check last message
+      let lastMessage: IMessageToGame = message.lastMessage;
+      if (!angular.equals(lastMessage, getChangeUI(id))) {
+        console.warn("Ignoring message because message.lastMessage is wrong! This can happen if you play and immediately changed something like playMode. lastMessage=", lastMessage, " expected lastMessage=", getChangeUI(id));
+        return;
+      }
+      // Check move&prposal
+      let move: IMove = message.move;
+      let proposal: IProposal = message.proposal;
+      if (lastMessage.communityUI) {
+        checkCommunityMove(lastMessage.communityUI, proposal, move);
+      } else {
+        checkMakeMove(lastMessage.updateUI, move);
+      }
+      if (index !== getState().turnIndex) {
+        throw new Error("Not your turn! yourPlayerIndex=" + index + " and the turn is of playerIndex=" + getState().turnIndex);
+      }
+      // Update state&proposals
+      if (historyIndex != history.length - 1) {
+        // cut the future
+        history.splice(historyIndex+1);
+        playerIdToProposal = {};
+      }
+      if (historyIndex != history.length - 1) throw new Error("Internal err! historyIndex=" + historyIndex + " history.length=" + history.length);
+
+      if (move) {
+        history.push(move);
+        historyIndex++;
+        playerIdToProposal = {};
+      } else {
+        playerIdToProposal['playerId' + id] = proposal;
+      }
+      setTimeout(()=>{
+        for (let r = 0; r < iframeRows; r++) {
+          for (let c = 0; c < iframeCols; c++) {
+            let id = c + r*iframeCols;
+            sendChangeUI(id);
+          }
+        }
+      }, 100);
+    }
+  }
+
+  
+  let lastChangeUiMessage: IMessageToGame = null;
+  export function communityMove(proposal: IProposal, move: IMove): void {
+    checkCommunityMove(lastChangeUiMessage.communityUI, proposal, move);
+    // I'm sending the move even in local testing to make sure it's simple json (or postMessage will fail).
+    sendMessage({proposal: proposal, move: move, lastMessage: lastChangeUiMessage});
+    lastChangeUiMessage = null;
+  }
+
+  export function makeMove(move: IMove): void {
+    checkMakeMove(lastChangeUiMessage.updateUI, move);
+    // I'm sending the move even in local testing to make sure it's simple json (or postMessage will fail).
+    sendMessage({move: move, lastMessage: lastChangeUiMessage}); 
+    lastChangeUiMessage = null; // to make sure you don't call makeMove until you get the next updateUI.
+  }
+  export function callUpdateUI(updateUI: IUpdateUI): void {
+    lastChangeUiMessage = angular.copy({updateUI: updateUI});
+    game.updateUI(updateUI);
+  }
+  export function callCommunityUI(communityUI: ICommunityUI): void {
+    lastChangeUiMessage = angular.copy({communityUI: communityUI});
+    game.communityUI(communityUI);
+  }
+
+  function gotMessageFromPlatform(message: IMessageToGame): void {
+    if (message.communityUI) {
+      callCommunityUI(message.communityUI);
+
+    } else if (message.updateUI) {
+      callUpdateUI(message.updateUI);
+
+    } else if (message.setLanguage) {
+      translate.setLanguage(message.setLanguage.language);
+      
+    } else if (message.getGameLogs) {
+      // To make sure students don't get:
+      // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
+      // I serialize to string and back.
+      let plainPojoLogs = angular.fromJson(angular.toJson(log.getLogs()));
+      setTimeout(function () {
+        sendMessage({getGameLogsResult: plainPojoLogs});
+      });
+      
+    } else if (message.getStateForOgImage) {
+      sendMessage({sendStateForOgImage : game.getStateForOgImage()});
+    }
   }
 
   let didCallSetGame = false;
-  let w: any = window;
   export function setGame(_game: IGame) {
     game = _game;
+    setPlayersInfo();
+    loadSavedStates();
+    clearState();
     if (didCallSetGame) {
       throw new Error("You can call setGame exactly once!");
     }
     didCallSetGame = true;
-    let playersInfo = getPlayers();
+    log.info("Called setGame");
     if (isLocalTesting) {
-      if (w.game) {
-        w.game.isHelpModalShown = true;
-      }
-      if (isLocalTestCommunity) {
-        $timeout( ()=>communityUI({
-          yourPlayerIndex: 0,
-          yourPlayerInfo: {
-            avatarImageUrl: "",
-            displayName: "",
-            playerId: "playerId" + Math.random(),
-          },
-          playerIdToProposal: {},
-          numberOfPlayers: getNumberOfPlayers(),
-          stateBeforeMove: null,
-          turnIndexBeforeMove: 0,
-          move: {
-            endMatchScores: null,
-            turnIndexAfterMove: 0,
-            stateAfterMove: null, 
-          }
-        }), 200);
-      } else {
-        stateService.setGame({updateUI: updateUI, isMoveOk: game.isMoveOk});
-        stateService.initNewMatch();
-        stateService.setPlayMode(playMode);
-        stateService.setPlayers(playersInfo);
-        stateService.sendUpdateUi();
-      }
+      $rootScope['gameService'] = gameService;
+      $timeout(overrideInnerHtml, 50); // waiting a bit because the game might access the html (like boardArea) to listen to TouchEvents
     } else {
-      messageService.addMessageListener(function (message) {
-        if (message.isMoveOk) {
-          let isMoveOkResult: any = game.isMoveOk(message.isMoveOk);
-          if (isMoveOkResult !== true) {
-            isMoveOkResult = {result: isMoveOkResult, isMoveOk: message.isMoveOk};
-          }
-          messageService.sendMessage({isMoveOkResult: isMoveOkResult});
-        } else if (message.communityUI) {
-          communityUI(message.communityUI);
-        } else if (message.updateUI) {
-          updateUI(message.updateUI);
-        } else if (message.setLanguage) {
-          translate.setLanguage(message.setLanguage.language, message.setLanguage.codeToL10N);
-          // we need to ack this message to the platform so the platform will make the game-iframe visible
-          // (The platform waited until the game got the l10n.)
-          // Using setTimeout to give time for angular to refresh it's UI (the default was in English)
-          setTimeout(function () {
-            messageService.sendMessage({setLanguageResult: true});
-          })
-          
-        } else if (message.getGameLogs) {
-          // To make sure students don't get:
-          // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
-          // I serialize to string and back.
-          let plainPojoLogs = angular.fromJson(angular.toJson(log.getLogs()));
-          setTimeout(function () {
-            messageService.sendMessage({getGameLogsResult: plainPojoLogs});
-          });
-          
-        } else if (message.getStateForOgImage) {
-          messageService.sendMessage({sendStateForOgImage : game.getStateForOgImage()});
-          
-        } else if (message.passMessageToGame) {
-          let msgFromPlatform = message.passMessageToGame;
-          if (msgFromPlatform.SHOW_GAME_INSTRUCTIONS && w.game) {
-            w.game.isHelpModalShown = !w.game.isHelpModalShown;
-          }
-          if (game.gotMessageFromPlatform) game.gotMessageFromPlatform(msgFromPlatform);
-        }
-      });
-      // I wanted to delay sending gameReady until window.innerWidth and height are not 0,
-      // but they will stay 0 (on ios) until we send gameReady (because platform will hide the iframe)
-      messageService.sendMessage({gameReady : {}});
+      messageService.addMessageListener(gotMessageFromPlatform);
     }
-
-    // Show an empty board to a viewer (so you can't perform moves).
-    log.info("Passing a 'fake' updateUI message in order to show an empty board to a viewer (so you can NOT perform moves)");
-    updateUI({
-      move : [],
-      turnIndexBeforeMove : 0,
-      turnIndexAfterMove : 0,
-      stateBeforeMove : null,
-      stateAfterMove : {},
-      yourPlayerIndex : -2,
-      playersInfo : playersInfo,
-      playMode: "passAndPlay",
+    // I wanted to delay sending gameReady until window.innerWidth and height are not 0,
+    // but they will stay 0 (on ios) until we send gameReady (because platform will hide the iframe)
+    sendMessage({gameReady : "v4"});
+    log.info("Calling 'fake' updateUI with yourPlayerIndex=-2 , meaning you're a viewer so you can't make a move");
+    callUpdateUI({
+      yourPlayerIndex: -2,
+      playersInfo: playersInfo,
+      numberOfPlayers: numberOfPlayers,
+      state: null,
+      turnIndex: 0,
       endMatchScores: null,
-      moveNumber: 0, randomSeed:"",
-      numberOfPlayers: playersInfo.length
+      playMode: "passAndPlay",
     });
   }
 }
+
+let typeCheck_gameService: IGameService = gameService;
 
 }

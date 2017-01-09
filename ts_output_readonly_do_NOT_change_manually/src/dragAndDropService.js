@@ -57,5 +57,6 @@ var gamingPlatform;
         }
         dragAndDropService.addDragListener = addDragListener;
     })(dragAndDropService = gamingPlatform.dragAndDropService || (gamingPlatform.dragAndDropService = {}));
+    var typeCheck_dragAndDropService = dragAndDropService;
 })(gamingPlatform || (gamingPlatform = {}));
 //# sourceMappingURL=dragAndDropService.js.map

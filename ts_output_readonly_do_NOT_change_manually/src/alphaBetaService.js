@@ -171,5 +171,6 @@ var gamingPlatform;
             return { bestScore: bestScore, bestState: bestState };
         }
     })(alphaBetaService = gamingPlatform.alphaBetaService || (gamingPlatform.alphaBetaService = {}));
+    var typeCheck_alphaBetaService = alphaBetaService;
 })(gamingPlatform || (gamingPlatform = {}));
 //# sourceMappingURL=alphaBetaService.js.map

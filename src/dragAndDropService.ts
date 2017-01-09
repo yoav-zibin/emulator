@@ -64,4 +64,6 @@ export module dragAndDropService {
   }
 }
 
+let typeCheck_dragAndDropService: IDragAndDropService = dragAndDropService;
+
 }

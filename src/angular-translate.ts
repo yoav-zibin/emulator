@@ -9,15 +9,12 @@ export interface TranslateService {
   (translationId: string, interpolateParams?: StringDictionary, languageCode?: string): string;
   getLanguage(): string;
   setTranslations(idToLanguageToL10n: StringToStringDictionary): void;
-  setLanguage(language: string, codeToL10N?: StringDictionary): void;
+  setLanguage(language: string): void;
 }
 
 // This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
 function createTranslateService(): TranslateService {
   let language: string;
-  // codeToL10N is deprecated (I keep it for older games that used the platform for i18n)
-  // New games should use setTranslations (which sets idToLanguageToL10n).
-  let codeToL10N: StringDictionary = null;
   let idToLanguageToL10n: StringToStringDictionary = null;
 
   function translate(translationId: string, interpolateParams: StringDictionary, languageCode?: string): string {
@@ -27,8 +24,6 @@ function createTranslateService(): TranslateService {
       let languageToL10n = idToLanguageToL10n[translationId];
       translation = languageToL10n[languageCode];
       if (!translation) translation = languageToL10n['en']; 
-    } else if (codeToL10N) {
-      translation = codeToL10N[translationId];
     }
     if (!translation) {
       translation = "[" + translationId + "]";
@@ -46,9 +41,8 @@ function createTranslateService(): TranslateService {
   translateService.setTranslations = function (_idToLanguageToL10n: StringToStringDictionary): void {
     idToLanguageToL10n = _idToLanguageToL10n;
   };
-  translateService.setLanguage = function (_language: string, _codeToL10N?: StringDictionary): void {
+  translateService.setLanguage = function (_language: string): void {
     language = _language;
-    codeToL10N = _codeToL10N;
   };
   return translateService;
 }

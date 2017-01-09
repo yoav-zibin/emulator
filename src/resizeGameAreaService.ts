@@ -93,4 +93,6 @@ export module resizeGameAreaService {
   setInterval(rescale, 300);
 }
 
+let typeCheck_resizeGameAreaService: IResizeGameAreaService = resizeGameAreaService;
+
 }

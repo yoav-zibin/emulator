@@ -90,6 +90,9 @@ var gamingPlatform;
             storeLog(args, ILogLevel.LOG, console.log);
         }
         log_1.log = log;
+        window.addEventListener("error", function (e) {
+            error("Had an error! Message=", e.error ? e.error.message : '', " stacktrace=", e.error ? e.error.stack : '');
+        });
     })(log = gamingPlatform.log || (gamingPlatform.log = {}));
 })(gamingPlatform || (gamingPlatform = {}));
 //# sourceMappingURL=log.js.map

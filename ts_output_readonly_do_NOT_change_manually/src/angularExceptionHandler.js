@@ -1,16 +1,5 @@
 var gamingPlatform;
 (function (gamingPlatform) {
-    // Copy everything on gamingPlatform to window,
-    // for backward compatability with games that don't use the gamingPlatform namespace.
-    function copyNamespaceToWindow() {
-        var w = window;
-        var g = gamingPlatform;
-        for (var key in g) {
-            w[key] = g[key];
-        }
-    }
-    copyNamespaceToWindow();
-    setTimeout(copyNamespaceToWindow, 0);
     // Preventing context menu on long taps: http://stackoverflow.com/questions/3413683/disabling-the-context-menu-on-long-taps-on-android
     window.oncontextmenu = function (event) {
         event.preventDefault();
@@ -42,17 +31,22 @@ var gamingPlatform;
                 }
             ]);
         }])
-        .run(['$location', '$rootScope', '$timeout', '$interval', '$interpolate',
-        function (_location, _rootScope, _timeout, _interval, _interpolate) {
+        .run(['$location', '$rootScope', '$timeout', '$interval', '$interpolate', '$compile', '$sce',
+        function (_location, _rootScope, _timeout, _interval, _interpolate, _compile, _sce) {
             gamingPlatform.$location = _location;
             gamingPlatform.$rootScope = _rootScope;
             gamingPlatform.$timeout = _timeout;
             gamingPlatform.$interval = _interval;
             gamingPlatform.$interpolate = _interpolate;
-            copyNamespaceToWindow();
+            gamingPlatform.$compile = _compile;
+            gamingPlatform.$sce = _sce;
             gamingPlatform.log.alwaysLog("Finished init of gameServices module; emulatorServicesCompilationDate=", emulatorServicesCompilationDate);
         }])
         .factory('$exceptionHandler', function () {
+        var didSendBugReport = false;
+        function isLocalHost() {
+            return location.hostname === "localhost" || location.protocol === "file:";
+        }
         function angularErrorHandler(exception, cause) {
             var errMsg = {
                 gameUrl: '' + window.location,
@@ -62,7 +56,11 @@ var gamingPlatform;
                 gameLogs: gamingPlatform.log.getLogs()
             };
             console.error("Game had an exception:\n", exception, " Full error message with logs: ", errMsg);
-            window.alert("Game had an unexpected error. If you know JavaScript, you can look at the console and try to debug it :)");
+            if (didSendBugReport)
+                return;
+            didSendBugReport = true;
+            if (isLocalHost())
+                window.alert("Game had an unexpected error. If you know JavaScript, you can look at the console and try to debug it :)");
             // To make sure students don't get:
             // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
             // I serialize to string and back.

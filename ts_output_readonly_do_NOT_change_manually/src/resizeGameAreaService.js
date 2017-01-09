@@ -84,5 +84,6 @@ var gamingPlatform;
             window.matchMedia('(orientation: portrait)').addListener(rescale);
         setInterval(rescale, 300);
     })(resizeGameAreaService = gamingPlatform.resizeGameAreaService || (gamingPlatform.resizeGameAreaService = {}));
+    var typeCheck_resizeGameAreaService = resizeGameAreaService;
 })(gamingPlatform || (gamingPlatform = {}));
 //# sourceMappingURL=resizeGameAreaService.js.map
