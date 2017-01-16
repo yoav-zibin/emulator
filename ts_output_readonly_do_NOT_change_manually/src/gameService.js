@@ -120,7 +120,7 @@ var gamingPlatform;
                 }
                 else if (gameService.playMode == "multiplayer") {
                     gameService.iframeRows = 1;
-                    gameService.iframeCols = gameService.numberOfPlayers + 1;
+                    gameService.iframeCols = gameService.numberOfPlayers; // if I want to support a viewer, then add +1.
                 }
                 else {
                     gameService.iframeRows = 1;

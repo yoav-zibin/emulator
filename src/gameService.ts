@@ -183,7 +183,7 @@ export module gameService {
         iframeCols = playersInCommunity;
       } else if (playMode == "multiplayer") {
         iframeRows = 1;
-        iframeCols = numberOfPlayers + 1;
+        iframeCols = numberOfPlayers; // if I want to support a viewer, then add +1.
       } else {
         iframeRows = 1;
         iframeCols = 1;
