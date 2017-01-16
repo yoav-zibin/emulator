@@ -74,4 +74,7 @@ export module log {
     error("Had an error! Message=", e.error ? e.error.message : '', " stacktrace=", e.error ? e.error.stack : '');
   });
 }
+
+let typeCheck_logService: ILog = log;
+
 }

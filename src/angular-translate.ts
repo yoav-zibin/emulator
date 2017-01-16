@@ -4,16 +4,8 @@ export interface StringToStringDictionary {
   [index: string]: StringDictionary;
 }
 
-// Defines translate service and filter for I18N.
-export interface TranslateService {
-  (translationId: string, interpolateParams?: StringDictionary, languageCode?: string): string;
-  getLanguage(): string;
-  setTranslations(idToLanguageToL10n: StringToStringDictionary): void;
-  setLanguage(language: string): void;
-}
-
 // This can't be a module, because we use it like:  translate(...) and not like translate.foobar(...)
-function createTranslateService(): TranslateService {
+function createTranslateService(): ITranslateService {
   let language: string;
   let idToLanguageToL10n: StringToStringDictionary = null;
 
@@ -35,8 +27,8 @@ function createTranslateService(): TranslateService {
     } 
     return result;
   }
-  let translateService: TranslateService;
-  translateService = <TranslateService>translate;
+  let translateService: ITranslateService;
+  translateService = <ITranslateService>translate;
   translateService.getLanguage = function (): string { return language; };
   translateService.setTranslations = function (_idToLanguageToL10n: StringToStringDictionary): void {
     idToLanguageToL10n = _idToLanguageToL10n;

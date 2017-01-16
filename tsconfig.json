@@ -38,6 +38,7 @@
         "src/gameService.ts",
         "src/log.ts",
         "src/messageService.ts",
+        "src/multiplayer-games.d.ts",
         "src/resizeGameAreaService.ts",
         "typings/angularjs/angular.d.ts",
         "typings/jquery/jquery.d.ts"

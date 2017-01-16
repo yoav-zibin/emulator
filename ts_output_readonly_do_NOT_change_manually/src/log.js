@@ -94,5 +94,6 @@ var gamingPlatform;
             error("Had an error! Message=", e.error ? e.error.message : '', " stacktrace=", e.error ? e.error.stack : '');
         });
     })(log = gamingPlatform.log || (gamingPlatform.log = {}));
+    var typeCheck_logService = log;
 })(gamingPlatform || (gamingPlatform = {}));
 //# sourceMappingURL=log.js.map

@@ -9,6 +9,11 @@ module.exports = function(grunt) {
     .join(" && ");
   console.log(compareCommand);
 
+  function removeREMOVEDWHENCOPIED(content, srcpath) {
+    if (content.indexOf('REMOVEDWHENCOPIED') == -1) throw new Error("Didn't find REMOVEDWHENCOPIED in " + srcpath);
+    return content.replace("REMOVEDWHENCOPIED", "");
+  };
+
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -44,13 +49,28 @@ module.exports = function(grunt) {
         src: 'dist/turnBasedServices.4.js',
         dest: '../friendlygo/lib/turnBasedServices.4.js',
       },
+      friendlygo2: {
+        src: 'src/multiplayer-games.d.ts',
+        dest: '../friendlygo/typings/multiplayer-games.d.ts',
+        options: {process: removeREMOVEDWHENCOPIED},
+      },
       tictactoe: {
         src: 'dist/turnBasedServices.4.js',
         dest: '../tictactoe/lib/turnBasedServices.4.js',
       },
-      friendlygo: {
+      tictactoe2: {
+        src: 'src/multiplayer-games.d.ts',
+        dest: '../tictactoe/typings/multiplayer-games.d.ts',
+        options: {process: removeREMOVEDWHENCOPIED},
+      },
+      ycheckers: {
         src: 'dist/turnBasedServices.4.js',
-        dest: '../friendlygo/lib/turnBasedServices.4.js',
+        dest: '../ycheckers/lib/turnBasedServices.4.js',
+      },
+      ycheckers2: {
+        src: 'src/multiplayer-games.d.ts',
+        dest: '../ycheckers/typings/multiplayer-games.d.ts',
+        options: {process: removeREMOVEDWHENCOPIED},
       },
     },
     shell: {
@@ -71,6 +91,6 @@ module.exports = function(grunt) {
     'shell:compareStateService',
     'shell:compilationDate',
     'concat',
-    "copy:copyTurnBasedServices",
+    "copy",
   ]);
 };

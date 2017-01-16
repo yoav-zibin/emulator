@@ -1,10 +1,5 @@
 namespace gamingPlatform {
 
-interface IAlphaBetaLimits {
-  millisecondsLimit? : number;
-  maxDepth? : number;
-}
-
 export module alphaBetaService {
   /**
    * Does alpha-beta search, starting from startingState,
