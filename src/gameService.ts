@@ -56,6 +56,7 @@ export module gameService {
   export let currentLanguage: Language = supportedLanguages[0];
   export let languageCode = "en";
   export let ogImageMaker = "https://dotted-guru-139914.appspot.com/";
+  export let numberOfPlayersRequiredToMove = 3; // for community matches.
   export let numberOfPlayers = 2;
   export let iframeRows = 1;
   export let iframeCols = 1;
@@ -88,6 +89,7 @@ export module gameService {
       </select>
       <input ng-model="gameService.ogImageMaker">
       <button ng-click="gameService.getOgImageState()">Open AppEngine image</button>
+      Number of players required to move in a community match: <input ng-model="gameService.numberOfPlayersRequiredToMove">
     </div>
     <div style="position:absolute; width:100%; height:90%; top: 10%;">
       <div ng-repeat="row in gameService.getIntegersTill(gameService.iframeRows)"
@@ -299,6 +301,7 @@ export module gameService {
     let state = getState();
     if (playMode == "community") {
       let communityUI: ICommunityUI = {
+        numberOfPlayersRequiredToMove: numberOfPlayersRequiredToMove,
         yourPlayerIndex: index,
         yourPlayerInfo: {
           avatarImageUrl: "",
