@@ -59,9 +59,7 @@ angular.module('gameServices', ['translate'])
 }])
 .factory('$exceptionHandler', function () {
   let didSendBugReport: boolean = false;
-  function isLocalHost() {
-    return location.hostname === "localhost" || location.protocol === "file:";
-  }
+
   function angularErrorHandler(exception: any, cause: any): void {
     let errMsg = {
       gameUrl: '' + window.location,
@@ -74,7 +72,6 @@ angular.module('gameServices', ['translate'])
     if (didSendBugReport) return;
     didSendBugReport = true;
 
-    if (isLocalHost()) window.alert("Game had an unexpected error. If you know JavaScript, you can look at the console and try to debug it :)");
     // To make sure students don't get:
     // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
     // I serialize to string and back.
