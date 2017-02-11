@@ -8,7 +8,6 @@ type SupportedLanguages = StringDictionary;
 namespace gamingPlatform {
 
 interface IMessageToGame {
-  communityUI?: ICommunityUI;
   updateUI?: IUpdateUI;
   setLanguage?: {language: string};
   getGameLogs?: boolean;
@@ -72,6 +71,7 @@ export module gameService {
   // test ogImage, getLogs, etc
   let testingHtml = `
     <div style="position:absolute; width:100%; height:10%; overflow: scroll;">
+      <h4 ng-if="gameService.getState().endMatchScores">endMatchScores={{gameService.getState().endMatchScores}}</h4>
       <select
         ng-options="playMode for playMode in gameService.playModes track by playMode"
         ng-model="gameService.playMode"
@@ -89,7 +89,9 @@ export module gameService {
       </select>
       <input ng-model="gameService.ogImageMaker">
       <button ng-click="gameService.getOgImageState()">Open AppEngine image</button>
-      Number of players required to move in a community match: <input ng-model="gameService.numberOfPlayersRequiredToMove">
+      Number of players required to move in a community match: 
+      <input ng-model="gameService.numberOfPlayersRequiredToMove" 
+        ng-change="gameService.reloadIframes()">
     </div>
     <div style="position:absolute; width:100%; height:90%; top: 10%;">
       <div ng-repeat="row in gameService.getIntegersTill(gameService.iframeRows)"
@@ -209,7 +211,7 @@ export module gameService {
           angular.toJson(move, true));
     }
   }
-  function checkMakeMove(lastUpdateUI: IUpdateUI, move: IMove): void {
+  function checkMakeMove(lastUpdateUI: IUpdateUI, move: IMove, proposal: IProposal): void {
     if (!lastUpdateUI) {
       throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
     }
@@ -218,23 +220,19 @@ export module gameService {
     if (!wasYourTurn) {
       throw new Error("Game called makeMove when it wasn't your turn: yourPlayerIndex=" + lastUpdateUI.yourPlayerIndex + " turnIndexAfterMove=" + lastUpdateUI.turnIndex);
     }
-    checkMove(move);
-  }
-  function checkCommunityMove(lastCommunityUI: ICommunityUI, proposal: IProposal, move: IMove): void {
-    if (!lastCommunityUI) {
-      throw new Error("Don't call communityMove before getting communityUI.");
+
+    if (lastUpdateUI.playerIdToProposal) {
+      let oldProposal = lastUpdateUI.playerIdToProposal[lastUpdateUI.yourPlayerInfo.playerId]; 
+      if (oldProposal) {
+        throw new Error("Called communityMove when yourPlayerId already made a proposal, see: " + angular.toJson(oldProposal, true));  
+      }
     }
+
     if (move) {
       checkMove(move);
     }
-    let wasYourTurn = lastCommunityUI.turnIndex >= 0 && // game is ongoing
-        lastCommunityUI.yourPlayerIndex === lastCommunityUI.turnIndex; // it's my turn
-    if (!wasYourTurn) {
-      throw new Error("Called communityMove when it wasn't your turn: yourPlayerIndex=" + lastCommunityUI.yourPlayerIndex + " turnIndexAfterMove=" + lastCommunityUI.turnIndex);
-    }
-    let oldProposal = lastCommunityUI.playerIdToProposal[lastCommunityUI.yourPlayerInfo.playerId]; 
-    if (oldProposal) {
-      throw new Error("Called communityMove when yourPlayerId already made a proposal, see: " + angular.toJson(oldProposal, true));  
+    if (proposal && !proposal.chatDescription) {
+      throw new Error("You didn't set chatDescription in your proposal=" + angular.toJson(proposal, true));
     }
   }
 
@@ -281,7 +279,7 @@ export module gameService {
       $rootScope.$apply(()=>gotMessageFromGame(event));
     });
   }
-  function getState():IMove {
+  export function getState(): IMove {
     return history[historyIndex];
   }
   function getPlayerIndex(id: number): number {
@@ -295,41 +293,34 @@ export module gameService {
     } 
     return getState().turnIndex;
   }
-  function getChangeUI(id: number):IMessageToGame {
+  function getUpdateUI(id: number): IUpdateUI {
     let index = getPlayerIndex(id);
     
     let state = getState();
-    if (playMode == "community") {
-      let communityUI: ICommunityUI = {
-        numberOfPlayersRequiredToMove: numberOfPlayersRequiredToMove,
-        yourPlayerIndex: index,
-        yourPlayerInfo: {
-          avatarImageUrl: "",
-          displayName: "",
-          playerId: "playerId" + id,
-        },
-        playerIdToProposal: playerIdToProposal,
-        numberOfPlayers: numberOfPlayers,
-        state: state.state,
-        turnIndex: state.turnIndex,
-        endMatchScores: state.endMatchScores,
-      };
-      return {communityUI: communityUI};
-    }
+    let isCommunity = playMode == "community";
     let updateUI: IUpdateUI = {
+      // community matches
+      numberOfPlayersRequiredToMove: isCommunity ? numberOfPlayersRequiredToMove : null,
+      playerIdToProposal: isCommunity ? playerIdToProposal : null,
+
       yourPlayerIndex: index,
+      yourPlayerInfo: {
+        avatarImageUrl: "",
+        displayName: "",
+        playerId: "playerId" + id,
+      },
       playersInfo: playersInfo,
       numberOfPlayers: numberOfPlayers,
       state: state.state,
       turnIndex: state.turnIndex,
       endMatchScores: state.endMatchScores,
-      playMode: playMode == "multiplayer" ? index : playMode,
+      playMode: playMode == "multiplayer" || isCommunity ? index : playMode,
     };
-    return {updateUI: updateUI};
+    return updateUI;
   }
 
   function sendChangeUI(id: number) {
-    passMessage(getChangeUI(id), id);
+    passMessage({updateUI: getUpdateUI(id)}, id);
   }
 
   function getQueryString(params: StringIndexer): string {
@@ -368,19 +359,15 @@ export module gameService {
       window.open(imageMakerUrl, "_blank");
     } else {
       // Check last message
-      let lastMessage: IMessageToGame = message.lastMessage;
-      if (!angular.equals(lastMessage, getChangeUI(id))) {
-        console.warn("Ignoring message because message.lastMessage is wrong! This can happen if you play and immediately changed something like playMode. lastMessage=", lastMessage, " expected lastMessage=", getChangeUI(id));
+      let lastUpdateUI: IUpdateUI = message.lastMessage.updateUI;
+      if (!angular.equals(lastUpdateUI, getUpdateUI(id))) {
+        console.warn("Ignoring message because message.lastMessage is wrong! This can happen if you play and immediately changed something like playMode. lastMessage.updateUI=", lastUpdateUI, " expected=", getUpdateUI(id));
         return;
       }
-      // Check move&prposal
+      // Check move&proposal
       let move: IMove = message.move;
       let proposal: IProposal = message.proposal;
-      if (lastMessage.communityUI) {
-        checkCommunityMove(lastMessage.communityUI, proposal, move);
-      } else {
-        checkMakeMove(lastMessage.updateUI, move);
-      }
+      checkMakeMove(lastUpdateUI, move, proposal);
       if (index !== getState().turnIndex) {
         throw new Error("Not your turn! yourPlayerIndex=" + index + " and the turn is of playerIndex=" + getState().turnIndex);
       }
@@ -411,34 +398,21 @@ export module gameService {
   }
 
   
-  let lastChangeUiMessage: IMessageToGame = null;
-  export function communityMove(proposal: IProposal, move: IMove): void {
-    checkCommunityMove(lastChangeUiMessage.communityUI, proposal, move);
-    // I'm sending the move even in local testing to make sure it's simple json (or postMessage will fail).
-    sendMessage({proposal: proposal, move: move, lastMessage: lastChangeUiMessage});
-    lastChangeUiMessage = null;
-  }
+  let lastUpdateUiMessage: IUpdateUI = null;
 
-  export function makeMove(move: IMove): void {
-    checkMakeMove(lastChangeUiMessage.updateUI, move);
+  export function makeMove(move: IMove, proposal: IProposal): void {
+    checkMakeMove(lastUpdateUiMessage, move, proposal);
     // I'm sending the move even in local testing to make sure it's simple json (or postMessage will fail).
-    sendMessage({move: move, lastMessage: lastChangeUiMessage}); 
-    lastChangeUiMessage = null; // to make sure you don't call makeMove until you get the next updateUI.
+    sendMessage({move: move, proposal: proposal, lastMessage: {updateUI: lastUpdateUiMessage}}); 
+    lastUpdateUiMessage = null; // to make sure you don't call makeMove until you get the next updateUI.
   }
   export function callUpdateUI(updateUI: IUpdateUI): void {
-    lastChangeUiMessage = angular.copy({updateUI: updateUI});
+    lastUpdateUiMessage = angular.copy(updateUI);
     game.updateUI(updateUI);
-  }
-  export function callCommunityUI(communityUI: ICommunityUI): void {
-    lastChangeUiMessage = angular.copy({communityUI: communityUI});
-    game.communityUI(communityUI);
   }
 
   function gotMessageFromPlatform(message: IMessageToGame): void {
-    if (message.communityUI) {
-      callCommunityUI(message.communityUI);
-
-    } else if (message.updateUI) {
+    if (message.updateUI) {
       callUpdateUI(message.updateUI);
 
     } else if (message.setLanguage) {
@@ -480,7 +454,10 @@ export module gameService {
     sendMessage({gameReady : "v4"});
     log.info("Calling 'fake' updateUI with yourPlayerIndex=-2 , meaning you're a viewer so you can't make a move");
     callUpdateUI({
+      numberOfPlayersRequiredToMove: null,
+      playerIdToProposal: null,
       yourPlayerIndex: -2,
+      yourPlayerInfo: playersInfo[0],
       playersInfo: playersInfo,
       numberOfPlayers: numberOfPlayers,
       state: null,
