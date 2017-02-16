@@ -72,6 +72,10 @@ module.exports = function(grunt) {
         dest: '../ycheckers/typings/multiplayer-games.d.ts',
         options: {process: removeREMOVEDWHENCOPIED},
       },
+      ycheckers3: {
+        src: 'ts_output_readonly_do_NOT_change_manually/src/emulator.js',
+        dest: '../ycheckers/ts_output_readonly_do_NOT_change_manually/src/emulator.js',
+      },
     },
     shell: {
       compareStateService: {

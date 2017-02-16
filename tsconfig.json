@@ -36,6 +36,7 @@
         "src/angularExceptionHandler.ts",
         "src/dragAndDropService.ts",
         "src/gameService.ts",
+        "src/emulator.ts",
         "src/log.ts",
         "src/messageService.ts",
         "src/multiplayer-games.d.ts",
