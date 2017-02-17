@@ -113,7 +113,6 @@ export module gameService {
   }
 
   function createScriptWithCrossorigin(id: string, src: string) {
-    if (location.protocol == "file:") src = "http:" + src;
     log.info("Loading script ", src, " into script element with id=", id);
     if (document.getElementById(id)) {
       log.error("Already loaded src=", src);
@@ -147,7 +146,7 @@ export module gameService {
         if (gamingPlatform.emulator) {
           gamingPlatform.emulator.overrideInnerHtml();
         } else {
-          createScriptWithCrossorigin("emulator", "//yoav-zibin.github.io/emulator/ts_output_readonly_do_NOT_change_manually/src/emulator.js")
+          createScriptWithCrossorigin("emulator", "https://yoav-zibin.github.io/emulator/ts_output_readonly_do_NOT_change_manually/src/emulator.js")
         }
       }, 50); 
     } else {

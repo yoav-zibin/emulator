@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Fri Feb 17 09:19:15 EST 2017";
+"use strict"; var emulatorServicesCompilationDate = "Fri Feb 17 09:31:03 EST 2017";
 
 ;
 var gamingPlatform;
@@ -218,8 +218,6 @@ var gamingPlatform;
             }
         }
         function createScriptWithCrossorigin(id, src) {
-            if (location.protocol == "file:")
-                src = "http:" + src;
             gamingPlatform.log.info("Loading script ", src, " into script element with id=", id);
             if (document.getElementById(id)) {
                 gamingPlatform.log.error("Already loaded src=", src);
@@ -252,7 +250,7 @@ var gamingPlatform;
                         gamingPlatform.emulator.overrideInnerHtml();
                     }
                     else {
-                        createScriptWithCrossorigin("emulator", "//yoav-zibin.github.io/emulator/ts_output_readonly_do_NOT_change_manually/src/emulator.js");
+                        createScriptWithCrossorigin("emulator", "https://yoav-zibin.github.io/emulator/ts_output_readonly_do_NOT_change_manually/src/emulator.js");
                     }
                 }, 50);
             }
