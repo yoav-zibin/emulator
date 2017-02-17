@@ -112,6 +112,27 @@ export module gameService {
     }
   }
 
+  function createScriptWithCrossorigin(id: string, src: string) {
+    if (location.protocol == "file:") src = "http:" + src;
+    log.info("Loading script ", src, " into script element with id=", id);
+    if (document.getElementById(id)) {
+      log.error("Already loaded src=", src);
+      return;
+    }
+    
+    let js: HTMLScriptElement = <HTMLScriptElement>document.createElement('script');
+    js.src = src;
+    js.id = id;
+    js.onload = ()=>{
+      log.info("Loaded script ", src);
+      gamingPlatform.emulator.overrideInnerHtml();
+    };
+    (<any>js).async = 1;
+    (<any>js).crossorigin = "anonymous"; 
+    let fjs = document.getElementsByTagName('script')[0];
+    fjs.parentNode.insertBefore(js, fjs);
+  }
+
   let didCallSetGame = false;
   export function setGame(_game: IGame) {
     game = _game;
@@ -126,8 +147,7 @@ export module gameService {
         if (gamingPlatform.emulator) {
           gamingPlatform.emulator.overrideInnerHtml();
         } else {
-          document.write(
-            '<script src="http://yoav-zibin.github.io/emulator/ts_output_readonly_do_NOT_change_manually/src/emulator.js" onload="gamingPlatform.emulator.overrideInnerHtml()"></script>');
+          createScriptWithCrossorigin("emulator", "//yoav-zibin.github.io/emulator/ts_output_readonly_do_NOT_change_manually/src/emulator.js")
         }
       }, 50); 
     } else {

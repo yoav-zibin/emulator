@@ -83,6 +83,26 @@ var gamingPlatform;
                 sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
             }
         }
+        function createScriptWithCrossorigin(id, src) {
+            if (location.protocol == "file:")
+                src = "http:" + src;
+            gamingPlatform.log.info("Loading script ", src, " into script element with id=", id);
+            if (document.getElementById(id)) {
+                gamingPlatform.log.error("Already loaded src=", src);
+                return;
+            }
+            var js = document.createElement('script');
+            js.src = src;
+            js.id = id;
+            js.onload = function () {
+                gamingPlatform.log.info("Loaded script ", src);
+                gamingPlatform.emulator.overrideInnerHtml();
+            };
+            js.async = 1;
+            js.crossorigin = "anonymous";
+            var fjs = document.getElementsByTagName('script')[0];
+            fjs.parentNode.insertBefore(js, fjs);
+        }
         var didCallSetGame = false;
         function setGame(_game) {
             game = _game;
@@ -98,7 +118,7 @@ var gamingPlatform;
                         gamingPlatform.emulator.overrideInnerHtml();
                     }
                     else {
-                        document.write('<script src="http://yoav-zibin.github.io/emulator/ts_output_readonly_do_NOT_change_manually/src/emulator.js" onload="gamingPlatform.emulator.overrideInnerHtml()"></script>');
+                        createScriptWithCrossorigin("emulator", "//yoav-zibin.github.io/emulator/ts_output_readonly_do_NOT_change_manually/src/emulator.js");
                     }
                 }, 50);
             }

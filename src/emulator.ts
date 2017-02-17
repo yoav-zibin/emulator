@@ -43,7 +43,7 @@ export module emulator {
   export let savedStates: SavedState[] = [];
   export let selectedSavedStateToLoad: SavedState = null;
   export let showEnterJson = false;
-  export let pastedUpdateUiJson: string = '{state: null, turnIndex: 0, endMatchScores: null}';
+  export let pastedUpdateUiJson: string = '{"state": null, "turnIndex": 0, "endMatchScores": null}';
 
   // test ogImage, getLogs, etc
   let testingHtml = `
