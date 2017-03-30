@@ -48,7 +48,7 @@ export module emulator {
   // test ogImage, getLogs, etc
   let testingHtml = `
     <div style="position:absolute; width:100%; height:10%; overflow: scroll;">
-      <h4 ng-if="emulator.getState().endMatchScores">endMatchScores={{emulator.getState().endMatchScores}}</h4>
+      <h4 ng-show="emulator.isGameOver()">endMatchScores={{emulator.getState().endMatchScores}}</h4>
       <select
         ng-options="playMode for playMode in emulator.playModes track by playMode"
         ng-model="emulator.playMode"
@@ -67,13 +67,13 @@ export module emulator {
       <button ng-click="emulator.showEnterJson = true">Load match from JSON</button>
       <input ng-model="emulator.ogImageMaker">
       <button ng-click="emulator.getOgImageState()">Open AppEngine image</button>
-      <div ng-if="emulator.playMode == 'community'">
+      <div ng-show="emulator.playMode == 'community'">
         Number of players required to move in a community match: 
         <input ng-model="emulator.numberOfPlayersRequiredToMove" 
           ng-change="emulator.reloadIframes()">
       </div>
     </div>
-    <div ng-if="emulator.showEnterJson" style="z-index:100; position:absolute; width:100%; height:90%; top:10%; overflow: scroll;">
+    <div ng-show="emulator.showEnterJson" style="z-index:100; position:absolute; width:100%; height:90%; top:10%; overflow: scroll;">
       <textarea ng-model="emulator.pastedUpdateUiJson" style="position:absolute; width:100%; height:90%;"></textarea><br>
       <button ng-click="emulator.loadMatchFromJson()" style="position:absolute; width:100%; height:10%; top:90%;">Load match from JSON</button>
     </div>
@@ -270,6 +270,9 @@ export module emulator {
     window.addEventListener("message", (event)=>{
       $rootScope.$apply(()=>gotMessageFromGame(event));
     });
+  }
+  export function isGameOver() {
+    return !!getState().endMatchScores;
   }
   export function getState(): IMove {
     return history[historyIndex];
