@@ -45,8 +45,17 @@ export module emulator {
   export let showEnterJson = false;
   export let pastedUpdateUiJson: string = '{"state": null, "turnIndex": 0, "endMatchScores": null}';
 
-  // test ogImage, getLogs, etc
+  // TODO:
+  // * move to iframe (so this html won't be affected by the game.css)
+  // * test getLogs.
   let testingHtml = `
+    <style>
+    * {
+      font-size: 12px !important;
+      margin: 0px !important;
+      padding: 0px !important;
+    }
+    </style>
     <div style="position:absolute; width:100%; height:10%; overflow: scroll;">
       <h4 ng-show="emulator.isGameOver()">endMatchScores={{emulator.getState().endMatchScores}}</h4>
       <select
