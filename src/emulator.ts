@@ -93,7 +93,7 @@ export module emulator {
             style="position:absolute; top:0; left:{{col * 100 / emulator.iframeCols}}%; width:{{100 / emulator.iframeCols}}%; height:100%;">
           <iframe id="game_iframe_{{col + row*emulator.iframeCols}}"
             ng-src="{{emulator.locationTrustedStr}}"
-            seamless="seamless" style="position:absolute; width:100%; height:100%;">
+            seamless="seamless" style="position:absolute; width:100%; height:100%; left:0; top:0;">
           </iframe>
         </div>
       </div>
