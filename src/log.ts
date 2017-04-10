@@ -15,6 +15,7 @@ export module log {
   }
 
   let alwaysLogs: ILogEntry[] = [];
+  let logLaterFunctions: (()=>any)[] = [];
   let lastLogs: ILogEntry[] = [];
   let startTime: number = getCurrentTime();
 
@@ -43,11 +44,16 @@ export module log {
   }
 
   export function getLogs(): ILogEntry[] {
+    alwaysLog(logLaterFunctions.map((func)=>func()));
     return lastLogs.concat(alwaysLogs);
   }
 
   export function alwaysLog(... args: any[]):void {
     alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS, console.log));
+  }
+
+  export function logLater(func: ()=>any):void {
+    logLaterFunctions.push(func);
   }
 
   export function info(... args: any[]):void {
