@@ -76,6 +76,11 @@ module.exports = function(grunt) {
         src: 'ts_output_readonly_do_NOT_change_manually/src/emulator.js',
         dest: '../ycheckers/ts_output_readonly_do_NOT_change_manually/src/emulator.js',
       },
+      communityFire: {
+        src: 'src/multiplayer-games.d.ts',
+        dest: '../communityFire/typings/multiplayer-games.d.ts',
+        options: {process: removeREMOVEDWHENCOPIED},
+      },
     },
     shell: {
       compareStateService: {

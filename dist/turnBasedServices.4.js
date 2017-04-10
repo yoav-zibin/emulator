@@ -1,4 +1,4 @@
-"use strict"; var emulatorServicesCompilationDate = "Tue Apr 4 18:32:29 EDT 2017";
+"use strict"; var emulatorServicesCompilationDate = "Mon Apr 10 10:58:16 EDT 2017";
 
 ;
 var gamingPlatform;
@@ -17,6 +17,7 @@ var gamingPlatform;
             return ILogLevel;
         })();
         var alwaysLogs = [];
+        var logLaterFunctions = [];
         var lastLogs = [];
         var startTime = getCurrentTime();
         function getCurrentTime() {
@@ -42,6 +43,7 @@ var gamingPlatform;
             lastLogs.push(getLogEntry(args, logLevel, consoleFunc));
         }
         function getLogs() {
+            alwaysLog(logLaterFunctions.map(function (func) { return func(); }));
             return lastLogs.concat(alwaysLogs);
         }
         log_1.getLogs = getLogs;
@@ -53,6 +55,10 @@ var gamingPlatform;
             alwaysLogs.push(getLogEntry(args, ILogLevel.ALWAYS, console.log));
         }
         log_1.alwaysLog = alwaysLog;
+        function logLater(func) {
+            logLaterFunctions.push(func);
+        }
+        log_1.logLater = logLater;
         function info() {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
