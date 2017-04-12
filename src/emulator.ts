@@ -79,7 +79,7 @@ export module emulator {
       <div ng-show="emulator.playMode == 'community'">
         Number of players required to move in a community match: 
         <input ng-model="emulator.numberOfPlayersRequiredToMove" 
-          ng-change="emulator.reloadIframes()">
+          ng-change="emulator.resendUpdateUI()">
       </div>
     </div>
     <div ng-show="emulator.showEnterJson" style="z-index:100; position:absolute; width:100%; height:90%; top:10%; overflow: scroll;">
@@ -125,11 +125,11 @@ export module emulator {
     // angular makes historyIndex a string!
     historyIndex = Number(historyIndex);
     playerIdToProposal = {};
-    reloadIframes();
+    resendUpdateUI();
   }
   export function startNewMatch() {
     clearState();
-    reloadIframes();
+    resendUpdateUI();
   }
 
   function sendSetLanguage(id: number) {
@@ -165,7 +165,7 @@ export module emulator {
     historyIndex = history.length - 1;
     playerIdToProposal = angular.copy(selectedSavedStateToLoad.playerIdToProposal);
     selectedSavedStateToLoad = null;
-    reloadIframes();
+    resendUpdateUI();
   }
   function loadSavedStates() {
     let savedStatesJson = localStorage.getItem("savedStates");
@@ -174,6 +174,16 @@ export module emulator {
 
   export function getOgImageState() {
     passMessage({getStateForOgImage: true}, 0);
+  }
+
+  export function resendUpdateUI() {
+    // I want to avoid reloading the iframes (to be as close to the real platform as possible)
+    for (let r = 0; r < iframeRows; r++) {
+      for (let c = 0; c < iframeCols; c++) {
+        let id = c + r*iframeCols;
+        sendChangeUI(id);
+      }
+    }
   }
 
   export function reloadIframes() {
@@ -390,14 +400,7 @@ export module emulator {
       } else {
         playerIdToProposal['playerId' + id] = proposal;
       }
-      setTimeout(()=>{
-        for (let r = 0; r < iframeRows; r++) {
-          for (let c = 0; c < iframeCols; c++) {
-            let id = c + r*iframeCols;
-            sendChangeUI(id);
-          }
-        }
-      }, 100);
+      setTimeout(resendUpdateUI, 100);
     }
   }
 }
