@@ -22,14 +22,17 @@ export module log {
   export function getCurrentTime(): number {
     return new Date().getTime();
   }
+  export function getMillisecondsFromStart() {
+    return getCurrentTime() - startTime;
+  }
 
   function getLogEntry(args: any[], logLevel: string, consoleFunc: any): ILogEntry {
-    let millisecondsFromStart = getCurrentTime() - startTime;
     // Note that if the first argument to console.log is a string,
     // then it's supposed to be a format string, see:
     // https://developer.mozilla.org/en-US/docs/Web/API/Console/log
     // However, the output looks better on chrome if I pass a string as the first argument,
     // and I hope then it doesn't break anything anywhere else...
+    let millisecondsFromStart = getMillisecondsFromStart();
     let secondsFromStart = millisecondsFromStart/1000;
     let consoleArgs = ['', secondsFromStart, ' seconds:'].concat(args);
     consoleFunc.apply(console, consoleArgs);
