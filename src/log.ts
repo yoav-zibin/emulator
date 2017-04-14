@@ -47,7 +47,7 @@ export module log {
   }
 
   export function getLogs(): ILogEntry[] {
-    alwaysLog(logLaterFunctions.map((func)=>func()));
+    logLaterFunctions.map((func)=>alwaysLog(func()));
     return lastLogs.concat(alwaysLogs);
   }
 
