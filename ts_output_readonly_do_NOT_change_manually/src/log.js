@@ -21,13 +21,17 @@ var gamingPlatform;
             return new Date().getTime();
         }
         log_1.getCurrentTime = getCurrentTime;
+        function getMillisecondsFromStart() {
+            return getCurrentTime() - startTime;
+        }
+        log_1.getMillisecondsFromStart = getMillisecondsFromStart;
         function getLogEntry(args, logLevel, consoleFunc) {
-            var millisecondsFromStart = getCurrentTime() - startTime;
             // Note that if the first argument to console.log is a string,
             // then it's supposed to be a format string, see:
             // https://developer.mozilla.org/en-US/docs/Web/API/Console/log
             // However, the output looks better on chrome if I pass a string as the first argument,
             // and I hope then it doesn't break anything anywhere else...
+            var millisecondsFromStart = getMillisecondsFromStart();
             var secondsFromStart = millisecondsFromStart / 1000;
             var consoleArgs = ['', secondsFromStart, ' seconds:'].concat(args);
             consoleFunc.apply(console, consoleArgs);
@@ -40,7 +44,7 @@ var gamingPlatform;
             lastLogs.push(getLogEntry(args, logLevel, consoleFunc));
         }
         function getLogs() {
-            alwaysLog(logLaterFunctions.map(function (func) { return func(); }));
+            logLaterFunctions.map(function (func) { return alwaysLog(func()); });
             return lastLogs.concat(alwaysLogs);
         }
         log_1.getLogs = getLogs;

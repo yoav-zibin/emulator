@@ -31,6 +31,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: [
+          'header_for_turnBasedServices_lib.js',
           'dist/compilationDate.js',
           'ts_output_readonly_do_NOT_change_manually/src/log.js',
           'ts_output_readonly_do_NOT_change_manually/src/messageService.js',
