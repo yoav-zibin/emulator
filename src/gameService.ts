@@ -17,6 +17,7 @@ export interface IMessageToPlatform {
   gameReady?: string;
   move?: IMove;
   proposal?: IProposal;
+  chatDescription?: string;
   lastMessage?: IMessageToGame;
   getGameLogsResult?: any;
   sendStateForOgImage?: string;
@@ -63,9 +64,6 @@ export module gameService {
     if (move) {
       checkMove(move);
     }
-    if (proposal && !proposal.chatDescription) {
-      throw new Error("You didn't set chatDescription in your proposal=" + angular.toJson(proposal, true));
-    }
   }
 
   function sendMessage(msg: IMessageToPlatform) {
@@ -80,10 +78,13 @@ export module gameService {
   
   let lastUpdateUiMessage: IUpdateUI = null;
 
-  export function makeMove(move: IMove, proposal: IProposal): void {
+  export function makeMove(move: IMove, proposal: IProposal, chatDescription: string): void {
+    if (!chatDescription) {
+      throw new Error("You didn't set chatDescription in makeMove!");
+    }
     checkMakeMove(lastUpdateUiMessage, move, proposal);
     // I'm sending the move even in local testing to make sure it's simple json (or postMessage will fail).
-    sendMessage({move: move, proposal: proposal, lastMessage: {updateUI: lastUpdateUiMessage}}); 
+    sendMessage({move: move, proposal: proposal, chatDescription: chatDescription, lastMessage: {updateUI: lastUpdateUiMessage}}); 
     lastUpdateUiMessage = null; // to make sure you don't call makeMove until you get the next updateUI.
   }
   export function callUpdateUI(updateUI: IUpdateUI): void {

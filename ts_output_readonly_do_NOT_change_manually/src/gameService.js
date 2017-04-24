@@ -39,9 +39,6 @@ var gamingPlatform;
             if (move) {
                 checkMove(move);
             }
-            if (proposal && !proposal.chatDescription) {
-                throw new Error("You didn't set chatDescription in your proposal=" + angular.toJson(proposal, true));
-            }
         }
         function sendMessage(msg) {
             gamingPlatform.messageService.sendMessage(msg);
@@ -51,10 +48,13 @@ var gamingPlatform;
             iframe.contentWindow.postMessage(msg, "*");
         }
         var lastUpdateUiMessage = null;
-        function makeMove(move, proposal) {
+        function makeMove(move, proposal, chatDescription) {
+            if (!chatDescription) {
+                throw new Error("You didn't set chatDescription in makeMove!");
+            }
             checkMakeMove(lastUpdateUiMessage, move, proposal);
             // I'm sending the move even in local testing to make sure it's simple json (or postMessage will fail).
-            sendMessage({ move: move, proposal: proposal, lastMessage: { updateUI: lastUpdateUiMessage } });
+            sendMessage({ move: move, proposal: proposal, chatDescription: chatDescription, lastMessage: { updateUI: lastUpdateUiMessage } });
             lastUpdateUiMessage = null; // to make sure you don't call makeMove until you get the next updateUI.
         }
         gameService.makeMove = makeMove;

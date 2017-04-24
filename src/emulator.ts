@@ -222,7 +222,7 @@ export module emulator {
           angular.toJson(move, true));
     }
   }
-  function checkMakeMove(lastUpdateUI: IUpdateUI, move: IMove, proposal: IProposal): void {
+  function checkMakeMove(lastUpdateUI: IUpdateUI, move: IMove, proposal: IProposal, chatDescription: string): void {
     if (!lastUpdateUI) {
       throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
     }
@@ -242,8 +242,8 @@ export module emulator {
     if (move) {
       checkMove(move);
     }
-    if (proposal && !proposal.chatDescription) {
-      throw new Error("You didn't set chatDescription in your proposal=" + angular.toJson(proposal, true));
+    if (!chatDescription) {
+      log.warn("You didn't set chatDescription in your makeMove! Please copy http://yoav-zibin.github.io/emulator/dist/turnBasedServices.4.js into your lib/turnBasedServices.4.js , and http://yoav-zibin.github.io/emulator/src/multiplayer-games.d.ts into your typings/multiplayer-games.d.ts , and make sure you pass chatDescription as the last argument to gameService.makeMove(move, proposal, chatDescription)");
     }
   }
 
@@ -381,7 +381,7 @@ export module emulator {
       // Check move&proposal
       let move: IMove = message.move;
       let proposal: IProposal = message.proposal;
-      checkMakeMove(lastUpdateUI, move, proposal);
+      checkMakeMove(lastUpdateUI, move, proposal, message.chatDescription);
       if (index !== getState().turnIndex) {
         throw new Error("Not your turn! yourPlayerIndex=" + index + " and the turn is of playerIndex=" + getState().turnIndex);
       }
