@@ -139,6 +139,7 @@ var gamingPlatform;
                 turnIndex: 0,
                 endMatchScores: null,
                 playMode: "passAndPlay",
+                matchType: "passAndPlay",
             });
         }
         gameService.setGame = setGame;

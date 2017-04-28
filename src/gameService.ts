@@ -169,6 +169,7 @@ export module gameService {
       turnIndex: 0,
       endMatchScores: null,
       playMode: "passAndPlay",
+      matchType: "passAndPlay",
     });
   }
 }

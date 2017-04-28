@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp" ng-strict-di>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>emulator</title>
+    <link rel="shortcut icon" type="image/x-icon" href="data:image/x-icon;,">
+  
+    <script crossorigin="anonymous" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.js"></script>
+  
+    <script src="ts_output_readonly_do_NOT_change_manually/src/emulatorTopIframe.js"></script>
+    
+</head>
+
+<body ng-cloak>
+<div ng-show="!emulator.showEnterJson">
+    <h4 ng-show="emulator.isGameOver()">endMatchScores={{emulator.getState().endMatchScores}}</h4>
+    <select
+    ng-options="playMode for playMode in emulator.playModes track by playMode"
+    ng-model="emulator.playMode"
+    ng-change="emulator.reloadIframes()"></select>
+    <button ng-click="emulator.startNewMatch()">Start new match</button>
+    <select ng-change="emulator.historyIndexChanged()" ng-model="emulator.historyIndex" ng-options="index for index in emulator.getIntegersTill(emulator.history.length)">
+    <option value="">-- current move --</option>
+    </select>
+    <select ng-change="emulator.currentLanguageChanged()" ng-model="emulator.currentLanguage" ng-options="language.name for language in emulator.supportedLanguages">
+    <option value="">-- current game language --</option>
+    </select>
+    <button ng-click="emulator.saveState()">Save match</button>
+    <select ng-change="emulator.loadMatch()" ng-model="emulator.selectedSavedStateToLoad" ng-options="savedState.name for savedState in emulator.savedStates">
+    <option value="">-- load match --</option>
+    </select>
+    <button ng-click="emulator.showEnterJson = true">Load match from JSON</button>
+    <input ng-model="emulator.ogImageMaker">
+    <button ng-click="emulator.getOgImageState()">Open AppEngine image</button>
+    <div ng-show="emulator.playMode == 'community'">
+    Number of players required to move in a community match: 
+    <input ng-model="emulator.numberOfPlayersRequiredToMove" 
+        ng-change="emulator.resendUpdateUI()">
+    </div>
+</div>
+
+<div ng-show="emulator.showEnterJson">
+    <textarea ng-model="emulator.pastedUpdateUiJson" rows=2 cols=60></textarea><br>
+    <button ng-click="emulator.loadMatchFromJson()">Load match from JSON</button>
+</div>
+</body>
+
+</html>

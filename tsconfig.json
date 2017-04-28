@@ -37,6 +37,7 @@
         "src/dragAndDropService.ts",
         "src/gameService.ts",
         "src/emulator.ts",
+        "src/emulatorTopIframe.ts",
         "src/log.ts",
         "src/messageService.ts",
         "src/multiplayer-games.d.ts",
