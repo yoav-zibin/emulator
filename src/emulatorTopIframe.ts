@@ -165,7 +165,7 @@ export module emulatorTopIframe {
       iframeCols = playersInCommunity;
     } else if (isMultiplayer()) {
       iframeRows = 1;
-      iframeCols = numberOfPlayers; // if I want to support a viewer, then add +1.
+      iframeCols = numberOfPlayers + 1; // if I want to support a viewer, then add +1.
     } else {
       iframeRows = 1;
       iframeCols = 1;

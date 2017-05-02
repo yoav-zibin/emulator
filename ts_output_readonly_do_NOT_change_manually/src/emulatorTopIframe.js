@@ -170,7 +170,7 @@ var gamingPlatform;
             }
             else if (isMultiplayer()) {
                 emulatorTopIframe.iframeRows = 1;
-                emulatorTopIframe.iframeCols = emulatorTopIframe.numberOfPlayers; // if I want to support a viewer, then add +1.
+                emulatorTopIframe.iframeCols = emulatorTopIframe.numberOfPlayers + 1; // if I want to support a viewer, then add +1.
             }
             else {
                 emulatorTopIframe.iframeRows = 1;
