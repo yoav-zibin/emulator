@@ -200,28 +200,6 @@ var gamingPlatform;
             }
         }
         emulatorTopIframe.checkMove = checkMove;
-        function checkMakeMove(lastUpdateUI, move, proposal, chatDescription) {
-            if (!lastUpdateUI) {
-                throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
-            }
-            var wasYourTurn = lastUpdateUI.turnIndex >= 0 &&
-                lastUpdateUI.yourPlayerIndex === lastUpdateUI.turnIndex; // it's my turn
-            if (!wasYourTurn) {
-                throw new Error("Game called makeMove when it wasn't your turn: yourPlayerIndex=" + lastUpdateUI.yourPlayerIndex + " turnIndexAfterMove=" + lastUpdateUI.turnIndex);
-            }
-            if (lastUpdateUI.playerIdToProposal) {
-                var oldProposal = lastUpdateUI.playerIdToProposal[lastUpdateUI.yourPlayerInfo.playerId];
-                if (oldProposal) {
-                    throw new Error("Called communityMove when yourPlayerId already made a proposal, see: " + angular.toJson(oldProposal, true));
-                }
-            }
-            if (move) {
-                checkMove(move);
-            }
-            if (!chatDescription) {
-                console.warn("You didn't set chatDescription in your makeMove! Please copy http://yoav-zibin.github.io/emulator/dist/turnBasedServices.4.js into your lib/turnBasedServices.4.js , and http://yoav-zibin.github.io/emulator/src/multiplayer-games.d.ts into your typings/multiplayer-games.d.ts , and make sure you pass chatDescription as the last argument to gameService.makeMove(move, proposal, chatDescription)");
-            }
-        }
         function setPlayersInfo() {
             playersInfo = [];
             for (var i = 0; i < emulatorTopIframe.numberOfPlayers; i++) {
@@ -351,7 +329,7 @@ var gamingPlatform;
                 // Check move&proposal
                 var move = message.move;
                 var proposal = message.proposal;
-                checkMakeMove(lastUpdateUI, move, proposal, message.chatDescription);
+                gamingPlatform.gameService.checkMakeMove(lastUpdateUI, move, proposal, message.chatDescription);
                 if (index !== getState().turnIndex) {
                     throw new Error("Not your turn! yourPlayerIndex=" + index + " and the turn is of playerIndex=" + getState().turnIndex);
                 }

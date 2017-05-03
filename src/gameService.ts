@@ -28,10 +28,7 @@ export module gameService {
   let isLocalTesting = window.parent === window;
   let game: IGame;
 
-  export function checkMove(move: IMove): void {
-    if (!move) {
-      throw new Error("Game called makeMove with a null move=" + move);
-    }
+  function checkMove(move: IMove): void {
     // Do some checks: turnIndexAfterMove is -1 iff endMatchScores is not null.
     let noTurnIndexAfterMove = move.turnIndex === -1;
     let hasEndMatchScores = !!move.endMatchScores;
@@ -44,7 +41,7 @@ export module gameService {
           angular.toJson(move, true));
     }
   }
-  function checkMakeMove(lastUpdateUI: IUpdateUI, move: IMove, proposal: IProposal): void {
+  export function checkMakeMove(lastUpdateUI: IUpdateUI, move: IMove, proposal: IProposal, chatDescription: string): void {
     if (!lastUpdateUI) {
       throw new Error("Game called makeMove before getting updateUI or it called makeMove more than once for a single updateUI.");
     }
@@ -61,8 +58,16 @@ export module gameService {
       }
     }
 
-    if (move) {
-      checkMove(move);
+    if (!move && !proposal) {
+      throw new Error("Game called makeMove with a null move=" + move + " and null proposal=" + proposal);
+    }
+    if (!move && !lastUpdateUI.playerIdToProposal) {
+      throw new Error("Game called makeMove with a null move=" + move);
+    }
+    if (move) checkMove(move);
+
+    if (!chatDescription) {
+      console.error("You didn't set chatDescription in your makeMove! Please copy http://yoav-zibin.github.io/emulator/dist/turnBasedServices.4.js into your lib/turnBasedServices.4.js , and http://yoav-zibin.github.io/emulator/src/multiplayer-games.d.ts into your typings/multiplayer-games.d.ts , and make sure you pass chatDescription as the last argument to gameService.makeMove(move, proposal, chatDescription)");
     }
   }
 
@@ -79,10 +84,7 @@ export module gameService {
   let lastUpdateUiMessage: IUpdateUI = null;
 
   export function makeMove(move: IMove, proposal: IProposal, chatDescription: string): void {
-    if (!chatDescription) {
-      throw new Error("You didn't set chatDescription in makeMove!");
-    }
-    checkMakeMove(lastUpdateUiMessage, move, proposal);
+    checkMakeMove(lastUpdateUiMessage, move, proposal, chatDescription);
     // I'm sending the move even in local testing to make sure it's simple json (or postMessage will fail).
     sendMessage({move: move, proposal: proposal, chatDescription: chatDescription, lastMessage: {updateUI: lastUpdateUiMessage}}); 
     lastUpdateUiMessage = null; // to make sure you don't call makeMove until you get the next updateUI.
