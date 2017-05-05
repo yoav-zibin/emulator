@@ -194,6 +194,7 @@ export module emulatorTopIframe {
     }
   }
 
+  const UNKNOWN_AVATAR = "https://yoav-zibin.github.io/emulator/imgs/autoMatchAvatar.png";
   function setPlayersInfo() {
     playersInfo = [];
     for (let i = 0; i < numberOfPlayers; i++) {
@@ -202,7 +203,7 @@ export module emulatorTopIframe {
           i !== 0 && isPlayAgainstTheComputer() ?
           "" : // The playerId for the computer is "".
           "" + (i + 42);
-      playersInfo.push({playerId : playerId, avatarImageUrl: null, displayName: null});
+      playersInfo.push({playerId : playerId, avatarImageUrl: UNKNOWN_AVATAR, displayName: null});
     }
   }
 
@@ -240,9 +241,9 @@ export module emulatorTopIframe {
     // Some games use animations and guess when they end using $timeout, so I introduce
     // laginess on purpose to make it more like the real platform.
     setInterval(()=>{
-      // just take the CPU for 20ms.
+      // just take the CPU for 80ms.
       let start = new Date().getTime();
-      while (new Date().getTime() - start < 20) {}
+      while (new Date().getTime() - start < 100) {}
     }, 100);
   }
 
@@ -273,9 +274,9 @@ export module emulatorTopIframe {
       playerIdToProposal: isCommunity() ? playerIdToProposal : null,
 
       yourPlayerIndex: index,
-      yourPlayerInfo: {
-        avatarImageUrl: "",
-        displayName: "",
+      yourPlayerInfo: index >= 0 ? playersInfo[index] : {
+        avatarImageUrl: UNKNOWN_AVATAR,
+        displayName: "Yoyo",
         playerId: "playerId" + id,
       },
       playersInfo: playersInfo,
