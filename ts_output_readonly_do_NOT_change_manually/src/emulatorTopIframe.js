@@ -246,8 +246,13 @@ var gamingPlatform;
             setInterval(function () {
                 // just take the CPU for 80ms.
                 var start = new Date().getTime();
-                while (new Date().getTime() - start < 500) { }
-            }, 600);
+                console.info("Cause laginess started");
+                var c = 0;
+                while (new Date().getTime() - start < 500) {
+                    c++;
+                }
+                console.info("Cause laginess ended, c=" + c);
+            }, 700);
         }
         function isGameOver() {
             return !!getState().endMatchScores;

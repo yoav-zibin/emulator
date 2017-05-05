@@ -243,8 +243,11 @@ export module emulatorTopIframe {
     setInterval(()=>{
       // just take the CPU for 80ms.
       let start = new Date().getTime();
-      while (new Date().getTime() - start < 500) {}
-    }, 600);
+      console.info("Cause laginess started");
+      let c = 0;
+      while (new Date().getTime() - start < 500) {c++}
+      console.info("Cause laginess ended, c=" + c);
+    }, 700);
   }
 
   export function isGameOver() {
