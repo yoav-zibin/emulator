@@ -240,14 +240,14 @@ var gamingPlatform;
         }
         emulatorTopIframe.init = init;
         function causeLaginess() {
-            console.info("causeLaginess on purpose for 100 ms");
+            console.info("causeLaginess on purpose for 500 ms");
             // Some games use animations and guess when they end using $timeout, so I introduce
             // laginess on purpose to make it more like the real platform.
             setInterval(function () {
                 // just take the CPU for 80ms.
                 var start = new Date().getTime();
-                while (new Date().getTime() - start < 100) { }
-            }, 100);
+                while (new Date().getTime() - start < 500) { }
+            }, 600);
         }
         function isGameOver() {
             return !!getState().endMatchScores;
