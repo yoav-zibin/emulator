@@ -240,7 +240,7 @@ var gamingPlatform;
         }
         emulatorTopIframe.init = init;
         function causeLaginess() {
-            console.info("causeLaginess on purpose");
+            console.info("causeLaginess on purpose for 100 ms");
             // Some games use animations and guess when they end using $timeout, so I introduce
             // laginess on purpose to make it more like the real platform.
             setInterval(function () {
