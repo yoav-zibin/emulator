@@ -5,7 +5,7 @@
  */
 
 ;
-"use strict"; var emulatorServicesCompilationDate = "Wed May 3 09:41:12 EDT 2017";
+"use strict"; var emulatorServicesCompilationDate = "Fri May 5 14:05:44 EDT 2017";
 
 ;
 var gamingPlatform;
