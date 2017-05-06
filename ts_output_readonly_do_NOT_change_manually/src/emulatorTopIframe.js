@@ -229,7 +229,6 @@ var gamingPlatform;
                 return;
             }
             $rootScope['emulator'] = emulatorTopIframe;
-            causeLaginess();
             setPlayersInfo();
             loadSavedStates();
             clearState();
@@ -239,21 +238,6 @@ var gamingPlatform;
             reloadIframes();
         }
         emulatorTopIframe.init = init;
-        function causeLaginess() {
-            console.info("causeLaginess on purpose for 500 ms");
-            // Some games use animations and guess when they end using $timeout, so I introduce
-            // laginess on purpose to make it more like the real platform.
-            setInterval(function () {
-                // just take the CPU for 80ms.
-                var start = new Date().getTime();
-                console.info("Cause laginess started");
-                var c = 0;
-                while (new Date().getTime() - start < 500) {
-                    c++;
-                }
-                console.info("Cause laginess ended, c=" + c);
-            }, 700);
-        }
         function isGameOver() {
             return !!getState().endMatchScores;
         }
@@ -366,7 +350,7 @@ var gamingPlatform;
                 else {
                     playerIdToProposal['playerId' + id] = proposal;
                 }
-                setTimeout(resendUpdateUIRespectingPingPong, 100);
+                setTimeout(resendUpdateUIRespectingPingPong, 0);
             }
         }
     })(emulatorTopIframe = gamingPlatform.emulatorTopIframe || (gamingPlatform.emulatorTopIframe = {}));
