@@ -72,7 +72,13 @@ export module gameService {
   }
 
   function sendMessage(msg: IMessageToPlatform) {
-    messageService.sendMessage(msg);
+    // To make sure students don't get:
+    // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
+    // I serialize to string and back.
+    // This also removes any $$hashkey that the game may have added:
+    // http://stackoverflow.com/questions/18826320/what-is-the-hashkey-added-to-my-json-stringify-result
+    let plainPojoMsg = angular.fromJson(angular.toJson(msg));
+    messageService.sendMessage(plainPojoMsg);
   }
 
   function passMessage(msg: IMessageToGame, toIndex: number): void {
@@ -85,7 +91,6 @@ export module gameService {
 
   export function makeMove(move: IMove, proposal: IProposal, chatDescription: string): void {
     checkMakeMove(lastUpdateUiMessage, move, proposal, chatDescription);
-    // I'm sending the move even in local testing to make sure it's simple json (or postMessage will fail).
     sendMessage({move: move, proposal: proposal, chatDescription: chatDescription, lastMessage: {updateUI: lastUpdateUiMessage}}); 
     lastUpdateUiMessage = null; // to make sure you don't call makeMove until you get the next updateUI.
   }
@@ -102,12 +107,8 @@ export module gameService {
       translate.setLanguage(message.setLanguage.language);
       
     } else if (message.getGameLogs) {
-      // To make sure students don't get:
-      // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
-      // I serialize to string and back.
-      let plainPojoLogs = angular.fromJson(angular.toJson(log.getLogs()));
       setTimeout(function () {
-        sendMessage({getGameLogsResult: plainPojoLogs});
+        sendMessage({getGameLogsResult: log.getLogs()});
       });
       
     } else if (message.getStateForOgImage) {

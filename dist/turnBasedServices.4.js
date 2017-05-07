@@ -5,7 +5,7 @@
  */
 
 ;
-"use strict"; var emulatorServicesCompilationDate = "Sat May 6 07:52:45 EDT 2017";
+"use strict"; var emulatorServicesCompilationDate = "Sun May 7 08:49:40 EDT 2017";
 
 ;
 var gamingPlatform;
@@ -197,7 +197,13 @@ var gamingPlatform;
         }
         gameService.checkMakeMove = checkMakeMove;
         function sendMessage(msg) {
-            gamingPlatform.messageService.sendMessage(msg);
+            // To make sure students don't get:
+            // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
+            // I serialize to string and back.
+            // This also removes any $$hashkey that the game may have added:
+            // http://stackoverflow.com/questions/18826320/what-is-the-hashkey-added-to-my-json-stringify-result
+            var plainPojoMsg = angular.fromJson(angular.toJson(msg));
+            gamingPlatform.messageService.sendMessage(plainPojoMsg);
         }
         function passMessage(msg, toIndex) {
             var iframe = window.document.getElementById("game_iframe_" + toIndex);
@@ -206,7 +212,6 @@ var gamingPlatform;
         var lastUpdateUiMessage = null;
         function makeMove(move, proposal, chatDescription) {
             checkMakeMove(lastUpdateUiMessage, move, proposal, chatDescription);
-            // I'm sending the move even in local testing to make sure it's simple json (or postMessage will fail).
             sendMessage({ move: move, proposal: proposal, chatDescription: chatDescription, lastMessage: { updateUI: lastUpdateUiMessage } });
             lastUpdateUiMessage = null; // to make sure you don't call makeMove until you get the next updateUI.
         }
@@ -224,12 +229,8 @@ var gamingPlatform;
                 gamingPlatform.translate.setLanguage(message.setLanguage.language);
             }
             else if (message.getGameLogs) {
-                // To make sure students don't get:
-                // Error: Uncaught DataCloneError: Failed to execute 'postMessage' on 'Window': An object could not be cloned.
-                // I serialize to string and back.
-                var plainPojoLogs = angular.fromJson(angular.toJson(gamingPlatform.log.getLogs()));
                 setTimeout(function () {
-                    sendMessage({ getGameLogsResult: plainPojoLogs });
+                    sendMessage({ getGameLogsResult: gamingPlatform.log.getLogs() });
                 });
             }
             else if (message.getStateForOgImage) {
