@@ -109,9 +109,9 @@ export module emulator {
     
     // Hide all elements in body.
     for(let child: any = window.document.body.firstChild; child; child=child.nextSibling) {
-      child.style.display = "none";
+      if (child.style) child.style.display = "none";
     }
-    
+
     angular.element(window.document.body).append($compile(el)($rootScope));
     window.addEventListener("message", (event)=>{
       $rootScope.$apply(()=>gotMessageFromGame(event));

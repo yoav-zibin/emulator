@@ -63,7 +63,8 @@ var gamingPlatform;
             var el = angular.element(testingHtml);
             // Hide all elements in body.
             for (var child = window.document.body.firstChild; child; child = child.nextSibling) {
-                child.style.display = "none";
+                if (child.style)
+                    child.style.display = "none";
             }
             angular.element(window.document.body).append(gamingPlatform.$compile(el)(gamingPlatform.$rootScope));
             window.addEventListener("message", function (event) {
