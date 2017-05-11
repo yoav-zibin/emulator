@@ -95,10 +95,13 @@ export module emulator {
   }
   function getIndexOfSource(src: Window) {
     let i = 0;
-    while (true) {
-      if (getGameIframe(i) === src) return i;
+    while (i < 50) {
+      let game_iframe = getGameIframe(i);
+      if (game_iframe === src) return i;
+      if (!game_iframe) break;
       i++;
     }
+    console.error("getIndexOfSource src=", src, " didn't find the matching iframe!");
   }
 
   export function overrideInnerHtml() {
@@ -109,6 +112,7 @@ export module emulator {
     
     // Hide all elements in body.
     for(let child: any = window.document.body.firstChild; child; child=child.nextSibling) {
+      // We also get some #text DOM nodes that don't have a .style attribute.
       if (child.style) child.style.display = "none";
     }
 

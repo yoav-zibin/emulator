@@ -50,11 +50,15 @@ var gamingPlatform;
         }
         function getIndexOfSource(src) {
             var i = 0;
-            while (true) {
-                if (getGameIframe(i) === src)
+            while (i < 50) {
+                var game_iframe = getGameIframe(i);
+                if (game_iframe === src)
                     return i;
+                if (!game_iframe)
+                    break;
                 i++;
             }
+            console.error("getIndexOfSource src=", src, " didn't find the matching iframe!");
         }
         function overrideInnerHtml() {
             gamingPlatform.log.info("Overriding body's html");
@@ -63,6 +67,7 @@ var gamingPlatform;
             var el = angular.element(testingHtml);
             // Hide all elements in body.
             for (var child = window.document.body.firstChild; child; child = child.nextSibling) {
+                // We also get some #text DOM nodes that don't have a .style attribute.
                 if (child.style)
                     child.style.display = "none";
             }
