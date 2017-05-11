@@ -61,7 +61,10 @@ var gamingPlatform;
             gamingPlatform.$rootScope['emulator'] = emulator;
             emulator.locationTrustedStr = gamingPlatform.$sce.trustAsResourceUrl(location.toString());
             var el = angular.element(testingHtml);
-            window.document.body.innerHTML = '';
+            // Hide all elements in body.
+            for (var child = window.document.body.firstChild; child; child = child.nextSibling) {
+                child.style.display = "none";
+            }
             angular.element(window.document.body).append(gamingPlatform.$compile(el)(gamingPlatform.$rootScope));
             window.addEventListener("message", function (event) {
                 gamingPlatform.$rootScope.$apply(function () { return gotMessageFromGame(event); });
