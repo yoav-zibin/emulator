@@ -85,6 +85,9 @@ var gamingPlatform;
             else if (message.getStateForOgImage) {
                 sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
             }
+            else if (message.evalJsCode) {
+                eval(message.evalJsCode);
+            }
         }
         function createScriptWithCrossorigin(id, src) {
             gamingPlatform.log.info("Loading script ", src, " into script element with id=", id);

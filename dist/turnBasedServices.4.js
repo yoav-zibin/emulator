@@ -5,7 +5,7 @@
  */
 
 ;
-"use strict"; var emulatorServicesCompilationDate = "Thu May 11 13:45:02 EDT 2017";
+"use strict"; var emulatorServicesCompilationDate = "Fri May 12 09:12:31 EDT 2017";
 
 ;
 var gamingPlatform;
@@ -235,6 +235,9 @@ var gamingPlatform;
             }
             else if (message.getStateForOgImage) {
                 sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
+            }
+            else if (message.evalJsCode) {
+                eval(message.evalJsCode);
             }
         }
         function createScriptWithCrossorigin(id, src) {

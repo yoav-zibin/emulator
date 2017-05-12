@@ -12,6 +12,7 @@ export interface IMessageToGame {
   setLanguage?: {language: string};
   getGameLogs?: boolean;
   getStateForOgImage?: boolean;
+  evalJsCode?: string;
 }
 export interface IMessageToPlatform {
   gameReady?: string;
@@ -113,6 +114,8 @@ export module gameService {
       
     } else if (message.getStateForOgImage) {
       sendMessage({sendStateForOgImage : game.getStateForOgImage()});
+    } else if (message.evalJsCode) {
+      eval(message.evalJsCode);
     }
   }
 
