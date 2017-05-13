@@ -34,9 +34,9 @@ var gamingPlatform;
             { name: "עברית", code: "iw" },
             { name: "português", code: "pt" },
             { name: "中文", code: "zh" },
-            { name: "ελληνικά", code: "el" },
+            //{name:"ελληνικά", code: "el"}, // Greek
             { name: "French", code: "fr" },
-            { name: "हिन्दी", code: "hi" },
+            //{name:"हिन्दी", code: "hi"}, // Hindi
             { name: "español", code: "es" },
         ];
         emulatorTopIframe.currentLanguage = emulatorTopIframe.supportedLanguages[0];

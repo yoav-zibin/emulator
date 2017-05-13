@@ -37,9 +37,9 @@ export module emulatorTopIframe {
       {name:"עברית", code: "iw"}, // Hebrew
       {name:"português", code: "pt"}, // Portuguese
       {name:"中文", code: "zh"}, // Chinese
-      {name:"ελληνικά", code: "el"}, // Greek
+      //{name:"ελληνικά", code: "el"}, // Greek
       {name:"French", code: "fr"}, // French
-      {name:"हिन्दी", code: "hi"}, // Hindi
+      //{name:"हिन्दी", code: "hi"}, // Hindi
       {name:"español", code: "es"}, // Spanish
       ];
   export let currentLanguage: Language = supportedLanguages[0];
