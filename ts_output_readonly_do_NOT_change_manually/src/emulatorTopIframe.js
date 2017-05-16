@@ -41,7 +41,6 @@ var gamingPlatform;
         ];
         emulatorTopIframe.currentLanguage = emulatorTopIframe.supportedLanguages[0];
         emulatorTopIframe.languageCode = "en";
-        emulatorTopIframe.ogImageMaker = "https://dotted-guru-139914.appspot.com/";
         emulatorTopIframe.numberOfPlayersRequiredToMove = 3; // for community matches.
         emulatorTopIframe.numberOfPlayers = 2;
         var playersInfo;
@@ -132,10 +131,6 @@ var gamingPlatform;
             if (savedStatesJson)
                 emulatorTopIframe.savedStates = angular.fromJson(savedStatesJson);
         }
-        function getOgImageState() {
-            passMessage({ getStateForOgImage: true }, 0);
-        }
-        emulatorTopIframe.getOgImageState = getOgImageState;
         function resendUpdateUI() {
             // I want to avoid reloading the iframes (to be as close to the real platform as possible)
             for (var r = 0; r < emulatorTopIframe.iframeRows; r++) {
@@ -291,19 +286,6 @@ var gamingPlatform;
             }
             return res.join("&");
         }
-        function getImageMakerUrl(stateStr) {
-            var params = {};
-            params["fbId0"] = "10153589934097337";
-            params["fbId1"] = "10153693068502449";
-            var state = getState();
-            if (state.endMatchScores) {
-                params["winner"] = state.endMatchScores[0] > state.endMatchScores[1] ? '0' : '1';
-                ;
-            }
-            params["myIndex"] = '0';
-            params["state"] = stateStr;
-            return emulatorTopIframe.ogImageMaker + "?" + getQueryString(params);
-        }
         function gotMessageFromGame(event) {
             var data = event.data;
             console.info("Debug info: topIframe got from platform: ", data);
@@ -314,11 +296,6 @@ var gamingPlatform;
             if (message.gameReady) {
                 sendSetLanguage(id);
                 sendChangeUI(id);
-            }
-            else if (message.sendStateForOgImage) {
-                var imageMakerUrl = getImageMakerUrl(message.sendStateForOgImage);
-                console.info(imageMakerUrl);
-                window.open(imageMakerUrl, "_blank");
             }
             else {
                 // Check last message

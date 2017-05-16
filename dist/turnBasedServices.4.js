@@ -5,7 +5,7 @@
  */
 
 ;
-"use strict"; var emulatorServicesCompilationDate = "Sat May 13 15:12:53 EDT 2017";
+"use strict"; var emulatorServicesCompilationDate = "Tue May 16 11:19:57 EDT 2017";
 
 ;
 var gamingPlatform;
@@ -232,9 +232,6 @@ var gamingPlatform;
                 setTimeout(function () {
                     sendMessage({ getGameLogsResult: gamingPlatform.log.getLogs() });
                 });
-            }
-            else if (message.getStateForOgImage) {
-                sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
             }
             else if (message.evalJsCode) {
                 eval(message.evalJsCode);

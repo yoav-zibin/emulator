@@ -11,7 +11,6 @@ export interface IMessageToGame {
   updateUI?: IUpdateUI;
   setLanguage?: {language: string};
   getGameLogs?: boolean;
-  getStateForOgImage?: boolean;
   evalJsCode?: string;
 }
 export interface IMessageToPlatform {
@@ -21,7 +20,6 @@ export interface IMessageToPlatform {
   chatDescription?: string;
   lastMessage?: IMessageToGame;
   getGameLogsResult?: any;
-  sendStateForOgImage?: string;
 }
 
 
@@ -112,8 +110,6 @@ export module gameService {
         sendMessage({getGameLogsResult: log.getLogs()});
       });
       
-    } else if (message.getStateForOgImage) {
-      sendMessage({sendStateForOgImage : game.getStateForOgImage()});
     } else if (message.evalJsCode) {
       eval(message.evalJsCode);
     }

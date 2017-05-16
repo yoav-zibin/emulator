@@ -44,7 +44,6 @@ export module emulatorTopIframe {
       ];
   export let currentLanguage: Language = supportedLanguages[0];
   export let languageCode = "en";
-  export let ogImageMaker = "https://dotted-guru-139914.appspot.com/";
   export let numberOfPlayersRequiredToMove = 3; // for community matches.
   export let numberOfPlayers = 2;
   let playersInfo: IPlayerInfo[];
@@ -126,10 +125,6 @@ export module emulatorTopIframe {
   function loadSavedStates() {
     let savedStatesJson = localStorage.getItem("savedStates");
     if (savedStatesJson) savedStates = angular.fromJson(savedStatesJson);
-  }
-
-  export function getOgImageState() {
-    passMessage({getStateForOgImage: true}, 0);
   }
 
   export function resendUpdateUI() {
@@ -290,18 +285,7 @@ export module emulatorTopIframe {
     }
     return res.join("&");
   }
-  function getImageMakerUrl(stateStr: string) {
-    let params: StringIndexer = {};
-    params["fbId0"] = "10153589934097337";
-    params["fbId1"] = "10153693068502449";
-    let state = getState();
-    if (state.endMatchScores) {
-      params["winner"] = state.endMatchScores[0] > state.endMatchScores[1] ? '0' : '1';;
-    }
-    params["myIndex"] = '0';
-    params["state"] = stateStr;
-    return ogImageMaker + "?" + getQueryString(params);
-  }
+  
   function gotMessageFromGame(event: MessageEvent) {
     let data: MessageToTopIframe = event.data;
     console.info("Debug info: topIframe got from platform: ", data);
@@ -312,10 +296,6 @@ export module emulatorTopIframe {
     if (message.gameReady) {
       sendSetLanguage(id);
       sendChangeUI(id);
-    } else if (message.sendStateForOgImage) {
-      let imageMakerUrl = getImageMakerUrl(message.sendStateForOgImage);
-      console.info(imageMakerUrl);
-      window.open(imageMakerUrl, "_blank");
     } else {
       // Check last message
       let lastUpdateUI: IUpdateUI = message.lastMessage.updateUI;

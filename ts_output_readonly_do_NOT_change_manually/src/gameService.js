@@ -82,9 +82,6 @@ var gamingPlatform;
                     sendMessage({ getGameLogsResult: gamingPlatform.log.getLogs() });
                 });
             }
-            else if (message.getStateForOgImage) {
-                sendMessage({ sendStateForOgImage: game.getStateForOgImage() });
-            }
             else if (message.evalJsCode) {
                 eval(message.evalJsCode);
             }

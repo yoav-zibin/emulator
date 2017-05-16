@@ -73,8 +73,6 @@ interface IGameService {
   makeMove(move: IMove, proposal: IProposal, chatDescription: string): void;
 }
 
-// Your game must support the updateUI method.
-// The other methods are optional.
 interface IGame {
   // This method is called when the game state changes, e.g., if the player started a new match,
   // loaded an existing match, if an opponent made a move, etc.
@@ -89,35 +87,6 @@ interface IGame {
   // So if a player in your game sets the turn to themselves, you should be careful to do the animations
   // correctly, especially in ping-pong matches.
   updateUI(updateUI: IUpdateUI): void;
-
-  // The platform supports players sharing a match on facebook, and therefore the platform
-  // needs a way to convert the match state into an image.
-  // That image is also used in the platform HTML in <meta property="og:image" ...>,
-  // which is why I called the mechanism to conver a state to an image 'ogImageMaker'.
-  // (In the future, the platform may also send push notifications that includes an image of the state.)
-  // This method is optional: if your game doesn't support it, then 
-  // you won't be able to share images on Facebook.
-  // In the game developer site you can enter a URL (called 'ogImageMaker')
-  // that converts a state string to an image.
-  // The platform will pass your URL the following parameters:
-  // * state: this is the string returned from getStateForOgImage()
-  // * fbId0, fbId1: the FB ids of the first and second players (if these players logged into FB).
-  // * winner: the playerIndex of the winner (either 0/1 or missing).
-  // * onlyBoard: either equals to "t" (true) or missing.
-  // If onlyBoard=t, then the URL should created
-  // a square image (of size 400x400) that contains just the board. 
-  // If it's missing, then it should create an image
-  // that is approximately 1200x630 (that's facebook recommendation for og:image).
-  // E.g., for the game of friendlygo I created an AppEngine that does this conversion, 
-  // see the code here:
-  // https://github.com/yoav-zibin/friendlygo-appengine
-  // I uploaded this to AppEngine, and entered this URL for ogImageMaker in the developer site:
-  // https://dotted-guru-139914.appspot.com/
-  // This is an example of how the platform calls the ogImageMaker URL:
-  // https://dotted-guru-139914.appspot.com/?onlyBoard=t&winner=0&fbId0=10153589934097337&fbId1=10153693068502449&state=wbbxxxxxxxwbbwbbxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxwb
-  // See another example for the game of checkers:
-  // https://github.com/yoav-zibin/ycheckers-appengine
-  getStateForOgImage(): string;
 }
 
 // Making a move either ends the game (then <endMatchScores> must be set)
