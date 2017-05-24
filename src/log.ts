@@ -14,6 +14,7 @@ export module log {
     millisecondsFromStart: number;
   }
 
+  export let LOG_TO_CONSOLE = true;
   let alwaysLogs: ILogEntry[] = [];
   let logLaterFunctions: (()=>any)[] = [];
   let lastLogs: ILogEntry[] = [];
@@ -33,9 +34,11 @@ export module log {
     // However, the output looks better on chrome if I pass a string as the first argument,
     // and I hope then it doesn't break anything anywhere else...
     let millisecondsFromStart = getMillisecondsFromStart();
-    let secondsFromStart = millisecondsFromStart/1000;
-    let consoleArgs = ['', secondsFromStart, ' seconds:'].concat(args);
-    consoleFunc.apply(console, consoleArgs);
+    if (LOG_TO_CONSOLE) {
+      let secondsFromStart = millisecondsFromStart/1000;
+      let consoleArgs = ['', secondsFromStart, ' seconds:'].concat(args);
+      consoleFunc.apply(console, consoleArgs);
+    }
     return {millisecondsFromStart: millisecondsFromStart, args: args, logLevel: logLevel};
   }
 
